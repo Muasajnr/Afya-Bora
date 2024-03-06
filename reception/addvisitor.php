@@ -1,3 +1,42 @@
+<?php
+include "../database/config.php";
+
+// Fetch data from the form after validating and sanitizing
+$fullName = isset($_POST["fullName"]) ? mysqli_real_escape_string($conn, $_POST["fullName"]) : '';
+$position = isset($_POST["position"]) ? mysqli_real_escape_string($conn, $_POST["position"]) : '';
+$contact = isset($_POST["contact"]) ? mysqli_real_escape_string($conn, $_POST["contact"]) : '';
+$idNumber = isset($_POST["idNumber"]) ? mysqli_real_escape_string($conn, $_POST["idNumber"]) : '';
+$attendPurpose = isset($_POST["attendPurpose"]) ? mysqli_real_escape_string($conn, $_POST["attendPurpose"]) : '';
+$paymentMethod = isset($_POST["paymentMethod"]) ? mysqli_real_escape_string($conn, $_POST["paymentMethod"]) : '';
+$age = isset($_POST["age"]) ? intval($_POST["age"]) : 0; // Assuming age is a numeric value
+$role = isset($_POST["role"]) ? mysqli_real_escape_string($conn, $_POST["role"]) : '';
+$visitPurpose = isset($_POST["visitPurpose"]) ? mysqli_real_escape_string($conn, $_POST["visitPurpose"]) : '';
+$patientVisitedName = isset($_POST["patientVisitedName"]) ? mysqli_real_escape_string($conn, $_POST["patientVisitedName"]) : '';
+$relationship = isset($_POST["relationship"]) ? mysqli_real_escape_string($conn, $_POST["relationship"]) : '';
+$timeIn = isset($_POST["timeIn"]) ? mysqli_real_escape_string($conn, $_POST["timeIn"]) : '';
+$timeOut = isset($_POST["timeOut"]) ? mysqli_real_escape_string($conn, $_POST["timeOut"]) : '';
+
+// SQL query with prepared statement
+$sql = "INSERT INTO visitors (fullName, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ssssssissssss", $fullName, $position, $contact, $idNumber, $attendPurpose, $paymentMethod, $age, $role, $visitPurpose, $patientVisitedName, $relationship, $timeIn, $timeOut);
+
+// Execute the prepared statement
+if ($stmt->execute()) {
+    echo "New record added successfully";
+} else {
+    echo "Error: " . $stmt->error;
+}
+
+// Close the prepared statement and the database connection
+$stmt->close();
+$conn->close();
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,13 +51,13 @@
     <title>AFYA BORA || Reception</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../css/sb-admin-2.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 </head>
@@ -272,8 +311,7 @@
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                                <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
+                                <img class="img-profile rounded-circle" src="../img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -356,17 +394,17 @@
                                 </div>
                                 <div class="card-body">
                                     <!-- Your form content goes here -->
-                                    <form>
+                                    <form Method="post" action="addvisitor.php">
                                         <!-- Full Name -->
                                         <div class="form-group">
                                             <label for="fullName">Full Name</label>
-                                            <input type="text" class="form-control" id="fullName" placeholder="Enter Full Name">
+                                            <input type="text" class="form-control" name="fullName"id="fullName" placeholder="Enter Full Name">
                                         </div>
                     
                                         <!-- Position (Patient, Non-Patient, Caregiver) -->
                                         <div class="form-group">
                                             <label for="position">Position</label>
-                                            <select class="form-control" id="position">
+                                            <select class="form-control" id="position"name="position">
                                                 <option value="patient">Patient</option>
                                                 <option value="nonPatient">Non-Patient</option>
                                                 <option value="caregiver">Caregiver</option>
@@ -376,19 +414,19 @@
                                         <!-- Contact -->
                                         <div class="form-group">
                                             <label for="contact">Contact</label>
-                                            <input type="tel" class="form-control" id="contact" placeholder="Enter Contact Number">
+                                            <input type="tel" class="form-control" name="contact" id="contact" placeholder="Enter Contact Number">
                                         </div>
                     
                                         <!-- ID Number (if a patient) -->
                                         <div class="form-group">
                                             <label for="idNumber">ID Number</label>
-                                            <input type="text" class="form-control" id="idNumber" placeholder="Enter ID Number">
+                                            <input type="text" class="form-control" name="idNumber" id="idNumber" placeholder="Enter ID Number">
                                         </div>
                     
                                         <!-- Attend Purpose (for patients) -->
                                         <div class="form-group">
                                             <label for="attendPurpose">Attend Purpose</label>
-                                            <select class="form-control" id="attendPurpose">
+                                            <select class="form-control" name="attendPurpose" id="attendPurpose">
                                                 <option value="doctor">Doctor</option>
                                                 <option value="imaging">Imaging</option>
                                                 <option value="lab">Lab</option>
@@ -400,45 +438,45 @@
                                         <!-- Payment Method -->
                                         <div class="form-group">
                                             <label for="paymentMethod">Payment Method</label>
-                                            <input type="text" class="form-control" id="paymentMethod" placeholder="Enter Payment Method">
+                                            <input type="text" class="form-control"name="paymentMethod" id="paymentMethod" placeholder="Enter Payment Method">
                                         </div>
                     
                                         <!-- Age -->
                                         <div class="form-group">
                                             <label for="age">Age</label>
-                                            <input type="number" class="form-control" id="age" placeholder="Enter Age">
+                                            <input type="number" class="form-control"name="age" id="age" placeholder="Enter Age">
                                         </div>
                     
                                         <!-- Role (for non-patients) -->
                                         <div class="form-group">
                                             <label for="role">Role/Title</label>
-                                            <input type="text" class="form-control" id="role" placeholder="Enter Role">
+                                            <input type="text" class="form-control" name="role" id="role" placeholder="Enter Role">
                                         </div>
                     
                                         <!-- Visit Purpose (for non-patients) -->
                                         <div class="form-group">
                                             <label for="visitPurpose">Visit Purpose</label>
-                                            <input type="text" class="form-control" id="visitPurpose" placeholder="Enter Visit Purpose">
+                                            <input type="text" class="form-control" name="visitPurpose" id="visitPurpose" placeholder="Enter Visit Purpose">
                                         </div>
                     
                                         <!-- Patient Visited Name and Relationship (for caregivers) -->
                                         <div class="form-group">
                                             <label for="patientVisitedName">Patient Visited Name</label>
-                                            <input type="text" class="form-control" id="patientVisitedName" placeholder="Enter Patient Visited Name">
+                                            <input type="text" class="form-control" name="patientVisitedName" id="patientVisitedName" placeholder="Enter Patient Visited Name">
                                         </div>
                                         <div class="form-group">
                                             <label for="relationship">Relationship</label>
-                                            <input type="text" class="form-control" id="relationship" placeholder="Enter Relationship">
+                                            <input type="text" class="form-control" name="relationship" id="relationship" placeholder="Enter Relationship">
                                         </div>
                     
                                         <!-- Time In and Time Out -->
                                         <div class="form-group">
                                             <label for="timeIn">Time In</label>
-                                            <input type="time" class="form-control" id="timeIn">
+                                            <input type="time" class="form-control" name="timeIn" id="timeIn">
                                         </div>
                                         <div class="form-group">
                                             <label for="timeOut">Time Out</label>
-                                            <input type="time" class="form-control" id="timeOut">
+                                            <input type="time" class="form-control" name="timeOut" id="timeOut">
                                         </div>
                     
                                         <!-- Submit button -->
@@ -506,21 +544,21 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="../js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="../vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="../js/demo/chart-area-demo.js"></script>
+    <script src="../js/demo/chart-pie-demo.js"></script>
 
 </body>
 
