@@ -1,39 +1,56 @@
 <?php
-include "../database/config.php";
+// Include your database connection details (assuming config.php is in the database folder)
+require('../database/config.php');
 
-// Fetch data from the form after validating and sanitizing
-$fullName = isset($_POST["fullName"]) ? mysqli_real_escape_string($conn, $_POST["fullName"]) : '';
-$position = isset($_POST["position"]) ? mysqli_real_escape_string($conn, $_POST["position"]) : '';
-$contact = isset($_POST["contact"]) ? mysqli_real_escape_string($conn, $_POST["contact"]) : '';
-$idNumber = isset($_POST["idNumber"]) ? mysqli_real_escape_string($conn, $_POST["idNumber"]) : '';
-$attendPurpose = isset($_POST["attendPurpose"]) ? mysqli_real_escape_string($conn, $_POST["attendPurpose"]) : '';
-$paymentMethod = isset($_POST["paymentMethod"]) ? mysqli_real_escape_string($conn, $_POST["paymentMethod"]) : '';
-$age = isset($_POST["age"]) ? intval($_POST["age"]) : 0; // Assuming age is a numeric value
-$role = isset($_POST["role"]) ? mysqli_real_escape_string($conn, $_POST["role"]) : '';
-$visitPurpose = isset($_POST["visitPurpose"]) ? mysqli_real_escape_string($conn, $_POST["visitPurpose"]) : '';
-$patientVisitedName = isset($_POST["patientVisitedName"]) ? mysqli_real_escape_string($conn, $_POST["patientVisitedName"]) : '';
-$relationship = isset($_POST["relationship"]) ? mysqli_real_escape_string($conn, $_POST["relationship"]) : '';
-$timeIn = isset($_POST["timeIn"]) ? mysqli_real_escape_string($conn, $_POST["timeIn"]) : '';
-$timeOut = isset($_POST["timeOut"]) ? mysqli_real_escape_string($conn, $_POST["timeOut"]) : '';
+// Check if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-// SQL query with prepared statement
-$sql = "INSERT INTO visitors (fullName, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut) 
+  // Collect form data
+  $fullName = $_POST['fullName'];
+  $position = $_POST['position'];
+  $contact = $_POST['contact'];
+  $idNumber = $_POST['idNumber'];
+  $attendPurpose = $_POST['attendPurpose'];
+  $paymentMethod = $_POST['paymentMethod'];
+  $age = $_POST['age'];
+  $role = $_POST['role'];
+  $visitPurpose = $_POST['visitPurpose'];
+  $patientVisitedName = $_POST['patientVisitedName'];
+  $relationship = $_POST['relationship'];
+  $currentDate = date('Y-m-d');
+  $timeIn = date('Y-m-d H:i:s', strtotime($currentDate . ' ' . $_POST['timeIn']));
+$timeOut = date('Y-m-d H:i:s', strtotime($currentDate . ' ' . $_POST['timeOut']));
+
+            
+
+  // Prepare SQL statement (prevents SQL injection)
+  $sql = "INSERT INTO visitors (fullName, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ssssssissssss", $fullName, $position, $contact, $idNumber, $attendPurpose, $paymentMethod, $age, $role, $visitPurpose, $patientVisitedName, $relationship, $timeIn, $timeOut);
+$stmt = mysqli_prepare($conn, $sql);
 
-// Execute the prepared statement
-if ($stmt->execute()) {
-    echo "New record added successfully";
-} else {
-    echo "Error: " . $stmt->error;
+// Bind parameters to the prepared statement
+mysqli_stmt_bind_param($stmt, "sssssssssssss", $fullName, $position, $contact, $idNumber, $attendPurpose, $paymentMethod, $age, $role, $visitPurpose, $patientVisitedName, $relationship, $timeIn, $timeOut);
+
+  // Execute the statement
+  if (mysqli_stmt_execute($stmt)) {
+    echo "Visitor information added successfully!";
+  } else {
+    echo "Error: " . mysqli_error($conn);
+  }
+
+  // Close statement and connection
+  mysqli_stmt_close($stmt);
+  mysqli_close($conn);
 }
 
-// Close the prepared statement and the database connection
-$stmt->close();
-$conn->close();
+// Check connection established earlier (optional, assuming connection details are correct)
+if (mysqli_connect_errno()) {
+  echo "Failed to connect to MySQL: " . mysqli_connect_error();
+}
 ?>
+
+
 
 
 
