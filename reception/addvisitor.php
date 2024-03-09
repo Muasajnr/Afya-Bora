@@ -117,14 +117,27 @@ if (mysqli_connect_errno()) {
 
             
 
-            <!-- Nav Item - Charts -->
+            <!-- Nav Item -  -->
             <li class="nav-item">
-                <a class="nav-link" href="addvisitor.php">
+                <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#collapsePages"
+                    aria-expanded="true" aria-controls="collapsePages">
+    
                     <i class="fas fa-plus fa-fw"></i>
-                    <span>Add Visitor</span></a>
+                    <span>Add Visitor</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Visitors:</h6>
+                        <a class="collapse-item" href="">Patient </a>
+                        <a class="collapse-item" href="">Care Giver</a>
+                        <a class="collapse-item" href="">Other</a>
+                        <div class="collapse-divider"></div>
+                        
+                    </div>
+                </div>
             </li>
 
-            <!-- Nav Item - Tables -->
+            <!-- Nav Item -  -->
             <li class="nav-item">
                 <a class="nav-link" href="allpatientsvisitors.php">
                     <i class="fas fa-edit fa-fw"></i>

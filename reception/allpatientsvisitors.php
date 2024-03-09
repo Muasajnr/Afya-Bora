@@ -20,6 +20,8 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 
 </head>
 
@@ -61,14 +63,27 @@
 
             
 
-            <!-- Nav Item - Charts -->
+            <!-- Nav Item - -->
             <li class="nav-item">
-                <a class="nav-link" href="addvisitor.php">
+                <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#collapsePages"
+                    aria-expanded="true" aria-controls="collapsePages">
+    
                     <i class="fas fa-plus fa-fw"></i>
-                    <span>Add Visitor</span></a>
+                    <span>Add Visitor</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Visitors:</h6>
+                        <a class="collapse-item" href="">Patient </a>
+                        <a class="collapse-item" href="">Care Giver</a>
+                        <a class="collapse-item" href="">Other</a>
+                        <div class="collapse-divider"></div>
+                        
+                    </div>
+                </div>
             </li>
 
-            <!-- Nav Item - Tables -->
+            <!-- Nav Item  -->
             <li class="nav-item">
                 <a class="nav-link" href="allpatientsvisitors.php">
                     <i class="fas fa-edit fa-fw"></i>
@@ -310,7 +325,7 @@
                         <!-- Page Heading -->
                         <h1 class="h3 mb-2 text-gray-800">All Visitors</h1>
                         
-                        <!-- DataTales Example -->
+                        <!-- DataTales  -->
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">All Patients & Visitors</h6>
@@ -341,7 +356,7 @@
                                             // Include your database connection details
                                             require('../database/config.php');
 
-                                            // Check connection established earlier (optional, assuming connection details are correct)
+                                            // Check connection established earlier 
                                             if (!$conn) {
                                                 die("Failed to connect to MySQL: " . mysqli_connect_error());
                                             }
@@ -370,6 +385,12 @@
                                                         echo "<td>" . $row['relationship']."</td>";
                                                         echo "<td>" . $row['timeIn']."</td>";
                                                         echo "<td>" . $row['timeOut']."</td>";
+                                                        echo "<td><button onclick='openPopup(" . $row['id'] . ", \"" . $row['fullname'] . "\", \"" . $row['position'] . "\", \"" . $row['contact'] . "\", \"" . $row['idNumber'] . "\", \"" . $row['attendPurpose'] . "\", \"" . $row['paymentMethod'] . "\", \"" . $row['age'] . "\", \"" . $row['role'] . "\", \"" . $row['visitPurpose'] . "\", \"" . $row['patientVisitedName'] . "\", \"" . $row['relationship'] . "\", \"" . $row['timeIn'] . "\", \"" . $row['timeOut'] . "\")' class='btn-primary'>Edit</button></td>";
+                                                        echo "</tr>";
+
+                                                        
+                                                    
+
 
                                                     
                                                     }
@@ -458,6 +479,203 @@
     <!-- Page level custom scripts -->
     <script src="../js/demo/datatables-demo.js"></script>
 
-</body>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+    <style>
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        label{
+            text-align:left;
+        }
+
+        /* Popup Form */
+        .popup {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 80%; 
+            max-width: 600px; 
+            height: 80vh;
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+        /* Close Button */
+        .close-btn {
+            /* position: absolute; */
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color:red;
+            margin-left: auto;
+        }
+
+        /* Form Styling */
+        form {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Button Styling */
+        .submit-btn {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+
+<!-- Popup Form -->
+<div class="overlay" id="editOverlay">
+    <div class="popup">
+        <span class="close-btn" onclick="closePopup()">&times;Close</span>
+        <h2>Edit Record</h2>
+        <form id="editForm">
+            <!-- Input fields for each column -->
+            <label for="editFullName">Full Name:</label>
+            <input type="text" id="editFullName" name="editFullName" value="<?php echo isset($row['fullname']) ? $row['fullname'] : ''; ?>">
+
+            <label for="editPosition">Position:</label>
+            <input type="text" id="editPosition" name="editPosition" value="<?php echo isset($row['position']) ? $row['position'] : ''; ?>">
+
+            <label for="editContact">Contact:</label>
+            <input type="tel" id="editContact" name="editContact" value="<?php echo isset($row['contact']) ? $row['contact'] : ''; ?>">
+
+            <label for="editIdNumber">ID Number:</label>
+            <input type="text" id="editIdNumber" name="editIdNumber" value="<?php echo isset($row['idNumber']) ? $row['idNumber'] : ''; ?>">
+
+            <label for="editAttendPurpose">Attend Purpose:</label>
+            <input type="text" id="editAttendPurpose" name="editAttendPurpose" value="<?php echo isset($row['attendPurpose']) ? $row['attendPurpose'] : ''; ?>">
+
+            <label for="editPaymentMethod">Payment Method:</label>
+            <input type="text" id="editPaymentMethod" name="editPaymentMethod" value="<?php echo isset($row['paymentMethod']) ? $row['paymentMethod'] : ''; ?>">
+
+            <label for="editAge">Age:</label>
+            <input type="text" id="editAge" name="editAge" value="<?php echo isset($row['age']) ? $row['age'] : ''; ?>">
+
+            <label for="editRole">Role:</label>
+            <input type="text" id="editRole" name="editRole" value="<?php echo isset($row['role']) ? $row['role'] : ''; ?>">
+
+            <label for="editVisitPurpose">Visit Purpose:</label>
+            <input type="text" id="editVisitPurpose" name="editVisitPurpose" value="<?php echo isset($row['visitPurpose']) ? $row['visitPurpose'] : ''; ?>">
+
+            <label for="editPatientVisitedName">Patient Visited Name:</label>
+            <input type="text" id="editPatientVisitedName" name="editPatientVisitedName" value="<?php echo isset($row['patientVisitedName']) ? $row['patientVisitedName'] : ''; ?>">
+
+            <label for="editRelationship">Relationship:</label>
+            <input type="text" id="editRelationship" name="editRelationship" value="<?php echo isset($row['relationship']) ? $row['relationship'] : ''; ?>">
+
+            <label for="editTimeIn">Time In:</label>
+            <input type="text" id="editTimeIn" name="editTimeIn" value="<?php echo isset($row['timeIn']) ? $row['timeIn'] : ''; ?>">
+
+            <label for="editTimeOut">Time Out:</label>
+            <input type="text" id="editTimeOut" name="editTimeOut" value="<?php echo isset($row['timeOut']) ? $row['timeOut'] : ''; ?>">
+
+            <button class="submit-btn" onclick="saveChanges()">Save Changes</button>
+            <button class="close-btn" onclick="closePopup()">Close</button>
+
+            
+        </form>
+    </div>
+</div>
+
+<script>
+    function openPopup(id, fullName, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut) {
+        document.getElementById('editOverlay').style.display = 'flex';
+
+        // Set existing values in the form
+        document.getElementById('editId').value = id;
+        document.getElementById('editFullName').value = fullName;
+        document.getElementById('editPosition').value = position;
+        document.getElementById('editContact').value = contact;
+        document.getElementById('editIdNumber').value = idNumber;
+        document.getElementById('editAttendPurpose').value = attendPurpose;
+        document.getElementById('editPaymentMethod').value = paymentMethod;
+        document.getElementById('editAge').value = age;
+        document.getElementById('editRole').value = role;
+        document.getElementById('editVisitPurpose').value = visitPurpose;
+        document.getElementById('editPatientVisitedName').value = patientVisitedName;
+        document.getElementById('editRelationship').value = relationship;
+        document.getElementById('editTimeIn').value = timeIn;
+        document.getElementById('editTimeOut').value = timeOut;
+        // Set values for other input fields as needed
+    }
+
+    function closePopup() {
+        document.getElementById('editOverlay').style.display = 'none';
+    }
+
+    function saveChanges() {
+        // Get edited values from the form
+        var id = document.getElementById('editId').value;
+        var fullName = document.getElementById('editFullName').value;
+        var position = document.getElementById('editPosition').value;
+        var contact = document.getElementById('editContact').value;
+        var idNumber = document.getElementById('editIdNumber').value;
+        var attendPurpose = document.getElementById('editAttendPurpose').value;
+        var paymentMethod = document.getElementById('editPaymentMethod').value;
+        var age = document.getElementById('editAge').value;
+        var role = document.getElementById('editRole').value;
+        var visitPurpose = document.getElementById('editVisitPurpose').value;
+        var patientVisitedName = document.getElementById('editPatientVisitedName').value;
+        var relationship = document.getElementById('editRelationship').value;
+        var timeIn = document.getElementById('editTimeIn').value;
+        var timeOut = document.getElementById('editTimeOut').value;
+
+        // Send edited values to the server using AJAX
+        $.ajax({
+            type: 'POST',
+            url: 'updateVisitor.php', // Replace with the actual server-side update script
+            data: {
+                id: id,
+                fullName: fullName,
+                position: position,
+                contact: contact,
+                idNumber: idNumber,
+                attendPurpose: attendPurpose,
+                paymentMethod: paymentMethod,
+                age: age,
+                role: role,
+                visitPurpose: visitPurpose,
+                patientVisitedName: patientVisitedName,
+                relationship: relationship,
+                timeIn: timeIn,
+                timeOut: timeOut
+            },
+            success: function(response) {
+                // Handle the response from the server (you can display a message or update the UI)
+                alert(response);
+                // You may also reload the page or update the specific row in the table
+                location.reload();
+            },
+            error: function() {
+                alert('Error updating record.');
+            }
+        });
+
+        closePopup(); // Close the popup after saving changes
+    }
+</script>
+
+
+</body>
 </html>
+
+
