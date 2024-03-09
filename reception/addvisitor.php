@@ -24,7 +24,7 @@ $timeOut = date('Y-m-d H:i:s', strtotime($currentDate . ' ' . $_POST['timeOut'])
             
 
   // Prepare SQL statement (prevents SQL injection)
-  $sql = "INSERT INTO visitors (fullName, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut)
+  $sql = "INSERT INTO visitors (fullname, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = mysqli_prepare($conn, $sql);
@@ -100,7 +100,7 @@ if (mysqli_connect_errno()) {
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -119,14 +119,14 @@ if (mysqli_connect_errno()) {
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="addvisitor.html">
+                <a class="nav-link" href="addvisitor.php">
                     <i class="fas fa-plus fa-fw"></i>
                     <span>Add Visitor</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="allpatientsvisitors.html">
+                <a class="nav-link" href="allpatientsvisitors.php">
                     <i class="fas fa-edit fa-fw"></i>
                     <span>Manage Visitor</span></a>
             </li>
