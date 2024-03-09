@@ -359,7 +359,7 @@
                                                         echo "<td>" . $row['id'] . "</td>";
                                                         echo "<td>" . $row['fullname'] . "</td>";
                                                         echo "<td>" . $row['position'] . "</td>";
-                                                        echo "<td>" . $row['contact'] . "</td>";
+                                                        echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
                                                         echo "<td>" . $row['idNumber'] . "</td>";
                                                         echo "<td>" . $row['attendPurpose']."</td>";
                                                         echo "<td>" . $row['paymentMethod']."</td>";
