@@ -65,23 +65,11 @@
 
             <!-- Nav Item - -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-    
-                    <i class="fas fa-plus fa-fw"></i>
-                    <span>Add Visitor</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Visitors:</h6>
-                        <a class="collapse-item" href="">Patient </a>
-                        <a class="collapse-item" href="">Care Giver</a>
-                        <a class="collapse-item" href="">Other</a>
-                        <div class="collapse-divider"></div>
-                        
-                    </div>
-                </div>
+                <a class="nav-link" href="addvisitor.php">
+                    <i class="fas fa-edit fa-fw"></i>
+                    <span>Add Visitor</span></a>
             </li>
+
 
             <!-- Nav Item  -->
             <li class="nav-item">
@@ -604,7 +592,7 @@
                     echo '<input type="text" id="editTimeIn" name="editTimeIn" value="' . $row['timeIn'] . '">';
 
                     echo '<label for="editTimeOut">Time Out:</label>';
-                    echo '<input type="text" id="editTimeOut" name="editTimeOut" value="' . $row['timeOut'] . '">';
+                    echo '<input type="time" id="editTimeOut" name="editTimeOut" value="' . $row['timeOut'] . '">';
 
                     echo '<button class="submit-btn" onclick="saveChanges()">Save Changes</button>';
                 } else {

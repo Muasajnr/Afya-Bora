@@ -62,23 +62,11 @@
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-    
-                    <i class="fas fa-plus fa-fw"></i>
-                    <span>Add Visitor</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Visitors:</h6>
-                        <a class="collapse-item" href="">Patient </a>
-                        <a class="collapse-item" href="">Care Giver</a>
-                        <a class="collapse-item" href="">Other</a>
-                        <div class="collapse-divider"></div>
-                        
-                    </div>
-                </div>
+                <a class="nav-link" href="addvisitor.php">
+                    <i class="fas fa-edit fa-fw"></i>
+                    <span>Add Visitor</span></a>
             </li>
+
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="allpatientsvisitors.php">

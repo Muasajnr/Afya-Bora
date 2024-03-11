@@ -119,22 +119,9 @@ if (mysqli_connect_errno()) {
 
             <!-- Nav Item -  -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-    
-                    <i class="fas fa-plus fa-fw"></i>
-                    <span>Add Visitor</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Visitors:</h6>
-                        <a class="collapse-item" href="">Patient </a>
-                        <a class="collapse-item" href="">Care Giver</a>
-                        <a class="collapse-item" href="">Other</a>
-                        <div class="collapse-divider"></div>
-                        
-                    </div>
-                </div>
+                <a class="nav-link" href="addvisitor.php">
+                    <i class="fas fa-edit fa-fw"></i>
+                    <span>Add Visitor</span></a>
             </li>
 
             <!-- Nav Item -  -->
@@ -383,38 +370,6 @@ if (mysqli_connect_errno()) {
 
                     <!-- Content Row -->
                     <div class="row">
-                        
-                        <script>
-                            $(document).ready(function () {
-                                // Hide all sections initially
-                                $(".form-section").hide();
-                            
-                                // Show the relevant section based on the selected option
-                                $("#position").change(function () {
-                                    var selectedOption = $(this).val();
-                                    $(".form-section").hide();
-                            
-                                    // Show common fields
-                                    $("#common-section").show();
-                            
-                                    // Show/hide fields based on the selected option
-                                    if (selectedOption === "patient") {
-                                        $("#nonPatient-section").hide();
-                                        $("#caregiver-section").hide();
-                                        $("#patient-section").show();
-                                    } else if (selectedOption === "nonPatient") {
-                                        $("#patient-section").hide();
-                                        $("#caregiver-section").hide();
-                                        $("#nonPatient-section").show();
-                                    } else if (selectedOption === "caregiver") {
-                                        $("#patient-section").hide();
-                                        $("#nonPatient-section").hide();
-                                        $("#caregiver-section").show();
-                                    }
-                                });
-                            });
-                            </script>
-                            
 
                         <!-- New Patient/Visitor Form -->
                         <div class="col-xl-12 mb-4">
@@ -424,93 +379,94 @@ if (mysqli_connect_errno()) {
                                 </div>
                                 <div class="card-body">
                                     <!-- Your form content goes here -->
-                                    <form Method="post" action="addvisitor.php">
-                                        <!-- Full Name -->
-                                        <div class="form-group">
-                                            <label for="fullName">Full Name</label>
-                                            <input type="text" class="form-control" name="fullName"id="fullName" placeholder="Enter Full Name">
-                                        </div>
-                    
-                                        <!-- Position (Patient, Non-Patient, Caregiver) -->
-                                        <div class="form-group">
-                                            <label for="position">Position</label>
-                                            <select class="form-control" id="position"name="position">
-                                                <option value="patient">Patient</option>
-                                                <option value="nonPatient">Non-Patient</option>
-                                                <option value="caregiver">Caregiver</option>
-                                            </select>
-                                        </div>
-                                         
-                                        <!-- Contact -->
-                                        <div class="form-group">
-                                            <label for="contact">Contact</label>
-                                            <input type="tel" class="form-control" name="contact" id="contact" placeholder="Enter Contact Number">
-                                        </div>
-                    
-                                        <!-- ID Number (if a patient) -->
-                                        <div class="form-group">
-                                            <label for="idNumber">ID Number</label>
-                                            <input type="text" class="form-control" name="idNumber" id="idNumber" placeholder="Enter ID Number">
-                                        </div>
-                    
-                                        <!-- Attend Purpose (for patients) -->
-                                        <div class="form-group">
-                                            <label for="attendPurpose">Attend Purpose</label>
-                                            <select class="form-control" name="attendPurpose" id="attendPurpose">
-                                                <option value="doctor">Doctor</option>
-                                                <option value="imaging">Imaging</option>
-                                                <option value="lab">Lab</option>
-                                                <option value="pharmacist">Pharmacist</option>
-                                                <option value="counseling">Counseling</option>
-                                            </select>
-                                        </div>
-                    
-                                        <!-- Payment Method -->
-                                        <div class="form-group">
-                                            <label for="paymentMethod">Payment Method</label>
-                                            <input type="text" class="form-control"name="paymentMethod" id="paymentMethod" placeholder="Enter Payment Method">
-                                        </div>
-                    
-                                        <!-- Age -->
-                                        <div class="form-group">
-                                            <label for="age">Age</label>
-                                            <input type="number" class="form-control"name="age" id="age" placeholder="Enter Age">
-                                        </div>
-                    
-                                        <!-- Role (for non-patients) -->
-                                        <div class="form-group">
-                                            <label for="role">Role/Title</label>
-                                            <input type="text" class="form-control" name="role" id="role" placeholder="Enter Role">
-                                        </div>
-                    
-                                        <!-- Visit Purpose (for non-patients) -->
-                                        <div class="form-group">
-                                            <label for="visitPurpose">Visit Purpose</label>
-                                            <input type="text" class="form-control" name="visitPurpose" id="visitPurpose" placeholder="Enter Visit Purpose">
-                                        </div>
-                    
-                                        <!-- Patient Visited Name and Relationship (for caregivers) -->
-                                        <div class="form-group">
-                                            <label for="patientVisitedName">Patient Visited Name</label>
-                                            <input type="text" class="form-control" name="patientVisitedName" id="patientVisitedName" placeholder="Enter Patient Visited Name">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="relationship">Relationship</label>
-                                            <input type="text" class="form-control" name="relationship" id="relationship" placeholder="Enter Relationship">
-                                        </div>
-                    
-                                        <!-- Time In and Time Out -->
-                                        <div class="form-group">
-                                            <label for="timeIn">Time In</label>
-                                            <input type="time" class="form-control" name="timeIn" id="timeIn">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="timeOut">Time Out</label>
-                                            <input type="time" class="form-control" name="timeOut" id="timeOut">
-                                        </div>
-                    
-                                        <!-- Submit button -->
-                                        <button type="submit" class="btn btn-primary">Add Patient/Visitor</button>
+                                    <form method="post" action="addvisitor.php">
+        <!-- Full Name -->
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" class="form-control" name="fullName" id="fullName" placeholder="Enter Full Name">
+        </div>
+
+        <!-- Position (Patient, Non-Patient, Caregiver) -->
+        <div class="form-group">
+            <label for="position">Position</label>
+            <select class="form-control" id="position" name="position" onchange="showFieldsBasedOnPosition()">
+                <option value="patient" selected>Patient</option>
+                <option value="nonPatient">Non-Patient(Others)</option>
+                <option value="caregiver">Caregiver</option>
+            </select>
+        </div>
+
+        <!-- Contact -->
+        <div class="form-group" id="contactField">
+            <label for="contact">Contact</label>
+            <input type="tel" class="form-control" name="contact" id="contact" placeholder="Enter Contact Number">
+        </div>
+
+        <!-- ID Number -->
+        <div class="form-group" id="idNumberField">
+            <label for="idNumber">ID Number</label>
+            <input type="text" class="form-control" name="idNumber" id="idNumber" placeholder="Enter ID Number">
+        </div>
+
+        <!-- Attend Purpose (for patients) -->
+        <div class="form-group" id="attendPurposeField">
+            <label for="attendPurpose">Attend Purpose</label>
+            <select class="form-control" name="attendPurpose" id="attendPurpose">
+                <option value="doctor">Doctor</option>
+                <option value="imaging">Imaging</option>
+                <option value="lab">Lab</option>
+                <option value="pharmacist">Pharmacist</option>
+                <option value="counseling">Counseling</option>
+            </select>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="form-group" id="paymentMethodField">
+            <label for="paymentMethod">Payment Method</label>
+            <input type="text" class="form-control" name="paymentMethod" id="paymentMethod" placeholder="Enter Payment Method">
+        </div>
+
+        <!-- Age -->
+        <div class="form-group" id="ageField">
+            <label for="age">Age</label>
+            <input type="number" class="form-control" name="age" id="age" placeholder="Enter Age">
+        </div>
+
+        <!-- Role (for non-patients) -->
+        <div class="form-group" id="roleField" style="display: none;">
+            <label for="role">Role/Title</label>
+            <input type="text" class="form-control" name="role" id="role" placeholder="Enter Role">
+        </div>
+
+        <!-- Visit Purpose (for non-patients) -->
+        <div class="form-group" id="visitPurposeField" style="display: none;">
+            <label for="visitPurpose">Visit Purpose</label>
+            <input type="text" class="form-control" name="visitPurpose" id="visitPurpose" placeholder="Enter Visit Purpose">
+        </div>
+
+        <!-- Patient Visited Name and Relationship (for caregivers) -->
+        <div class="form-group" id="patientVisitedField" style="display: none;">
+            <label for="patientVisitedName">Patient Visited Name</label>
+            <input type="text" class="form-control" name="patientVisitedName" id="patientVisitedName"
+                placeholder="Enter Patient Visited Name">
+        </div>
+        <div class="form-group" id="relationshipField" style="display: none;">
+            <label for="relationship">Relationship</label>
+            <input type="text" class="form-control" name="relationship" id="relationship" placeholder="Enter Relationship">
+        </div>
+
+        <!-- Time In and Time Out -->
+        <div class="form-group" id="timeInField" style="display: none;">
+            <label for="timeIn">Time In</label>
+            <input type="time" class="form-control" name="timeIn" id="timeIn">
+        </div>
+        <div class="form-group" id="timeOutField" style="display: none;">
+            <label for="timeOut">Time Out</label>
+            <input type="time" class="form-control" name="timeOut" id="timeOut">
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary">Add Patient/Visitor</button>
                                     </form>
                                 </div>
                             </div>
@@ -572,6 +528,60 @@ if (mysqli_connect_errno()) {
             </div>
         </div>
     </div>
+    <script>
+        function showFieldsBasedOnPosition() {
+            // Reset all fields
+            resetFields();
+
+            // Get the selected position
+            var position = document.getElementById('position').value;
+
+            // Show fields based on the selected position
+            if (position === 'patient') {
+                showField('idNumberField');
+                showField('attendPurposeField');
+                showField('paymentMethodField');
+                showField('ageField');
+            } else if (position === 'caregiver') {
+                showField('idNumberField');
+                showField('patientVisitedField');
+                showField('relationshipField');
+                showField('timeInField');
+                showField('timeOutField');
+            } else if (position === 'nonPatient') {
+                showField('idNumberField');
+                showField('roleField');
+                showField('visitPurposeField');
+                showField('timeInField');
+                showField('timeOutField');
+            }
+        }
+
+        function showField(fieldId) {
+            document.getElementById(fieldId).style.display = 'block';
+        }
+
+        function resetFields() {
+            // Define all field IDs
+            var fieldIds = [
+                'idNumberField',
+                'attendPurposeField',
+                'paymentMethodField',
+                'ageField',
+                'roleField',
+                'visitPurposeField',
+                'patientVisitedField',
+                'relationshipField',
+                'timeInField',
+                'timeOutField'
+            ];
+
+            // Hide all fields
+            for (var i = 0; i < fieldIds.length; i++) {
+                document.getElementById(fieldIds[i]).style.display = 'none';
+            }
+        }
+    </script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
@@ -589,6 +599,9 @@ if (mysqli_connect_errno()) {
     <!-- Page level custom scripts -->
     <script src="../js/demo/chart-area-demo.js"></script>
     <script src="../js/demo/chart-pie-demo.js"></script>
+
+
+
 
 </body>
 
