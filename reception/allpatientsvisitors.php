@@ -547,131 +547,155 @@
     <div class="popup">
         <span class="close-btn" onclick="closePopup()">&times;Close</span>
         <h2>Edit Record</h2>
-        <form id="editForm">
-            <!-- Input fields for each column -->
-            <label for="editFullName">Full Name:</label>
-            <input type="text" id="editFullName" name="editFullName" value="<?php echo isset($row['fullname']) ? $row['fullname'] : ''; ?>">
+        <form id="editForm" method="post" action="updateVisitor.php">
+            <?php
+            // Include your database connection details
+            require('../database/config.php');
 
-            <label for="editPosition">Position:</label>
-            <input type="text" id="editPosition" name="editPosition" value="<?php echo isset($row['position']) ? $row['position'] : ''; ?>">
+            // Check connection established earlier 
+            if (!$conn) {
+                die("Failed to connect to MySQL: " . mysqli_connect_error());
+            }
 
-            <label for="editContact">Contact:</label>
-            <input type="tel" id="editContact" name="editContact" value="<?php echo isset($row['contact']) ? $row['contact'] : ''; ?>">
+            // Fetch visitor data from the database
+            $sql = "SELECT * FROM visitors";
+            $result = mysqli_query($conn, $sql);
 
-            <label for="editIdNumber">ID Number:</label>
-            <input type="text" id="editIdNumber" name="editIdNumber" value="<?php echo isset($row['idNumber']) ? $row['idNumber'] : ''; ?>">
+            // Check if any results found
+            if ($result) {
+                if (mysqli_num_rows($result) > 0) {
+                    // Loop through results and display data in form input fields
+                    $row = mysqli_fetch_assoc($result);
 
-            <label for="editAttendPurpose">Attend Purpose:</label>
-            <input type="text" id="editAttendPurpose" name="editAttendPurpose" value="<?php echo isset($row['attendPurpose']) ? $row['attendPurpose'] : ''; ?>">
+                    echo '<label for="editFullName">Full Name:</label>';
+                    echo '<input type="text" id="editFullName" name="editFullName" value="' . $row['fullname'] . '">';
 
-            <label for="editPaymentMethod">Payment Method:</label>
-            <input type="text" id="editPaymentMethod" name="editPaymentMethod" value="<?php echo isset($row['paymentMethod']) ? $row['paymentMethod'] : ''; ?>">
+                    echo '<label for="editPosition">Position:</label>';
+                    echo '<input type="text" id="editPosition" name="editPosition" value="' . $row['position'] . '">';
 
-            <label for="editAge">Age:</label>
-            <input type="text" id="editAge" name="editAge" value="<?php echo isset($row['age']) ? $row['age'] : ''; ?>">
+                    echo '<label for="editContact">Contact:</label>';
+                    echo '<input type="tel" id="editContact" name="editContact" value="' . $row['contact'] . '">';
 
-            <label for="editRole">Role:</label>
-            <input type="text" id="editRole" name="editRole" value="<?php echo isset($row['role']) ? $row['role'] : ''; ?>">
+                    echo '<label for="editIdNumber">ID Number:</label>';
+                    echo '<input type="text" id="editIdNumber" name="editIdNumber" value="' . $row['idNumber'] . '">';
 
-            <label for="editVisitPurpose">Visit Purpose:</label>
-            <input type="text" id="editVisitPurpose" name="editVisitPurpose" value="<?php echo isset($row['visitPurpose']) ? $row['visitPurpose'] : ''; ?>">
+                    echo '<label for="editAttendPurpose">Attend Purpose:</label>';
+                    echo '<input type="text" id="editAttendPurpose" name="editAttendPurpose" value="' . $row['attendPurpose'] . '">';
 
-            <label for="editPatientVisitedName">Patient Visited Name:</label>
-            <input type="text" id="editPatientVisitedName" name="editPatientVisitedName" value="<?php echo isset($row['patientVisitedName']) ? $row['patientVisitedName'] : ''; ?>">
+                    echo '<label for="editPaymentMethod">Payment Method:</label>';
+                    echo '<input type="text" id="editPaymentMethod" name="editPaymentMethod" value="' . $row['paymentMethod'] . '">';
 
-            <label for="editRelationship">Relationship:</label>
-            <input type="text" id="editRelationship" name="editRelationship" value="<?php echo isset($row['relationship']) ? $row['relationship'] : ''; ?>">
+                    echo '<label for="editAge">Age:</label>';
+                    echo '<input type="text" id="editAge" name="editAge" value="' . $row['age'] . '">';
 
-            <label for="editTimeIn">Time In:</label>
-            <input type="text" id="editTimeIn" name="editTimeIn" value="<?php echo isset($row['timeIn']) ? $row['timeIn'] : ''; ?>">
+                    echo '<label for="editRole">Role:</label>';
+                    echo '<input type="text" id="editRole" name="editRole" value="' . $row['role'] . '">';
 
-            <label for="editTimeOut">Time Out:</label>
-            <input type="text" id="editTimeOut" name="editTimeOut" value="<?php echo isset($row['timeOut']) ? $row['timeOut'] : ''; ?>">
+                    echo '<label for="editVisitPurpose">Visit Purpose:</label>';
+                    echo '<input type="text" id="editVisitPurpose" name="editVisitPurpose" value="' . $row['visitPurpose'] . '">';
 
-            <button class="submit-btn" onclick="saveChanges()">Save Changes</button>
-            <button class="close-btn" onclick="closePopup()">Close</button>
+                    echo '<label for="editPatientVisitedName">Patient Visited Name:</label>';
+                    echo '<input type="text" id="editPatientVisitedName" name="editPatientVisitedName" value="' . $row['patientVisitedName'] . '">';
 
-            
+                    echo '<label for="editRelationship">Relationship:</label>';
+                    echo '<input type="text" id="editRelationship" name="editRelationship" value="' . $row['relationship'] . '">';
+
+                    echo '<label for="editTimeIn">Time In:</label>';
+                    echo '<input type="text" id="editTimeIn" name="editTimeIn" value="' . $row['timeIn'] . '">';
+
+                    echo '<label for="editTimeOut">Time Out:</label>';
+                    echo '<input type="text" id="editTimeOut" name="editTimeOut" value="' . $row['timeOut'] . '">';
+
+                    echo '<button class="submit-btn" onclick="saveChanges()">Save Changes</button>';
+                } else {
+                    echo "<p>No visitors found!</p>";
+                }
+            } else {
+                die("Error: " . mysqli_error($conn));
+            }
+
+            // Close connection
+            mysqli_close($conn);
+            ?>
         </form>
+
     </div>
 </div>
 
 <script>
-    function openPopup(id, fullName, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut) {
-        document.getElementById('editOverlay').style.display = 'flex';
+    function openPopup(id,fullName, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut) {
+    document.getElementById('editFullName').value = fullName;
+    document.getElementById('editPosition').value = position;
+    document.getElementById('editContact').value = contact;
+    document.getElementById('editIdNumber').value = idNumber;
+    document.getElementById('editAttendPurpose').value = attendPurpose;
+    document.getElementById('editPaymentMethod').value = paymentMethod;
+    document.getElementById('editAge').value = age;
+    document.getElementById('editRole').value = role;
+    document.getElementById('editVisitPurpose').value = visitPurpose;
+    document.getElementById('editPatientVisitedName').value = patientVisitedName;
+    document.getElementById('editRelationship').value = relationship;
+    document.getElementById('editTimeIn').value = timeIn;
+    document.getElementById('editTimeOut').value = timeOut;
 
-        // Set existing values in the form
-        document.getElementById('editId').value = id;
-        document.getElementById('editFullName').value = fullName;
-        document.getElementById('editPosition').value = position;
-        document.getElementById('editContact').value = contact;
-        document.getElementById('editIdNumber').value = idNumber;
-        document.getElementById('editAttendPurpose').value = attendPurpose;
-        document.getElementById('editPaymentMethod').value = paymentMethod;
-        document.getElementById('editAge').value = age;
-        document.getElementById('editRole').value = role;
-        document.getElementById('editVisitPurpose').value = visitPurpose;
-        document.getElementById('editPatientVisitedName').value = patientVisitedName;
-        document.getElementById('editRelationship').value = relationship;
-        document.getElementById('editTimeIn').value = timeIn;
-        document.getElementById('editTimeOut').value = timeOut;
-        // Set values for other input fields as needed
-    }
+    document.getElementById('editOverlay').style.display = 'flex';
+  }
 
     function closePopup() {
         document.getElementById('editOverlay').style.display = 'none';
     }
-
     function saveChanges() {
-        // Get edited values from the form
-        var id = document.getElementById('editId').value;
-        var fullName = document.getElementById('editFullName').value;
-        var position = document.getElementById('editPosition').value;
-        var contact = document.getElementById('editContact').value;
-        var idNumber = document.getElementById('editIdNumber').value;
-        var attendPurpose = document.getElementById('editAttendPurpose').value;
-        var paymentMethod = document.getElementById('editPaymentMethod').value;
-        var age = document.getElementById('editAge').value;
-        var role = document.getElementById('editRole').value;
-        var visitPurpose = document.getElementById('editVisitPurpose').value;
-        var patientVisitedName = document.getElementById('editPatientVisitedName').value;
-        var relationship = document.getElementById('editRelationship').value;
-        var timeIn = document.getElementById('editTimeIn').value;
-        var timeOut = document.getElementById('editTimeOut').value;
+    // Get form data
+    var fullName = document.getElementById('editFullName').value;
+    var position = document.getElementById('editPosition').value;
+    var contact = document.getElementById('editContact').value;
+    var idNumber = document.getElementById('editIdNumber').value;
+    var attendPurpose = document.getElementById('editAttendPurpose').value;
+    var paymentMethod = document.getElementById('editPaymentMethod').value;
+    var age = document.getElementById('editAge').value;
+    var role = document.getElementById('editRole').value;
+    var visitPurpose = document.getElementById('editVisitPurpose').value;
+    var patientVisitedName = document.getElementById('editPatientVisitedName').value;
+    var relationship = document.getElementById('editRelationship').value;
+    var timeIn = document.getElementById('editTimeIn').value;
+    var timeOut = document.getElementById('editTimeOut').value;
 
-        // Send edited values to the server using AJAX
-        $.ajax({
-            type: 'POST',
-            url: 'updateVisitor.php', // Replace with the actual server-side update script
-            data: {
-                id: id,
-                fullName: fullName,
-                position: position,
-                contact: contact,
-                idNumber: idNumber,
-                attendPurpose: attendPurpose,
-                paymentMethod: paymentMethod,
-                age: age,
-                role: role,
-                visitPurpose: visitPurpose,
-                patientVisitedName: patientVisitedName,
-                relationship: relationship,
-                timeIn: timeIn,
-                timeOut: timeOut
-            },
-            success: function(response) {
-                // Handle the response from the server (you can display a message or update the UI)
-                alert(response);
-                // You may also reload the page or update the specific row in the table
-                location.reload();
-            },
-            error: function() {
-                alert('Error updating record.');
+    // Prepare data for submission
+    var formData = new FormData();
+    formData.append('editFullName', fullName);
+    formData.append('editPosition', position);
+    formData.append('editContact', contact);
+    formData.append('editIdNumber', idNumber);
+    formData.append('editAttendPurpose', attendPurpose);
+    formData.append('editPaymentMethod', paymentMethod);
+    formData.append('editAge', age);
+    formData.append('editRole', role);
+    formData.append('editVisitPurpose', visitPurpose);
+    formData.append('editPatientVisitedName', patientVisitedName);
+    formData.append('editRelationship', relationship);
+    formData.append('editTimeIn', timeIn);
+    formData.append('editTimeOut', timeOut);
+
+    // Send asynchronous POST request
+    var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'updateVisitor.php', true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText);
+            } else {
+                console.error('Error updating record: ' + xhr.statusText);
             }
-        });
+        };
 
-        closePopup(); // Close the popup after saving changes
+        var urlEncodedData = new URLSearchParams(formData).toString();
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(urlEncodedData);
+
+        closePopup();
     }
+
+
+    
 </script>
 
 
