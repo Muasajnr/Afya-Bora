@@ -16,6 +16,7 @@
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-zjBQR0WbOG6N9xJ06uJCviMRC9CgjxWGd9xfExkMJndd6aA+WiPMW+JQGJqQ9zMXT9RXQ9nBc7Kn06uA6qFPi3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
@@ -316,49 +317,106 @@
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">All Patients </h6>
                             </div>
+                            
+
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>
-                                                <th>Name</th>
-                                                <th>Type</th>
-                                                <th>Office</th>
+                                                <th>Status</th>
+                                                <th>Full Names</th>
+                                                <th>Contact</th>
+                                                <th>ID Number</th>
+                                                <th>Payment Method</th>
                                                 <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
+                                                <th>Time In</th>
+                                                <th>Time Out</th>
                                                 <th>Consultation Report</th>
                                                 <th>Lab</th>
                                                 <th>Scan/xray</th>
                                                 <th>Counseller</th>
                                             </tr>
                                         </thead>
-                                        
-                                        <tbody>
-                                            <tr>
-                                                <td>Tiger Nixon</td>
-                                                <td>System Architect</td>
-                                                <td>Edinburgh</td>
-                                                <td>61</td>
-                                                <td>2011/04/25</td>
-                                                <td>$320,800</td>
-                                                <td>
-                                                    <div id="quill-editor" style="height: 250px;width: 300px;"></div>
-                                                    <input type="hidden" id="consultation_report" name="consultation_report" required>
-                                                </td>
-                                                
-                                                <td><input type="checkbox" id="lab"></td>
-                                                <td><input type="checkbox" id="imaging"></td>
-                                                <td><input type="checkbox" id="counseller"></td>
-                                                <td>
-                                                    <button class="btn btn-primary" type="button">Save</button><br><br>
-                                                    <button class="btn btn-danger" type="button">Modify</button> <br><br>
-                                                    <button class="btn btn-success" type="button"> Done</button> 
-                                                
-                                                </td>
-                                            </tr>
-                                            
-                                        </tbody>
+                                       <?php
+// Include your database connection details
+require('../database/config.php');
+
+// Check connection established earlier 
+if (!$conn) {
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
+}
+
+// Fetch visitor data from the database with attendPurpose being 'doctor'
+$sql = "SELECT * FROM visitors WHERE attendPurpose = 'doctor'";
+$result = mysqli_query($conn, $sql);
+
+// Check if any results found
+if ($result) {
+    if (mysqli_num_rows($result) > 0) {
+        echo "<tbody>";
+        // Open the form outside the loop
+        echo '<form method="post" action="attendpatients.php">';
+        // Loop through results and display data in table rows
+        while ($row = mysqli_fetch_assoc($result)) {
+            $cellId = 'statusCell_' . $row['id'];
+            $cellStatus = isset($_SESSION[$cellId]) ? $_SESSION[$cellId] : 'red';
+            
+            // Insert data into patients table when "Save" button is clicked
+            if (isset($_POST['save' . $row['id']])) {
+                // Escape user input for security
+                $details = mysqli_real_escape_string($conn, $_POST['details']);
+                $lab = isset($_POST['lab']) ? 1 : 0;
+                $imaging = isset($_POST['imaging']) ? 1 : 0;
+                $counseller = isset($_POST['counseller']) ? 1 : 0;
+
+                $insertSql = "INSERT INTO patients (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
+                              VALUES ('{$row['fullname']}', '{$row['contact']}', '{$row['idNumber']}', '{$row['paymentMethod']}', '{$row['age']}', '{$row['timeIn']}', '{$row['timeOut']}', '$details', '$lab', '$imaging', '$counseller', '$cellStatus')";
+                mysqli_query($conn, $insertSql);
+            }
+
+            // Display the table row
+            echo "<tr>";
+            echo "<td id='statusCell' style='background-color: $cellStatus;'>";
+            echo '<i class="fas fa-check-circle text-success"></i>';
+            echo "</td>";
+            echo "<td>" . $row['fullname'] . "</td>";
+            echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
+            echo "<td>" . $row['idNumber'] . "</td>";
+            echo "<td>" . $row['paymentMethod'] . "</td>";
+            echo "<td>" . $row['age'] . "</td>";
+            echo "<td>" . $row['timeIn'] . "</td>";
+            echo "<td>" . $row['timeOut'] . "</td>";
+            echo '<td>
+                    <div id="quill-editor" style="height: 250px;width: 300px;"></div>
+                    <input type="hidden" id="consultation_report" name="details" required>
+                  </td>';
+            echo '<td><input type="checkbox" id="lab" name="lab"></td>';
+            echo '<td><input type="checkbox" id="imaging" name="imaging"></td>';
+            echo '<td><input type="checkbox" id="counseller" name="counseller"></td>';
+            echo '<td>
+                    <button class="btn btn-primary" type="submit" name="save' . $row['id'] . '">Save</button><br><br>
+                    <button class="btn btn-danger" type="button">Modify</button> <br><br>
+                    <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ')">Done</button> 
+                  </td>';
+            echo "</tr>";
+        }
+        // Close the form outside the loop
+        echo '</form>';
+        echo "</tbody>";
+    } else {
+        echo "<tr><td colspan='4'>No visitors found!</td></tr>";
+    }
+} else {
+    die("Error: " . mysqli_error($conn));
+}
+
+// Close connection
+mysqli_close($conn);
+?>
+
+
+
                                     </table>
                                 </div>
                             </div>
@@ -425,6 +483,42 @@
             </div>
         </div>
     </div>
+    
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Assuming the button with class 'btn-success' triggers the 'Done' action
+    var doneButton = document.querySelector('.btn-success');
+    if (doneButton) {
+        doneButton.addEventListener('click', function() {
+            // Assuming $row['id'] is the unique identifier for each row
+            var cellId = 'statusCell_' + <?php echo $row['id']; ?>;
+            var statusCell = document.getElementById(cellId);
+
+            if (statusCell) {
+                // Change background color to green
+                statusCell.style.backgroundColor = 'green';
+                
+                // Store the status in local storage
+                localStorage.setItem(cellId, 'green');
+            }
+        });
+    }
+
+    // Restore cell status from local storage on page load
+    <?php
+    // Assuming $row['id'] is the unique identifier for each row
+    $cellId = 'statusCell_' . $row['id'];
+    $cellStatus = isset($_SESSION[$cellId]) ? $_SESSION[$cellId] : 'red';
+    ?>
+    var statusCell = document.getElementById('<?php echo $cellId; ?>');
+    if (statusCell) {
+        var storedStatus = localStorage.getItem('<?php echo $cellId; ?>');
+        if (storedStatus) {
+            statusCell.style.backgroundColor = storedStatus;
+        }
+    }
+});
+</script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
