@@ -20,9 +20,7 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>
 </head>
 
 <body id="page-top">
@@ -387,9 +385,9 @@ if ($result) {
             echo "<td>" . $row['age'] . "</td>";
             echo "<td>" . $row['timeIn'] . "</td>";
             echo "<td>" . $row['timeOut'] . "</td>";
-            echo '<td>
-                    <div id="quill-editor" style="height: 250px;width: 300px;"></div>
-                    <input type="hidden" id="consultation_report" name="details" required>
+            echo '<td><textarea class="tinymce-editor" name="details" required></textarea>
+            <input type="hidden" id="details" name="details" required>
+
                   </td>';
             echo '<td><input type="checkbox" id="lab" name="lab"></td>';
             echo '<td><input type="checkbox" id="imaging" name="imaging"></td>';
@@ -425,16 +423,20 @@ mysqli_close($conn);
                    
 
                         <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                var quill = new Quill('#quill-editor', {
-                                    theme: 'snow',
-                                });
-                        
-                                quill.on('text-change', function () {
-                                    // Update the hidden input with Quill content
-                                    document.getElementById('details').value = quill.root.innerHTML;
-                                });
+                        document.addEventListener('DOMContentLoaded', function () {
+                            // Initialize TinyMCE
+                            tinymce.init({
+                                selector: '.tinymce-editor',
+                                height: 250,
+                                theme: 'modern',
+                                plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                                    'searchreplace wordcount visualblocks visualchars code fullscreen',
+                                    'insertdatetime media nonbreaking save table directionality',
+                                    'emoticons template paste textcolor colorpicker textpattern imagetools toc'],
+                                toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media | forecolor backcolor emoticons | code',
                             });
+                        });
+                        
                         </script>
                         
                 </div>
@@ -519,7 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

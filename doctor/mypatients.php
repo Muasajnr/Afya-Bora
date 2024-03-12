@@ -317,35 +317,68 @@
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Type</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                            </tr>
-                                        </thead>
-                                        
-                                        <tbody>
-                                            <tr>
-                                                <td>Tiger Nixon</td>
-                                                <td>System Architect</td>
-                                                <td>Edinburgh</td>
-                                                <td>61</td>
-                                                <td>2011/04/25</td>
-                                                <td>$320,800</td>
-                                                <td>
-                                                    <button class="btn btn-primary" type="button">Login</button>
-                                                    <button class="btn btn-secondary" type="button">Edit</button> 
-                                                    <button class="btn btn-danger" type="button">Delete</button>
+                                       <?php
+                                       require('../database/config.php');
+
+                                       // Check connection established earlier 
+                                       if (!$conn) {
+                                           die("Failed to connect to MySQL: " . mysqli_connect_error());
+                                       }
+                                    $fetchSql = "SELECT * FROM patients ";
+                                            $result = mysqli_query($conn, $fetchSql);
+    
+                                            // Check if any results found
+                                            if ($result) {
+                                                $insertedPatient = mysqli_fetch_assoc($result);
+
+                                                // Display the inserted data in a table
                                                 
-                                                </td>
-                                            </tr>
+                                                echo "
+                                                        <tr>
+                                                            <th>Full Name</th>
+                                                            <th>Contact</th>
+                                                            <th>ID Number</th>
+                                                            <th>Payment Method</th>
+                                                            <th>Age</th>
+                                                            <th>Time In</th>
+                                                            <th>Time Out</th>
+                                                            <th>Details</th>
+                                                            <th>Lab</th>
+                                                            <th>Imaging</th>
+                                                            <th>Counseller</th>
+                                                            <th>Status</th>
+                                                        </tr>";
+
+                                                echo "<tr>";
+                                                echo "<td>{$insertedPatient['fullname']}</td>";
+                                                echo "<td>{$insertedPatient['contact']}</td>";
+                                                echo "<td>{$insertedPatient['idNumber']}</td>";
+                                                echo "<td>{$insertedPatient['paymentMethod']}</td>";
+                                                echo "<td>{$insertedPatient['age']}</td>";
+                                                echo "<td>{$insertedPatient['timeIn']}</td>";
+                                                echo "<td>{$insertedPatient['timeOut']}</td>";
+                                                echo "<td>{$insertedPatient['details']}</td>";
+                                                echo "<td>{$insertedPatient['lab']}</td>";
+                                                echo "<td>{$insertedPatient['imaging']}</td>";
+                                                echo "<td>{$insertedPatient['counseller']}</td>";
+                                                echo "<td>{$insertedPatient['status']}</td>";
+                                                
+                                                echo '<td>
+                                                    <button class="btn btn-primary" type="button">Save</button><br><br>
+                                                    <button class="btn btn-danger" type="button">Modify</button><br><br>
+                                                    <button class="btn btn-success" type="button">Done</button>
+                                                
+                                                </td>';
+                                            echo'</tr>';
                                             
-                                        </tbody>
-                                    </table>
+                                      echo'  </tbody>';
+                                    
+                                    echo "</table>";
+} else {
+    echo "Error fetching inserted data: " . mysqli_error($conn);
+}
+
+?>
                                 </div>
                             </div>
                         </div>
