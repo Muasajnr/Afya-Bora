@@ -44,7 +44,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -56,19 +56,19 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Reception
+                Doctor
             </div>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="attendpatients.html">
+                <a class="nav-link" href="attendpatients.php">
                     <i class="fas fa-edit fa-fw"></i>
                     <span>Attend Patients</span></a>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="mypatients.html">
+                <a class="nav-link" href="mypatients.php">
                     <i class="fas fa-list fa-fw"></i>
                     <span>My Patients</span></a>
             </li>
@@ -336,56 +336,65 @@
                                                 <th>Counseller</th>
                                             </tr>
                                         </thead>
-                                       <?php
-// Include your database connection details
+                                        <?php
+// Include database connection details
 require('../database/config.php');
 
-// Check connection established earlier 
+// Check connection
 if (!$conn) {
-    die("Failed to connect to MySQL: " . mysqli_connect_error());
+    die("Failed to connect to MySQL: ". mysqli_connect_error());
 }
 
-// Fetch visitor data from the database with attendPurpose being 'doctor'
+// Fetch visitor data
 $sql = "SELECT * FROM visitors WHERE attendPurpose = 'doctor'";
 $result = mysqli_query($conn, $sql);
 
-// Check if any results found
 if ($result) {
     if (mysqli_num_rows($result) > 0) {
         echo "<tbody>";
-        // Open the form outside the loop
         echo '<form method="post" action="attendpatients.php">';
-        // Loop through results and display data in table rows
         while ($row = mysqli_fetch_assoc($result)) {
-            $cellId = 'statusCell_' . $row['id'];
-            $cellStatus = isset($_SESSION[$cellId]) ? $_SESSION[$cellId] : 'red';
-            
-            // Insert data into patients table when "Save" button is clicked
-            if (isset($_POST['save' . $row['id']])) {
-                // Escape user input for security
+            $cellId = 'statusCell_'. $row['id'];
+            $cellStatus = isset($_SESSION[$cellId])? $_SESSION[$cellId] : 'red';
+
+            if (isset($_POST['save'. $row['id']])) {
+                // Escape input for security
                 $details = mysqli_real_escape_string($conn, $_POST['details']);
-                $lab = isset($_POST['lab']) ? 1 : 0;
-                $imaging = isset($_POST['imaging']) ? 1 : 0;
-                $counseller = isset($_POST['counseller']) ? 1 : 0;
+                $lab = isset($_POST['lab'])? 1 : 0;
+                $imaging = isset($_POST['imaging'])? 1 : 0;
+                $counseller = isset($_POST['counseller'])? 1 : 0;
 
-                $insertSql = "INSERT INTO patients (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
-                              VALUES ('{$row['fullname']}', '{$row['contact']}', '{$row['idNumber']}', '{$row['paymentMethod']}', '{$row['age']}', '{$row['timeIn']}', '{$row['timeOut']}', '$details', '$lab', '$imaging', '$counseller', '$cellStatus')";
-                mysqli_query($conn, $insertSql);
+                // Check if record exists
+                $checkSql = "SELECT COUNT(*) AS count FROM patients WHERE idNumber = '{$row['idNumber']}'";
+                $checkResult = mysqli_query($conn, $checkSql);
+                $checkRow = mysqli_fetch_assoc($checkResult);
+                $recordExists = $checkRow['count'] > 0;
+
+                if ($recordExists) {
+                    // Update existing record
+                    $updateSql = "UPDATE patients SET details = '$details', lab = ". ($lab? "'Yes'" : "'No'"). ", imaging = ". ($imaging? "'Yes'" : "'No'"). ", counseller = ". ($counseller? "'Yes'" : "'No'"). ", status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
+                    mysqli_query($conn, $updateSql);
+                } else {
+                    // Insert new record
+                    $insertSql = "INSERT INTO patients (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
+                                       VALUES ('{$row['fullname']}', '{$row['contact']}', '{$row['idNumber']}', '{$row['paymentMethod']}', '{$row['age']}', '{$row['timeIn']}', '{$row['timeOut']}', '$details', ". ($lab? "'Yes'" : "'No'"). ", ". ($imaging? "'Yes'" : "'No'"). ", ". ($counseller? "'Yes'" : "'No'"). ", '$cellStatus')";
+                    mysqli_query($conn, $insertSql);
+                }
             }
-
             // Display the table row
             echo "<tr>";
             echo "<td id='statusCell' style='background-color: $cellStatus;'>";
             echo '<i class="fas fa-check-circle text-success"></i>';
             echo "</td>";
-            echo "<td>" . $row['fullname'] . "</td>";
-            echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
-            echo "<td>" . $row['idNumber'] . "</td>";
-            echo "<td>" . $row['paymentMethod'] . "</td>";
-            echo "<td>" . $row['age'] . "</td>";
-            echo "<td>" . $row['timeIn'] . "</td>";
-            echo "<td>" . $row['timeOut'] . "</td>";
-            echo '<td><textarea class="tinymce-editor" name="details" required></textarea>
+            echo "<td>". $row['fullname']. "</td>";
+            echo "<td><a href='tel:". $row['contact']. "'>". $row['contact']. "</a></td>";
+            echo "<td>". $row['idNumber']. "</td>";
+            echo "<td>". $row['paymentMethod']. "</td>";
+            echo "<td>". $row['age']. "</td>";
+            echo "<td>". $row['timeIn']. "</td>";
+            echo "<td>". $row['timeOut']. "</td>";
+            echo '<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>
+            <td><textarea class="tinymce-editor" name="details" required></textarea>
             <input type="hidden" id="details" name="details" required>
 
                   </td>';
@@ -393,23 +402,21 @@ if ($result) {
             echo '<td><input type="checkbox" id="imaging" name="imaging"></td>';
             echo '<td><input type="checkbox" id="counseller" name="counseller"></td>';
             echo '<td>
-                    <button class="btn btn-primary" type="submit" name="save' . $row['id'] . '">Save</button><br><br>
-                    <button class="btn btn-danger" type="button">Modify</button> <br><br>
-                    <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ')">Done</button> 
-                  </td>';
+            <button class="btn btn-primary" type="submit" name="save' . $row['id'] . '">Save</button><br><br>
+            <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
+            <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ')">Done</button>
+            </td>';
             echo "</tr>";
         }
-        // Close the form outside the loop
         echo '</form>';
         echo "</tbody>";
     } else {
         echo "<tr><td colspan='4'>No visitors found!</td></tr>";
     }
 } else {
-    die("Error: " . mysqli_error($conn));
+    die("Error: ". mysqli_error($conn));
 }
 
-// Close connection
 mysqli_close($conn);
 ?>
 
@@ -521,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>
+
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
