@@ -20,7 +20,8 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 </head>
 
 <body id="page-top">
@@ -372,7 +373,7 @@ if ($result) {
 
                 if ($recordExists) {
                     // Update existing record
-                    $updateSql = "UPDATE doctor SET details = '$details', lab = ". ($lab? "'Yes'" : "'No'"). ", imaging = ". ($imaging? "'Yes'" : "'No'"). ", counseller = ". ($counseller? "'Yes'" : "'No'"). ", status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
+                    $updateSql = "UPDATE doctor SET details = '$details', lab = ". ($lab? "'1'" : "'0'"). ", imaging = ". ($imaging? "'1'" : "'0'"). ", counseller = ". ($counseller? "'1'" : "'0'"). ", status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
                     mysqli_query($conn, $updateSql);
                 } else {
                     // Insert new record
@@ -393,11 +394,47 @@ if ($result) {
             echo "<td>". $row['age']. "</td>";
             echo "<td>". $row['timeIn']. "</td>";
             echo "<td>". $row['timeOut']. "</td>";
-            echo '<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>
-            <td><textarea class="tinymce-editor" name="details" required></textarea>
-            <input type="hidden" id="details" name="details" required>
-
-                  </td>';
+            echo "<td>
+            <style>
+                #editor-container {
+                    width: 350px; 
+                    max-height: 400px; 
+                    margin: auto;
+                }
+            </style>
+            <div id='editor-container' name='details'></div>
+            <input type='hidden' id='details' name='details'>
+            <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
+            <script>
+                var quill = new Quill('#editor-container', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                            ['blockquote', 'code-block'],
+                            [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
+                            [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
+                            [{ 'direction': 'rtl' }],                         // text direction
+                            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean']                                         // remove formatting button
+                        ]
+                    },
+                    name: 'details',
+                    placeholder: 'write your report here...',
+                    autofocus: true,
+                });
+                quill.on('text-change', function () {
+                    document.getElementById('details').value = quill.root.innerHTML;
+                });
+            </script>
+        </td>";
+   
             echo '<td><input type="checkbox" id="lab" name="lab"></td>';
             echo '<td><input type="checkbox" id="imaging" name="imaging"></td>';
             echo '<td><input type="checkbox" id="counseller" name="counseller"></td>';
@@ -429,22 +466,7 @@ mysqli_close($conn);
     
                    
 
-                        <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            // Initialize TinyMCE
-                            tinymce.init({
-                                selector: '.tinymce-editor',
-                                height: 250,
-                                theme: 'modern',
-                                plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                                    'searchreplace wordcount visualblocks visualchars code fullscreen',
-                                    'insertdatetime media nonbreaking save table directionality',
-                                    'emoticons template paste textcolor colorpicker textpattern imagetools toc'],
-                                toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media | forecolor backcolor emoticons | code',
-                            });
-                        });
                         
-                        </script>
                         
                 </div>
                 <!-- /.container-fluid -->
