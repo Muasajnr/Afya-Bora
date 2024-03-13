@@ -365,18 +365,18 @@ if ($result) {
                 $counseller = isset($_POST['counseller'])? 1 : 0;
 
                 // Check if record exists
-                $checkSql = "SELECT COUNT(*) AS count FROM patients WHERE idNumber = '{$row['idNumber']}'";
+                $checkSql = "SELECT COUNT(*) AS count FROM doctor WHERE idNumber = '{$row['idNumber']}'";
                 $checkResult = mysqli_query($conn, $checkSql);
                 $checkRow = mysqli_fetch_assoc($checkResult);
                 $recordExists = $checkRow['count'] > 0;
 
                 if ($recordExists) {
                     // Update existing record
-                    $updateSql = "UPDATE patients SET details = '$details', lab = ". ($lab? "'Yes'" : "'No'"). ", imaging = ". ($imaging? "'Yes'" : "'No'"). ", counseller = ". ($counseller? "'Yes'" : "'No'"). ", status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
+                    $updateSql = "UPDATE doctor SET details = '$details', lab = ". ($lab? "'Yes'" : "'No'"). ", imaging = ". ($imaging? "'Yes'" : "'No'"). ", counseller = ". ($counseller? "'Yes'" : "'No'"). ", status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
                     mysqli_query($conn, $updateSql);
                 } else {
                     // Insert new record
-                    $insertSql = "INSERT INTO patients (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
+                    $insertSql = "INSERT INTO doctor (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
                                        VALUES ('{$row['fullname']}', '{$row['contact']}', '{$row['idNumber']}', '{$row['paymentMethod']}', '{$row['age']}', '{$row['timeIn']}', '{$row['timeOut']}', '$details', ". ($lab? "'Yes'" : "'No'"). ", ". ($imaging? "'Yes'" : "'No'"). ", ". ($counseller? "'Yes'" : "'No'"). ", '$cellStatus')";
                     mysqli_query($conn, $insertSql);
                 }

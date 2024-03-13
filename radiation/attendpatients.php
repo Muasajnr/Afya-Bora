@@ -19,6 +19,8 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 </head>
 
@@ -43,7 +45,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -60,14 +62,14 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="attendpatients.html">
+                <a class="nav-link" href="attendpatients.php">
                     <i class="fas fa-edit fa-fw"></i>
                     <span>Attend Patients</span></a>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="mypatients.html">
+                <a class="nav-link" href="mypatients.php">
                     <i class="fas fa-list fa-fw"></i>
                     <span>My Patients</span></a>
             </li>
@@ -307,7 +309,7 @@
                     <div class="container-fluid">
 
                         <!-- Page Heading -->
-                        <h1 class="h3 mb-2 text-gray-800">My Patients</h1>
+                        <h1 class="h3 mb-2 text-gray-800">Attend Patients</h1>
                         
                         <!-- DataTales Example -->
                         <div class="card shadow mb-4">
@@ -317,41 +319,121 @@
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Type</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                            </tr>
-                                        </thead>
                                         
-                                        <tbody>
-                                            <tr>
-                                                <td>Tiger Nixon</td>
-                                                <td>System Architect</td>
-                                                <td>Edinburgh</td>
-                                                <td>61</td>
-                                                <td>2011/04/25</td>
-                                                <td>$320,800</td>
-                                                <td>
-                                                    <button class="btn btn-primary" type="button">Login</button>
-                                                    <button class="btn btn-secondary" type="button">Edit</button> 
-                                                    <button class="btn btn-danger" type="button">Delete</button>
-                                                
-                                                </td>
-                                            </tr>
-                                            
-                                        </tbody>
-                                    </table>
+                                        <?php
+// Include database connection details
+require('../database/config.php');
+
+// Check connection
+if (!$conn) {
+    die("Failed to connect to MySQL: ". mysqli_connect_error());
+}
+
+// Query the database for the records with imaging
+$sql = "SELECT * FROM visitors WHERE attendPurpose = 'imaging' ";
+$sql = "SELECT * FROM doctor WHERE imaging = 'yes' ";
+$result = mysqli_query($conn, $sql);
+
+// Check if any records were found
+if (mysqli_num_rows($result) > 0) {
+    // Display the records
+    
+    echo "<tr>";
+    echo "<th>Status</th>";
+    echo "<th>Full Names</th>";
+    echo "<th>Contact</th>";
+    echo "<th>ID Number</th>";
+    echo "<th>Payment Method</th>";
+    echo "<th>Age</th>";
+    echo "<th>Time In</th>";
+    echo "<th>Time Out</th>";
+    echo "<th>Consultation Report</th>";
+    echo "<th>Scan/xray</th>";
+    echo "<th>Lab</th>";
+    echo "<th>Doctor</th>";
+    echo "<th>Counseller</th>";
+    echo "</tr>";
+    while ($row = mysqli_fetch_assoc($result)) {
+        // Escape the values to prevent SQL injection
+        $cellId = 'statusCell_'. $row['id'];
+        $cellStatus = isset($_SESSION[$cellId])? $_SESSION[$cellId] : 'red';
+        echo "<tr>";
+        echo "<td id='statusCell' style='background-color: $cellStatus;'>";
+        echo '<i class="fas fa-check-circle text-success"></i>';
+        echo "</td>";
+        echo "<td>". $row['fullname']. "</td>";
+        echo "<td><a href='tel:". $row['contact']. "'>". $row['contact']. "</a></td>";
+        echo "<td>". $row['idNumber']. "</td>";
+        echo "<td>". $row['paymentMethod']. "</td>";
+        echo "<td>". $row['age']. "</td>";
+        echo "<td>". $row['timeIn']. "</td>";
+        echo "<td>". $row['timeOut']. "</td>";
+        echo "<td>". $row['details']. "</td>";
+        echo "<td>
+        <style>
+            #editor-container {
+            width: 350px; 
+            max-height: 400px; 
+            margin: auto;
+            }
+  </style>
+        <div id='editor-container'></div>
+
+        <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
+        <script>
+          var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+              toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['blockquote', 'code-block'],
+      
+                [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
+                [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
+                [{ 'direction': 'rtl' }],                         // text direction
+      
+                [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      
+                [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+      
+                ['clean']                                         // remove formatting button
+              ]
+            },
+            placeholder: 'write your report here...',
+            autofocus: true,
+          });
+        </script></td>";
+        echo '<td><input type="checkbox" id="lab" name="lab"></td>';
+        echo '<td><input type="checkbox" id="doctor" name="doctor"></td>';
+        echo '<td><input type="checkbox" id="counseller" name="counseller"></td>';
+        echo '<td>
+        <button class="btn btn-primary" type="submit" name="save'. $row['id']. '">Save</button><br><br>
+        <button class="btn btn-danger" type="button" onclick="modifyPatient('. $row['id']. ')">Modify</button><br><br>
+        <button class="btn btn-success" type="button" onclick="updateStatus('. $row['id']. ')">Done</button>
+        </td>';
+        echo "</tr>";
+    }
+    echo "</table>";
+} else {
+    // Display a message if no records were found
+    echo "No records found.";
+}
+
+// Close the connection to the database
+mysqli_close($conn);
+?>
+                             
+                                    
                                 </div>
                             </div>
                         </div>
     
-                   
-
+                        
                 </div>
                 <!-- /.container-fluid -->
 
