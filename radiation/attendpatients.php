@@ -393,7 +393,7 @@ if (isset($_POST['done'])) {
 
 // Query the database for the records with imaging
 $sql = "SELECT * FROM visitors WHERE attendPurpose = 'imaging' ";
-$sql = "SELECT * FROM doctor WHERE imaging = 'yes' ";
+$sql = "SELECT * FROM doctor WHERE imaging = '1' ";
 $result = mysqli_query($conn, $sql);
 
 // Check if any records were found

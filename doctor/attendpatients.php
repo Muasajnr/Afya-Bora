@@ -338,124 +338,149 @@
                                             </tr>
                                         </thead>
                                         <?php
+
 // Include database connection details
 require('../database/config.php');
 
-// Check connection
-if (!$conn) {
-    die("Failed to connect to MySQL: ". mysqli_connect_error());
-}
+// Function to handle visitor data
+function handleVisitorData($conn)
+{
+    // Fetch visitor data
+    $sql = "SELECT * FROM visitors WHERE attendPurpose = 'doctor'";
+    $result = mysqli_query($conn, $sql);
 
-// Fetch visitor data
-$sql = "SELECT * FROM visitors WHERE attendPurpose = 'doctor'";
-$result = mysqli_query($conn, $sql);
-
-if ($result) {
-    if (mysqli_num_rows($result) > 0) {
-        echo "<tbody>";
-        echo '<form method="post" action="attendpatients.php">';
-        while ($row = mysqli_fetch_assoc($result)) {
-            $cellId = 'statusCell_'. $row['id'];
-            $cellStatus = isset($_SESSION[$cellId])? $_SESSION[$cellId] : 'red';
-
-            if (isset($_POST['save'. $row['id']])) {
-                // Escape input for security
-                $details = mysqli_real_escape_string($conn, $_POST['details']);
-                $lab = isset($_POST['lab'])? 1 : 0;
-                $imaging = isset($_POST['imaging'])? 1 : 0;
-                $counseller = isset($_POST['counseller'])? 1 : 0;
+    if ($result) {
+        if (mysqli_num_rows($result) > 0) {
+            echo "<tbody>";
+            echo '<form method="post" action="attendpatients.php">';
+            while ($row = mysqli_fetch_assoc($result)) {
+                $cellId = 'statusCell_' . $row['id'];
+                $cellStatus = isset($_SESSION[$cellId]) ? $_SESSION[$cellId] : 'red';
 
                 // Check if record exists
-                $checkSql = "SELECT COUNT(*) AS count FROM doctor WHERE idNumber = '{$row['idNumber']}'";
+                $checkSql = "SELECT * FROM doctor WHERE idNumber = '{$row['idNumber']}'";
                 $checkResult = mysqli_query($conn, $checkSql);
-                $checkRow = mysqli_fetch_assoc($checkResult);
-                $recordExists = $checkRow['count'] > 0;
+                $recordExists = mysqli_num_rows($checkResult) > 0;
 
+                // Initialize variables for current data
+                $details = '';
+                $labChecked = '';
+                $imagingChecked = '';
+                $counsellerChecked = '';
+
+                // Fetch current data if the record exists
                 if ($recordExists) {
-                    // Update existing record
-                    $updateSql = "UPDATE doctor SET details = '$details', lab = ". ($lab? "'1'" : "'0'"). ", imaging = ". ($imaging? "'1'" : "'0'"). ", counseller = ". ($counseller? "'1'" : "'0'"). ", status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
-                    mysqli_query($conn, $updateSql);
-                } else {
-                    // Insert new record
-                    $insertSql = "INSERT INTO doctor (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
-                                       VALUES ('{$row['fullname']}', '{$row['contact']}', '{$row['idNumber']}', '{$row['paymentMethod']}', '{$row['age']}', '{$row['timeIn']}', '{$row['timeOut']}', '$details', ". ($lab? "'Yes'" : "'No'"). ", ". ($imaging? "'Yes'" : "'No'"). ", ". ($counseller? "'Yes'" : "'No'"). ", '$cellStatus')";
-                    mysqli_query($conn, $insertSql);
+                    $fetchRow = mysqli_fetch_assoc($checkResult);
+
+                    // Set current data to variables
+                    $details = $fetchRow['details'];
+                    $labChecked = $fetchRow['lab'] == 1 ? 'checked' : '';
+                    $imagingChecked = $fetchRow['imaging'] == 1 ? 'checked' : '';
+                    $counsellerChecked = $fetchRow['counseller'] == 1 ? 'checked' : '';
                 }
+
+                if (isset($_POST['save' . $row['id']])) {
+                    // Escape input for security
+                    $details = mysqli_real_escape_string($conn, $_POST['details']);
+                    $lab = isset($_POST['lab']) ? 1 : 0;
+                    $imaging = isset($_POST['imaging']) ? 1 : 0;
+                    $counseller = isset($_POST['counseller']) ? 1 : 0;
+
+                    if ($recordExists) {
+                        // Update existing record
+                        $updateSql = "UPDATE doctor SET details = '$details', lab = $lab, imaging = $imaging, counseller = $counseller, status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
+                        mysqli_query($conn, $updateSql);
+                    } else {
+                        // Insert new record
+                        $insertSql = "INSERT INTO doctor (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
+                                           VALUES ('{$row['fullname']}', '{$row['contact']}', '{$row['idNumber']}', '{$row['paymentMethod']}', '{$row['age']}', '{$row['timeIn']}', '{$row['timeOut']}', '$details', $lab, $imaging, $counseller, '$cellStatus')";
+                        mysqli_query($conn, $insertSql);
+                    }
+                }
+
+                // Display the table row with current data
+                echo "<tr>";
+                echo "<td id='statusCell' style='background-color: $cellStatus;'>";
+                echo '<i class="fas fa-check-circle text-success"></i>';
+                echo "</td>";
+                echo "<td>" . $row['fullname'] . "</td>";
+                echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
+                echo "<td>" . $row['idNumber'] . "</td>";
+                echo "<td>" . $row['paymentMethod'] . "</td>";
+                echo "<td>" . $row['age'] . "</td>";
+                echo "<td>" . $row['timeIn'] . "</td>";
+                echo "<td>" . $row['timeOut'] . "</td>";
+                echo "<td>
+                    <style>
+                        #editor-container_" . $row['id'] . " {
+                            width: 350px; 
+                            max-height: 400px; 
+                            margin: auto;
+                        }
+                    </style>
+                    <div id='editor-container_" . $row['id'] . "' name='details'>$details</div>
+                    <input type='hidden' id='details_" . $row['id'] . "' name='details' value='$details'>
+                    <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
+                    <script>
+                        var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+                            theme: 'snow',
+                            modules: {
+                                toolbar: [
+                                    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                                    ['blockquote', 'code-block'],
+                                    [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                    [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
+                                    [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
+                                    [{ 'direction': 'rtl' }],                         // text direction
+                                    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                                    [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
+                                    [{ 'font': [] }],
+                                    [{ 'align': [] }],
+                                    ['clean']                                         // remove formatting button
+                                ]
+                            },
+                            name: 'details_" . $row['id'] . "',
+                            placeholder: 'write your report here...',
+                            autofocus: true,
+                        });
+                        quill_" . $row['id'] . ".on('text-change', function () {
+                            document.getElementById('details_" . $row['id'] . "').value = quill_" . $row['id'] . ".root.innerHTML;
+                        });
+                    </script>
+                </td>";
+
+                echo '<td><input type="checkbox" id="lab" name="lab" ' . $labChecked . '></td>';
+                echo '<td><input type="checkbox" id="imaging" name="imaging" ' . $imagingChecked . '></td>';
+                echo '<td><input type="checkbox" id="counseller" name="counseller" ' . $counsellerChecked . '></td>';
+                echo '<td>
+                    <button class="btn btn-primary" type="submit" name="save' . $row['id'] . '">Save</button><br><br>
+                    <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
+                    <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ')">Done</button>
+                </td>';
+                echo "</tr>";
             }
-            // Display the table row
-            echo "<tr>";
-            echo "<td id='statusCell' style='background-color: $cellStatus;'>";
-            echo '<i class="fas fa-check-circle text-success"></i>';
-            echo "</td>";
-            echo "<td>". $row['fullname']. "</td>";
-            echo "<td><a href='tel:". $row['contact']. "'>". $row['contact']. "</a></td>";
-            echo "<td>". $row['idNumber']. "</td>";
-            echo "<td>". $row['paymentMethod']. "</td>";
-            echo "<td>". $row['age']. "</td>";
-            echo "<td>". $row['timeIn']. "</td>";
-            echo "<td>". $row['timeOut']. "</td>";
-            echo "<td>
-            <style>
-                #editor-container {
-                    width: 350px; 
-                    max-height: 400px; 
-                    margin: auto;
-                }
-            </style>
-            <div id='editor-container' name='details'></div>
-            <input type='hidden' id='details' name='details'>
-            <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
-            <script>
-                var quill = new Quill('#editor-container', {
-                    theme: 'snow',
-                    modules: {
-                        toolbar: [
-                            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                            ['blockquote', 'code-block'],
-                            [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                            [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
-                            [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
-                            [{ 'direction': 'rtl' }],                         // text direction
-                            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                            [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
-                            [{ 'font': [] }],
-                            [{ 'align': [] }],
-                            ['clean']                                         // remove formatting button
-                        ]
-                    },
-                    name: 'details',
-                    placeholder: 'write your report here...',
-                    autofocus: true,
-                });
-                quill.on('text-change', function () {
-                    document.getElementById('details').value = quill.root.innerHTML;
-                });
-            </script>
-        </td>";
-   
-            echo '<td><input type="checkbox" id="lab" name="lab"></td>';
-            echo '<td><input type="checkbox" id="imaging" name="imaging"></td>';
-            echo '<td><input type="checkbox" id="counseller" name="counseller"></td>';
-            echo '<td>
-            <button class="btn btn-primary" type="submit" name="save' . $row['id'] . '">Save</button><br><br>
-            <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
-            <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ')">Done</button>
-            </td>';
-            echo "</tr>";
+            echo '</form>';
+            echo "</tbody>";
+        } else {
+            echo "<tr><td colspan='4'>No visitors found!</td></tr>";
         }
-        echo '</form>';
-        echo "</tbody>";
     } else {
-        echo "<tr><td colspan='4'>No visitors found!</td></tr>";
+        die("Error: " . mysqli_error($conn));
     }
-} else {
-    die("Error: ". mysqli_error($conn));
 }
 
+// Call the function to handle visitor data
+handleVisitorData($conn);
+
 mysqli_close($conn);
+
 ?>
+
+
+
+
 
 
 
