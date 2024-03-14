@@ -331,6 +331,7 @@
                                                 <th>Age</th>
                                                 <th>Time In</th>
                                                 <th>Time Out</th>
+                                                <th>Attend Purpose</th>
                                                 <th>Consultation Report</th>
                                                 <th>Lab</th>
                                                 <th>Scan/xray</th>
@@ -390,6 +391,7 @@ function handleVisitorData($conn)
                 echo "<td>" . $row['age'] . "</td>";
                 echo "<td>" . $row['timeIn'] . "</td>";
                 echo "<td>" . $row['timeOut'] . "</td>";
+                echo "<td>" . $row['attendPurpose'] . "</td>";
                 echo "<td>
                     <style>
                         #editor-container_" . $row['id'] . " {

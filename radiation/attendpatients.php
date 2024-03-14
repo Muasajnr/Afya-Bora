@@ -340,21 +340,30 @@ if (isset($_POST['save'])) {
 
     // Fetch fields based on 'id'
     $fetchNameSql = "SELECT fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut FROM visitors WHERE id = ?";
-    $fetchNameSql = "SELECT fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details FROM doctor WHERE id = ?";
     $fetchNameStmt = mysqli_prepare($conn, $fetchNameSql);
     mysqli_stmt_bind_param($fetchNameStmt, 'i', $id);
     mysqli_stmt_execute($fetchNameStmt);
     $nameResult = mysqli_stmt_get_result($fetchNameStmt);
     $nameRow = mysqli_fetch_assoc($nameResult);
-    $fullname = $nameRow['fullname'];
-    $contact = $nameRow['contact']; 
-    $idNumber = $nameRow['idNumber'];
-    $paymentMethod = $nameRow['paymentMethod'];
-    $age = $nameRow['age'];
-    $timeIn = $nameRow['timeIn'];
-    $timeOut = $nameRow['timeOut'];
-    $details = $nameRow['details'];
-
+    if ($nameRow) {
+        $fullname = $nameRow['fullname'];
+        $contact = $nameRow['contact']; 
+        $idNumber = $nameRow['idNumber'];
+        $paymentMethod = $nameRow['paymentMethod'];
+        $age = $nameRow['age'];
+        $timeIn = $nameRow['timeIn'];
+        $timeOut = $nameRow['timeOut'];
+        $details = isset($nameRow['details']) ? $nameRow['details'] : ''; // Check if details exist
+    } else {
+        $fullname = '';
+        $contact = '';
+        $idNumber = '';
+        $paymentMethod = '';
+        $age = '';
+        $timeIn = '';
+        $timeOut = '';
+        $details = '';
+    }
 
     // Check if a record already exists in the imaging table for the current visitor
     $checkSql = "SELECT * FROM imaging WHERE visitor_id = ?";
@@ -376,8 +385,6 @@ if (isset($_POST['save'])) {
         mysqli_stmt_bind_param($insertStmt, 'isssssssssiii', $id, $fullname, $contact, $idNumber, $paymentMethod, $age, $timeIn, $timeOut, $details, $imaging_report, $lab, $doctor, $counseller);
         mysqli_stmt_execute($insertStmt);
     }
-
-    
 }
 
 if (isset($_POST['done'])) {
@@ -390,10 +397,10 @@ if (isset($_POST['done'])) {
     mysqli_stmt_execute($updateStatusStmt);
 }
 
-
 // Query the database for the records with imaging
-$sql = "SELECT * FROM visitors WHERE attendPurpose = 'imaging' ";
-$sql = "SELECT * FROM doctor WHERE imaging = '1' ";
+$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, '' as details FROM visitors WHERE attendPurpose = 'imaging'
+        UNION 
+        SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details FROM doctor WHERE imaging = '1'";
 $result = mysqli_query($conn, $sql);
 
 // Check if any records were found
@@ -509,10 +516,10 @@ if (mysqli_num_rows($result) > 0) {
                     });
                 </script>
             </td>";
-            echo "<td><input type='checkbox' id='lab' name='lab' $labChecked></td>";
-            echo "<td><input type='checkbox' id='doctor' name='doctor' $doctorChecked></td>";
-            echo "<td><input type='checkbox' id='counseller' name='counseller' $counsellerChecked></td>";
-            echo '<td>
+        echo "<td><input type='checkbox' id='lab' name='lab' $labChecked></td>";
+        echo "<td><input type='checkbox' id='doctor' name='doctor' $doctorChecked></td>";
+        echo "<td><input type='checkbox' id='counseller' name='counseller' $counsellerChecked></td>";
+        echo '<td>
             <button class="btn btn-primary" type="submit" name="save" value="' . $row['id'] . '">Save</button><br><br>
             <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
             <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ', \'' . $cellStatus . '\')">Done</button>
@@ -529,6 +536,8 @@ if (mysqli_num_rows($result) > 0) {
 // Close the connection to the database
 mysqli_close($conn);
 ?>
+
+
 
                              
                                     
