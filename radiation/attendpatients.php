@@ -487,35 +487,36 @@ if (mysqli_num_rows($result) > 0) {
                 <div id='editor-container_" . $row['id'] . "' name='imaging_report'>$imagingReport</div>
                 <input type='hidden' id='imaging_report_" . $row['id'] . "' name='imaging_report' value='$imagingReport'>
                 <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
-                <script>
-                    var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
-                        theme: 'snow',
-                        modules: {
-                            toolbar: [
-                                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                                ['blockquote', 'code-block'],
-                                [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-                                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                                [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
-                                [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
-                                [{ 'direction': 'rtl' }],                         // text direction
-                                [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                                [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
-                                [{ 'font': [] }],
-                                [{ 'align': [] }],
-                                ['clean']                                         // remove formatting button
-                            ]
-                        },
-                        name: 'imaging_report_" . $row['id'] . "',
-                        placeholder: 'write your report here...',
-                        autofocus: true,
-                    });
-                    quill_" . $row['id'] . ".on('text-change', function () {
-                        document.getElementById('imaging_report_" . $row['id'] . "').value = quill_" . $row['id'] . ".root.innerHTML;
-                    });
-                </script>
-            </td>";
+                echo <script>
+    var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['blockquote', 'code-block'],
+                [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
+                [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
+                [{ 'direction': 'rtl' }],                         // text direction
+                [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+                ['clean']                                         // remove formatting button
+            ]
+        },
+        name: 'imaging_report_" . $row['id'] . "',
+        placeholder: 'write your report here...',
+        autofocus: true,
+    });
+    quill_" . $row['id'] . ".on('text-change', function () {
+        document.getElementById('imaging_report_" . $row['id'] . "').value = quill_" . $row['id'] . ".root.innerHTML;
+    });
+</script>";
+
+         echo"</td>";
         echo "<td><input type='checkbox' id='lab' name='lab' $labChecked></td>";
         echo "<td><input type='checkbox' id='doctor' name='doctor' $doctorChecked></td>";
         echo "<td><input type='checkbox' id='counseller' name='counseller' $counsellerChecked></td>";

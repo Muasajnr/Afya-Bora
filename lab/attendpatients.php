@@ -319,49 +319,203 @@
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Type</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                                <th>Consultation Report</th>
-                                                <th>Lab</th>
-                                                <th>Scan/xray</th>
-                                                <th>Doctor</th>
-                                                <th>Counseller</th>
-                                            </tr>
-                                        </thead>
-                                        
-                                        <tbody>
-                                            <tr>
-                                                <td>Tiger Nixon</td>
-                                                <td>System Architect</td>
-                                                <td>Edinburgh</td>
-                                                <td>61</td>
-                                                <td>2011/04/25</td>
-                                                <td>$320,800</td>
-                                                <td>
-                                                    
-                                                </td>
-                                                
-                                                <td><div id="quill-editor" style="height: 250px;width: 300px;"></div>
-                                                    <input type="hidden" id="consultation_report" name="consultation_report" required></td>
-                                                <td><input type="checkbox" id="imaging"></td>
-                                                <td><input type="checkbox" id="doctor"></td>
-                                                <td><input type="checkbox" id="counseller"></td>
-                                                <td>
-                                                    <button class="btn btn-primary" type="button">Save</button><br><br>
-                                                    <button class="btn btn-danger" type="button">Modify</button> <br><br>
-                                                    <button class="btn btn-success" type="button"> Done</button> 
-                                                
-                                                </td>
-                                            </tr>
-                                            
-                                        </tbody>
-                                    </table>
+                                   <?php
+// Include database connection details
+require('../database/config.php');
+
+// Check connection
+if (!$conn) {
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
+}
+
+if (isset($_POST['save'])) {
+    $id = $_POST['save'];
+
+    // Escape the values to prevent SQL injection (using prepared statement)
+    $imaging_report = isset($_POST['imaging_report']) ? $_POST['imaging_report'] : '';
+    $lab = isset($_POST['lab']) ? $_POST['lab'] : '';
+    $doctor = isset($_POST['doctor']) ? 1 : 0;
+    $counseller = isset($_POST['counseller']) ? 1 : 0;
+
+    // Fetch fields based on 'id'
+    $fetchNameSql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut FROM visitors WHERE id = ?";
+    $fetchNameStmt = mysqli_prepare($conn, $fetchNameSql);
+    mysqli_stmt_bind_param($fetchNameStmt, 'i', $id);
+    mysqli_stmt_execute($fetchNameStmt);
+    $nameResult = mysqli_stmt_get_result($fetchNameStmt);
+    $nameRow = mysqli_fetch_assoc($nameResult);
+    if ($nameRow) {
+        $fullname = $nameRow['fullname'];
+        $contact = $nameRow['contact']; 
+        $idNumber = $nameRow['idNumber'];
+        $paymentMethod = $nameRow['paymentMethod'];
+        $age = $nameRow['age'];
+        $timeIn = $nameRow['timeIn'];
+        $timeOut = $nameRow['timeOut'];
+    } else {
+        $fullname = '';
+        $contact = '';
+        $idNumber = '';
+        $paymentMethod = '';
+        $age = '';
+        $timeIn = '';
+        $timeOut = '';
+    }
+
+    // Check if a record already exists in the lab table for the current visitor
+    $checkSql = "SELECT * FROM lab WHERE visitor_id = ?";
+    $checkStmt = mysqli_prepare($conn, $checkSql);
+    mysqli_stmt_bind_param($checkStmt, 'i', $id);
+    mysqli_stmt_execute($checkStmt);
+    $checkResult = mysqli_stmt_get_result($checkStmt);
+
+    if (mysqli_num_rows($checkResult) > 0) {
+        // Update the existing record
+        $updateSql = "UPDATE lab SET imaging_report = ?, lab = ?, doctor = ?, counseller = ? WHERE visitor_id = ?";
+        $updateStmt = mysqli_prepare($conn, $updateSql);
+        mysqli_stmt_bind_param($updateStmt, 'siiii', $imaging_report, $lab, $doctor, $counseller, $id);
+        mysqli_stmt_execute($updateStmt);
+    } else {
+        // Insert a new record
+        $insertSql = "INSERT INTO lab (visitor_id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, imaging_report, lab, doctor, counseller) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $insertStmt = mysqli_prepare($conn, $insertSql);
+        mysqli_stmt_bind_param($insertStmt, 'isssssssssii', $id, $fullname, $contact, $idNumber, $paymentMethod, $age, $timeIn, $timeOut, $imaging_report, $lab, $doctor, $counseller);
+        mysqli_stmt_execute($insertStmt);
+    }
+}
+
+if (isset($_POST['done'])) {
+    $id = $_POST['done'];
+
+    // Update the status in the lab table
+    $updateStatusSql = "UPDATE lab SET status = 'done' WHERE visitor_id = ?";
+    $updateStatusStmt = mysqli_prepare($conn, $updateStatusSql);
+    mysqli_stmt_bind_param($updateStatusStmt, 'i', $id);
+    mysqli_stmt_execute($updateStatusStmt);
+}
+
+// Query the database for the records with lab data
+$sql = "SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut, d.details AS consultation_report, i.imaging_report, l.lab, l.doctor, l.counseller
+        FROM visitors v
+        LEFT JOIN lab l ON v.id = l.visitor_id
+        LEFT JOIN doctor d ON v.id = d.id  -- Update this line to join on 'id' column
+        LEFT JOIN imaging i ON v.id = i.visitor_id
+        WHERE v.attendPurpose = 'lab' OR v.attendPurpose = 'doctor'";
+$result = mysqli_query($conn, $sql);
+// Check if any records were found
+if (mysqli_num_rows($result) > 0) {
+    echo "<form method='post'>";
+    echo "<tr>";
+    echo "<th>Status</th>";
+    echo "<th>Full Names</th>";
+    echo "<th>Contact</th>";
+    echo "<th>ID Number</th>";
+    echo "<th>Payment Method</th>";
+    echo "<th>Age</th>";
+    echo "<th>Time In</th>";
+    echo "<th>Time Out</th>";
+    echo "<th>Consultation Report</th>";
+    echo "<th>Xray Report</th>";
+    echo "<th>Lab</th>";
+    echo "<th>Doctor</th>";
+    echo "<th>Counseller</th>";
+    echo "<th>Action</th>";
+    echo "</tr>";
+    while ($row = mysqli_fetch_assoc($result)) {
+        //*****color stattus
+        if (isset($_POST['update_status']) && isset($_POST['status_input_' . $_POST['update_status']])) {
+            $updateId = $_POST['update_status'];
+            $newStatus = $_POST['status_input_' . $updateId];
+        
+            // Update the status in the lab table
+            $updateStatusSql = "UPDATE lab SET status = ? WHERE visitor_id = ?";
+            $updateStatusStmt = mysqli_prepare($conn, $updateStatusSql);
+            mysqli_stmt_bind_param($updateStatusStmt, 'si', $newStatus, $updateId);
+            mysqli_stmt_execute($updateStatusStmt);
+        }
+        //*******status color
+        // Escape the values to prevent SQL injection
+        $cellId = 'statusCell_' . $row['id'];
+        $cellStatus = isset($_SESSION[$cellId]) ? $_SESSION[$cellId] : 'red';
+        $consultationReport = isset($row['consultation_report']) ? $row['consultation_report'] : '';
+        
+        echo "<tr>";
+        echo '<td id="statusCell_' . $row['id'] . '" style="background-color: ' . $cellStatus . ';">';
+        echo '<form method="post" id="updateStatusForm_' . $row['id'] . '" style="display: none;">
+        <input type="hidden" name="update_status" value="' . $row['id'] . '" id="statusInput_' . $row['id'] . '">
+      </form>';
+        echo '<i class="fas fa-check-circle text-success"></i>';
+        echo "</td>";
+        echo "<td>" . $row['fullname'] . "</td>";
+        echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
+        echo "<td>" . $row['idNumber'] . "</td>";
+        echo "<td>" . $row['paymentMethod'] . "</td>";
+        echo "<td>" . $row['age'] . "</td>";
+        echo "<td>" . $row['timeIn'] . "</td>";
+        echo "<td>" . $row['timeOut'] . "</td>";
+        echo "<td>" . $row['consultation_report'] . "</td>";
+        echo "<td>" . $imagingReport = htmlspecialchars($row['imaging_report']);  "</td>";
+        echo "<td>
+            <style>
+                #editor-container_" . $row['id'] . " {
+                    width: 350px; 
+                    max-height: 400px; 
+                    margin: auto;
+                }
+            </style>
+            <div id='editor-container_" . $row['id'] . "' name='lab'>" . ($row['lab'] ? htmlspecialchars($row['lab']) : '') . "</div>
+            <input type='hidden' id='lab_" . $row['id'] . "' name='lab' value='" . ($row['lab'] ? htmlspecialchars($row['lab']) : '') . "'>
+            <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
+            <script>
+                var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                            ['blockquote', 'code-block'],
+                            [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
+                            [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
+                            [{ 'direction': 'rtl' }],                         // text direction
+                            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean']                                         // remove formatting button
+                        ]
+                    },
+                    name: 'lab_" . $row['id'] . "',
+                    placeholder: 'Write your report here...',
+                    autofocus: true,
+                });
+                quill_" . $row['id'] . ".on('text-change', function () {
+                    document.getElementById('lab_" . $row['id'] . "').value = quill_" . $row['id'] . ".root.innerHTML;
+                });
+            </script>
+        </td>";
+        echo "<td><input type='checkbox' id='doctor' name='doctor' " . ($row['doctor'] ? 'checked' : '') . "></td>";
+        echo "<td><input type='checkbox' id='counseller' name='counseller' " . ($row['counseller'] ? 'checked' : '') . "></td>";
+        echo '<td>
+            <button class="btn btn-primary" type="submit" name="save" value="' . $row['id'] . '">Save</button><br><br>
+            <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
+            <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ', \'' . $cellStatus . '\')">Done</button>
+        </td>';
+        echo "</tr>";
+    }
+    echo "</table>";
+    echo "</form>";
+} else {
+    // Display a message if no records were found
+    echo "No records found.";
+}
+
+// Close the connection to the database
+mysqli_close($conn);
+?>
+
+
                                 </div>
                             </div>
                         </div>
