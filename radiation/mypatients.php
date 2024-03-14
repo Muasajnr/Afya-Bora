@@ -400,38 +400,52 @@ if (mysqli_num_rows($result) > 0) {
         echo "<td>" . $row['timeOut'] . "</td>";
         echo "<td>" . $row['details'] . "</td>";
         echo "<td>
-            <div id='editor-container_" . $row['visitor_id'] . "'></div>
-            <input type='hidden' id='imaging_report_" . $row['visitor_id'] . "' name='imaging_report' value='" . htmlspecialchars($row['imaging_report']) . "'>
-            <script>
-                var quill_" . $row['visitor_id'] . " = new Quill('#editor-container_" . $row['visitor_id'] . "', {
-                    theme: 'snow',
-                    modules: {
-                        toolbar: [
-                            ['bold', 'italic', 'underline', 'strike'],
-                            ['blockquote', 'code-block'],
-                            [{ 'header': 1 }, { 'header': 2 }],
-                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                            [{ 'script': 'sub' }, { 'script': 'super' }],
-                            [{ 'indent': '-1' }, { 'indent': '+1' }],
-                            [{ 'direction': 'rtl' }],
-                            [{ 'size': ['small', false, 'large', 'huge'] }],
-                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                            [{ 'color': [] }, { 'background': [] }],
-                            [{ 'font': [] }],
-                            [{ 'align': [] }],
-                            ['clean']
-                        ]
-                    },
-                    name: 'imaging_report',
-                    placeholder: 'write your report here...',
-                    autofocus: true,
-                });
-                quill_" . $row['visitor_id'] . ".setContents(" . $row['imaging_report'] . ");
-                quill_" . $row['visitor_id'] . ".on('text-change', function () {
-                    document.getElementById('imaging_report_" . $row['visitor_id'] . "').value = quill_" . $row['visitor_id'] . ".root.innerHTML;
-                });
-            </script>
-        </td>";
+        <div id='editor-container_" . $row['visitor_id'] . "' style='width: 350px; max-height: 400px; margin: auto;'></div>
+        <input type='hidden' id='imaging_report_" . $row['visitor_id'] . "' name='imaging_report' value='" . htmlspecialchars($row['imaging_report']) . "'>
+        <script>
+            var quill_" . $row['visitor_id'] . " = new Quill('#editor-container_" . $row['visitor_id'] . "', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                        ['blockquote', 'code-block'],
+                        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
+                        [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
+                        [{ 'direction': 'rtl' }],                         // text direction
+                        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
+                        [{ 'font': [] }],
+                        [{ 'align': [] }],
+                        ['clean']                                         // remove formatting button
+                    ]
+                },
+                placeholder: 'Write your report here...',
+                autofocus: true,
+            });
+    
+            // Set the initial content of the Quill editor
+            var initialContent_" . $row['visitor_id'] . " = '" . htmlspecialchars($row['imaging_report']) . "';
+            quill_" . $row['visitor_id'] . ".root.innerHTML = initialContent_" . $row['visitor_id'] . ";
+    
+            // Update the hidden input field when the content changes
+            quill_" . $row['visitor_id'] . ".on('text-change', function() {
+                var htmlContent_" . $row['visitor_id'] . " = quill_" . $row['visitor_id'] . ".root.innerHTML;
+                document.getElementById('imaging_report_" . $row['visitor_id'] . "').value = htmlContent_" . $row['visitor_id'] . ";
+            });
+    
+            // Decode the imaging report content
+            var imagingReportContent_" . $row['visitor_id'] . " = document.getElementById('imaging_report_" . $row['visitor_id'] . "').value;
+            var decodedContent_" . $row['visitor_id'] . " = decodeURIComponent(imagingReportContent_" . $row['visitor_id'] . ");
+        </script>
+    </td>";
+    
+    
+   
+
+
         echo "<td><input type='checkbox' id='lab' name='lab' " . ($row['lab'] ? 'checked' : '') . "></td>";
         echo "<td><input type='checkbox' id='doctor' name='doctor' " . ($row['doctor'] ? 'checked' : '') . "></td>";
         echo "<td><input type='checkbox' id='counseller' name='counseller' " . ($row['counseller'] ? 'checked' : '') . "></td>";
