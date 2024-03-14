@@ -337,8 +337,7 @@
                                                 <th>Counseller</th>
                                             </tr>
                                         </thead>
-                                        <?php
-
+<?php
 // Include database connection details
 require('../database/config.php');
 
@@ -379,25 +378,6 @@ function handleVisitorData($conn)
                     $counsellerChecked = $fetchRow['counseller'] == 1 ? 'checked' : '';
                 }
 
-                if (isset($_POST['save' . $row['id']])) {
-                    // Escape input for security
-                    $details = mysqli_real_escape_string($conn, $_POST['details']);
-                    $lab = isset($_POST['lab']) ? 1 : 0;
-                    $imaging = isset($_POST['imaging']) ? 1 : 0;
-                    $counseller = isset($_POST['counseller']) ? 1 : 0;
-
-                    if ($recordExists) {
-                        // Update existing record
-                        $updateSql = "UPDATE doctor SET details = '$details', lab = $lab, imaging = $imaging, counseller = $counseller, status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
-                        mysqli_query($conn, $updateSql);
-                    } else {
-                        // Insert new record
-                        $insertSql = "INSERT INTO doctor (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
-                                           VALUES ('{$row['fullname']}', '{$row['contact']}', '{$row['idNumber']}', '{$row['paymentMethod']}', '{$row['age']}', '{$row['timeIn']}', '{$row['timeOut']}', '$details', $lab, $imaging, $counseller, '$cellStatus')";
-                        mysqli_query($conn, $insertSql);
-                    }
-                }
-
                 // Display the table row with current data
                 echo "<tr>";
                 echo "<td id='statusCell' style='background-color: $cellStatus;'>";
@@ -419,7 +399,7 @@ function handleVisitorData($conn)
                         }
                     </style>
                     <div id='editor-container_" . $row['id'] . "' name='details'>$details</div>
-                    <input type='hidden' id='details_" . $row['id'] . "' name='details' value='$details'>
+                    <input type='hidden' id='details_" . $row['id'] . "' name='details" . $row['id'] . "' value='$details'>
                     <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
                     <script>
                         var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
@@ -451,15 +431,34 @@ function handleVisitorData($conn)
                     </script>
                 </td>";
 
-                echo '<td><input type="checkbox" id="lab" name="lab" ' . $labChecked . '></td>';
-                echo '<td><input type="checkbox" id="imaging" name="imaging" ' . $imagingChecked . '></td>';
-                echo '<td><input type="checkbox" id="counseller" name="counseller" ' . $counsellerChecked . '></td>';
+                echo '<td><input type="checkbox" id="lab' . $row['id'] . '" name="lab' . $row['id'] . '" ' . $labChecked . '></td>';
+                echo '<td><input type="checkbox" id="imaging' . $row['id'] . '" name="imaging' . $row['id'] . '" ' . $imagingChecked . '></td>';
+                echo '<td><input type="checkbox" id="counseller' . $row['id'] . '" name="counseller' . $row['id'] . '" ' . $counsellerChecked . '></td>';
                 echo '<td>
                     <button class="btn btn-primary" type="submit" name="save' . $row['id'] . '">Save</button><br><br>
                     <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
                     <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ')">Done</button>
                 </td>';
                 echo "</tr>";
+
+                if (isset($_POST['save' . $row['id']])) {
+                    // Escape input for security
+                    $details = mysqli_real_escape_string($conn, $_POST['details' . $row['id']]);
+                    $lab = isset($_POST['lab' . $row['id']]) ? 1 : 0;
+                    $imaging = isset($_POST['imaging' . $row['id']]) ? 1 : 0;
+                    $counseller = isset($_POST['counseller' . $row['id']]) ? 1 : 0;
+
+                    if ($recordExists) {
+                        // Update existing record
+                        $updateSql = "UPDATE doctor SET details = '$details', lab = $lab, imaging = $imaging, counseller = $counseller, status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
+                        mysqli_query($conn, $updateSql);
+                    } else {
+                        // Insert new record
+                        $insertSql = "INSERT INTO doctor (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
+                                           VALUES ('{$row['fullname']}', '{$row['contact']}', '{$row['idNumber']}', '{$row['paymentMethod']}', '{$row['age']}', '{$row['timeIn']}', '{$row['timeOut']}', '$details', $lab, $imaging, $counseller, '$cellStatus')";
+                        mysqli_query($conn, $insertSql);
+                    }
+                }
             }
             echo '</form>';
             echo "</tbody>";
@@ -475,8 +474,10 @@ function handleVisitorData($conn)
 handleVisitorData($conn);
 
 mysqli_close($conn);
-
 ?>
+
+
+
 
 
 

@@ -438,7 +438,7 @@ if (mysqli_num_rows($result) > 0) {
         }
 
         //*****color stattus
-        if (isset($_POST['update_status'])) {
+        if (isset($_POST['update_status']) && isset($_POST['status_input_' . $_POST['update_status']])) {
             $updateId = $_POST['update_status'];
             $newStatus = $_POST['status_input_' . $updateId];
         
@@ -471,17 +471,17 @@ if (mysqli_num_rows($result) > 0) {
         echo "<input type='hidden' name='save' value='" . $row['id'] . "'>";
         echo "<td>
                 <style>
-                    #editor-container {
+                    #editor-container_" . $row['id'] . " {
                         width: 350px; 
                         max-height: 400px; 
                         margin: auto;
                     }
                 </style>
-                <div id='editor-container' name='imaging_report'>$imagingReport</div>
-                <input type='hidden' id='imaging_report' name='imaging_report' value='$imagingReport'>
+                <div id='editor-container_" . $row['id'] . "' name='imaging_report'>$imagingReport</div>
+                <input type='hidden' id='imaging_report_" . $row['id'] . "' name='imaging_report' value='$imagingReport'>
                 <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
                 <script>
-                    var quill = new Quill('#editor-container', {
+                    var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
                         theme: 'snow',
                         modules: {
                             toolbar: [
@@ -500,12 +500,12 @@ if (mysqli_num_rows($result) > 0) {
                                 ['clean']                                         // remove formatting button
                             ]
                         },
-                        name: 'imaging_report',
+                        name: 'imaging_report_" . $row['id'] . "',
                         placeholder: 'write your report here...',
                         autofocus: true,
                     });
-                    quill.on('text-change', function () {
-                        document.getElementById('imaging_report').value = quill.root.innerHTML;
+                    quill_" . $row['id'] . ".on('text-change', function () {
+                        document.getElementById('imaging_report_" . $row['id'] . "').value = quill_" . $row['id'] . ".root.innerHTML;
                     });
                 </script>
             </td>";
