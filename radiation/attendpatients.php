@@ -487,7 +487,7 @@ if (mysqli_num_rows($result) > 0) {
                 <div id='editor-container_" . $row['id'] . "' name='imaging_report'>$imagingReport</div>
                 <input type='hidden' id='imaging_report_" . $row['id'] . "' name='imaging_report' value='$imagingReport'>
                 <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
-                echo <script>
+                 <script>
     var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
         theme: 'snow',
         modules: {

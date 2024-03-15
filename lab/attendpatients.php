@@ -319,7 +319,7 @@
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                   <?php
+                                    <?php
 // Include database connection details
 require('../database/config.php');
 
@@ -328,83 +328,87 @@ if (!$conn) {
     die("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 
-if (isset($_POST['save'])) {
-    $id = $_POST['save'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['save'])) {
+        $id = $_POST['save'];
 
-    // Escape the values to prevent SQL injection (using prepared statement)
-    $imaging_report = isset($_POST['imaging_report']) ? $_POST['imaging_report'] : '';
-    $lab = isset($_POST['lab']) ? $_POST['lab'] : '';
-    $doctor = isset($_POST['doctor']) ? 1 : 0;
-    $counseller = isset($_POST['counseller']) ? 1 : 0;
+        // Escape the values to prevent SQL injection (using prepared statement)
+        $imaging_report = isset($_POST['imaging_report']) ? $_POST['imaging_report'] : '';
+        $lab = isset($_POST['lab']) ? $_POST['lab'] : '';
+        $doctor = isset($_POST['doctor']) ? 1 : 0;
+        $counseller = isset($_POST['counseller']) ? 1 : 0;
 
-    // Fetch fields based on 'id'
-    $fetchNameSql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut FROM visitors WHERE id = ?";
-    $fetchNameStmt = mysqli_prepare($conn, $fetchNameSql);
-    mysqli_stmt_bind_param($fetchNameStmt, 'i', $id);
-    mysqli_stmt_execute($fetchNameStmt);
-    $nameResult = mysqli_stmt_get_result($fetchNameStmt);
-    $nameRow = mysqli_fetch_assoc($nameResult);
-    if ($nameRow) {
-        $fullname = $nameRow['fullname'];
-        $contact = $nameRow['contact']; 
-        $idNumber = $nameRow['idNumber'];
-        $paymentMethod = $nameRow['paymentMethod'];
-        $age = $nameRow['age'];
-        $timeIn = $nameRow['timeIn'];
-        $timeOut = $nameRow['timeOut'];
-    } else {
-        $fullname = '';
-        $contact = '';
-        $idNumber = '';
-        $paymentMethod = '';
-        $age = '';
-        $timeIn = '';
-        $timeOut = '';
+        // Fetch fields based on 'id'
+        $fetchNameSql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut FROM visitors WHERE id = ?";
+        $fetchNameStmt = mysqli_prepare($conn, $fetchNameSql);
+        mysqli_stmt_bind_param($fetchNameStmt, 'i', $id);
+        mysqli_stmt_execute($fetchNameStmt);
+        $nameResult = mysqli_stmt_get_result($fetchNameStmt);
+        $nameRow = mysqli_fetch_assoc($nameResult);
+
+        if ($nameRow) {
+            // Get visitor details
+            $fullname = $nameRow['fullname'];
+            $contact = $nameRow['contact'];
+            $idNumber = $nameRow['idNumber'];
+            $paymentMethod = $nameRow['paymentMethod'];
+            $age = $nameRow['age'];
+            $timeIn = $nameRow['timeIn'];
+            $timeOut = $nameRow['timeOut'];
+
+            // Check if a record already exists in the lab table for the current visitor
+            $checkSql = "SELECT * FROM lab WHERE visitor_id = ?";
+            $checkStmt = mysqli_prepare($conn, $checkSql);
+            mysqli_stmt_bind_param($checkStmt, 'i', $id);
+            mysqli_stmt_execute($checkStmt);
+            $checkResult = mysqli_stmt_get_result($checkStmt);
+
+            if (mysqli_num_rows($checkResult) > 0) {
+                // Update the existing record
+                $updateSql = "UPDATE lab SET imaging_report = ?, lab = ?, doctor = ?, counseller = ?, details = ? WHERE visitor_id = ?";
+                $updateStmt = mysqli_prepare($conn, $updateSql);
+                $details = $POST_['consultation_report']; // Provide a non-null value for the details column
+                mysqli_stmt_bind_param($updateStmt, 'siiisi', $imaging_report, $lab, $doctor, $counseller, $details, $id);
+                mysqli_stmt_execute($updateStmt);
+
+
+
+            } else {
+                // Insert a new record
+                $insertSql = "INSERT INTO lab (visitor_id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, imaging_report, lab, doctor, counseller, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $insertStmt = mysqli_prepare($conn, $insertSql);
+                $details = $POST_['consultation_report']; // Provide a non-null value for the details column
+                mysqli_stmt_bind_param($insertStmt, 'isssssssssiss', $id, $fullname, $contact, $idNumber, $paymentMethod, $age, $timeIn, $timeOut, $imaging_report, $lab, $doctor, $counseller, $details);
+                mysqli_stmt_execute($insertStmt);
+                
+
+
+            }
+        }
     }
 
-    // Check if a record already exists in the lab table for the current visitor
-    $checkSql = "SELECT * FROM lab WHERE visitor_id = ?";
-    $checkStmt = mysqli_prepare($conn, $checkSql);
-    mysqli_stmt_bind_param($checkStmt, 'i', $id);
-    mysqli_stmt_execute($checkStmt);
-    $checkResult = mysqli_stmt_get_result($checkStmt);
+    if (isset($_POST['done'])) {
+        $id = $_POST['done'];
 
-    if (mysqli_num_rows($checkResult) > 0) {
-        // Update the existing record
-        $updateSql = "UPDATE lab SET imaging_report = ?, lab = ?, doctor = ?, counseller = ? WHERE visitor_id = ?";
-        $updateStmt = mysqli_prepare($conn, $updateSql);
-        mysqli_stmt_bind_param($updateStmt, 'siiii', $imaging_report, $lab, $doctor, $counseller, $id);
-        mysqli_stmt_execute($updateStmt);
-    } else {
-        // Insert a new record
-        $insertSql = "INSERT INTO lab (visitor_id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, imaging_report, lab, doctor, counseller) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $insertStmt = mysqli_prepare($conn, $insertSql);
-        mysqli_stmt_bind_param($insertStmt, 'isssssssssii', $id, $fullname, $contact, $idNumber, $paymentMethod, $age, $timeIn, $timeOut, $imaging_report, $lab, $doctor, $counseller);
-        mysqli_stmt_execute($insertStmt);
+        // Update the status in the lab table
+        $updateStatusSql = "UPDATE lab SET status = 'done' WHERE visitor_id = ?";
+        $updateStatusStmt = mysqli_prepare($conn, $updateStatusSql);
+        mysqli_stmt_bind_param($updateStatusStmt, 'i', $id);
+        mysqli_stmt_execute($updateStatusStmt);
     }
-}
-
-if (isset($_POST['done'])) {
-    $id = $_POST['done'];
-
-    // Update the status in the lab table
-    $updateStatusSql = "UPDATE lab SET status = 'done' WHERE visitor_id = ?";
-    $updateStatusStmt = mysqli_prepare($conn, $updateStatusSql);
-    mysqli_stmt_bind_param($updateStatusStmt, 'i', $id);
-    mysqli_stmt_execute($updateStatusStmt);
 }
 
 // Query the database for the records with lab data
 $sql = "SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut, d.details AS consultation_report, i.imaging_report, l.lab, l.doctor, l.counseller
         FROM visitors v
         LEFT JOIN lab l ON v.id = l.visitor_id
-        LEFT JOIN doctor d ON v.id = d.id  -- Update this line to join on 'id' column
+        LEFT JOIN doctor d ON v.id = d.id
         LEFT JOIN imaging i ON v.id = i.visitor_id
         WHERE v.attendPurpose = 'lab' OR v.attendPurpose = 'doctor'";
 $result = mysqli_query($conn, $sql);
+
 // Check if any records were found
 if (mysqli_num_rows($result) > 0) {
-    echo "<form method='post'>";
     echo "<tr>";
     echo "<th>Status</th>";
     echo "<th>Full Names</th>";
@@ -421,12 +425,13 @@ if (mysqli_num_rows($result) > 0) {
     echo "<th>Counseller</th>";
     echo "<th>Action</th>";
     echo "</tr>";
+
     while ($row = mysqli_fetch_assoc($result)) {
-        //*****color stattus
+        //*****color status
         if (isset($_POST['update_status']) && isset($_POST['status_input_' . $_POST['update_status']])) {
             $updateId = $_POST['update_status'];
             $newStatus = $_POST['status_input_' . $updateId];
-        
+
             // Update the status in the lab table
             $updateStatusSql = "UPDATE lab SET status = ? WHERE visitor_id = ?";
             $updateStatusStmt = mysqli_prepare($conn, $updateStatusSql);
@@ -437,13 +442,12 @@ if (mysqli_num_rows($result) > 0) {
         // Escape the values to prevent SQL injection
         $cellId = 'statusCell_' . $row['id'];
         $cellStatus = isset($_SESSION[$cellId]) ? $_SESSION[$cellId] : 'red';
-        $consultationReport = isset($row['consultation_report']) ? $row['consultation_report'] : '';
-        
+
         echo "<tr>";
         echo '<td id="statusCell_' . $row['id'] . '" style="background-color: ' . $cellStatus . ';">';
-        echo '<form method="post" id="updateStatusForm_' . $row['id'] . '" style="display: none;">
+        echo '<form method="post" action="" id="updateStatusForm_' . $row['id'] . '">
         <input type="hidden" name="update_status" value="' . $row['id'] . '" id="statusInput_' . $row['id'] . '">
-      </form>';
+        </form>';
         echo '<i class="fas fa-check-circle text-success"></i>';
         echo "</td>";
         echo "<td>" . $row['fullname'] . "</td>";
@@ -453,8 +457,8 @@ if (mysqli_num_rows($result) > 0) {
         echo "<td>" . $row['age'] . "</td>";
         echo "<td>" . $row['timeIn'] . "</td>";
         echo "<td>" . $row['timeOut'] . "</td>";
-        echo "<td>" . $row['consultation_report'] . "</td>";
-        echo "<td>" . $imagingReport = htmlspecialchars($row['imaging_report']);  "</td>";
+        echo "<td>" . ($row['consultation_report'] ? $row['consultation_report'] : '') . "</td>";
+        echo "<td>" . htmlspecialchars_decode($row['imaging_report']) . "</td>";
         echo "<td>
             <style>
                 #editor-container_" . $row['id'] . " {
@@ -464,7 +468,11 @@ if (mysqli_num_rows($result) > 0) {
                 }
             </style>
             <div id='editor-container_" . $row['id'] . "' name='lab'>" . ($row['lab'] ? htmlspecialchars($row['lab']) : '') . "</div>
+            <form method='post' action=''>
+            <input type='hidden' name='save' value='" . $row['id'] . "'>
             <input type='hidden' id='lab_" . $row['id'] . "' name='lab' value='" . ($row['lab'] ? htmlspecialchars($row['lab']) : '') . "'>
+            <button class='btn btn-primary' type='submit'>Save</button>
+            </form>
             <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
             <script>
                 var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
@@ -495,17 +503,17 @@ if (mysqli_num_rows($result) > 0) {
                 });
             </script>
         </td>";
-        echo "<td><input type='checkbox' id='doctor' name='doctor' " . ($row['doctor'] ? 'checked' : '') . "></td>";
-        echo "<td><input type='checkbox' id='counseller' name='counseller' " . ($row['counseller'] ? 'checked' : '') . "></td>";
+        echo "<td><input type='checkbox' id='doctor' name='doctor' value='" . ($row['doctor'] ? '1' : '0') . "'></td>";
+        echo "<td><input type='checkbox' id='counseller' name='counseller' value='" . ($row['counseller'] ? '1' : '0') . "'></td>";
         echo '<td>
-            <button class="btn btn-primary" type="submit" name="save" value="' . $row['id'] . '">Save</button><br><br>
-            <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
-            <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ', \'' . $cellStatus . '\')">Done</button>
+            <form method="post" action="">
+            <input type="hidden" name="done" value="' . $row['id'] . '">
+            <button class="btn btn-success" type="submit">Done</button>
+            </form>
         </td>';
         echo "</tr>";
     }
     echo "</table>";
-    echo "</form>";
 } else {
     // Display a message if no records were found
     echo "No records found.";
@@ -514,6 +522,9 @@ if (mysqli_num_rows($result) > 0) {
 // Close the connection to the database
 mysqli_close($conn);
 ?>
+
+
+
 
 
                                 </div>
