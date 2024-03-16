@@ -320,10 +320,8 @@
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <?php
-// Include database connection details
 require('../database/config.php');
 
-// Check connection
 if (!$conn) {
     die("Failed to connect to MySQL: " . mysqli_connect_error());
 }
@@ -332,14 +330,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['save'])) {
         $id = $_POST['save'];
 
-        // Escape the values to prevent SQL injection (using prepared statement)
+        // Retrieve form inputs
         $imaging_report = isset($_POST['imaging_report']) ? $_POST['imaging_report'] : '';
         $lab = isset($_POST['lab']) ? $_POST['lab'] : '';
-        $doctor = isset($_POST['doctor']) ? 1 : 0;
-        $counseller = isset($_POST['counseller']) ? 1 : 0;
+        $doctor = isset($_POST['doctor']) ? $_POST['doctor'] : 0; // Ensure to handle checkbox value properly
+        $counseller = isset($_POST['counseller']) ? $_POST['counseller'] : 0; // Ensure to handle checkbox value properly
 
-        // Fetch fields based on 'id'
-        $fetchNameSql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut FROM visitors WHERE id = ?";
+        // Fetch visitor details
+        $fetchNameSql = "SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut, l.details FROM visitors v
+                 LEFT JOIN lab l ON v.id = l.visitor_id
+                 WHERE v.id = ?";
         $fetchNameStmt = mysqli_prepare($conn, $fetchNameSql);
         mysqli_stmt_bind_param($fetchNameStmt, 'i', $id);
         mysqli_stmt_execute($fetchNameStmt);
@@ -347,7 +347,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $nameRow = mysqli_fetch_assoc($nameResult);
 
         if ($nameRow) {
-            // Get visitor details
+            // Extract visitor details
             $fullname = $nameRow['fullname'];
             $contact = $nameRow['contact'];
             $idNumber = $nameRow['idNumber'];
@@ -355,6 +355,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $age = $nameRow['age'];
             $timeIn = $nameRow['timeIn'];
             $timeOut = $nameRow['timeOut'];
+            $details = $nameRow['details']; // Assigning the value of consultation_report to details
 
             // Check if a record already exists in the lab table for the current visitor
             $checkSql = "SELECT * FROM lab WHERE visitor_id = ?";
@@ -364,25 +365,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $checkResult = mysqli_stmt_get_result($checkStmt);
 
             if (mysqli_num_rows($checkResult) > 0) {
-                // Update the existing record
+                // Update existing record
                 $updateSql = "UPDATE lab SET imaging_report = ?, lab = ?, doctor = ?, counseller = ?, details = ? WHERE visitor_id = ?";
                 $updateStmt = mysqli_prepare($conn, $updateSql);
-                $details = $POST_['consultation_report']; // Provide a non-null value for the details column
-                mysqli_stmt_bind_param($updateStmt, 'siiisi', $imaging_report, $lab, $doctor, $counseller, $details, $id);
+                mysqli_stmt_bind_param($updateStmt, 'ssiisi', $imaging_report, $lab, $doctor, $counseller, $details, $id);
                 mysqli_stmt_execute($updateStmt);
-
-
-
             } else {
-                // Insert a new record
+                // Insert new record
                 $insertSql = "INSERT INTO lab (visitor_id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, imaging_report, lab, doctor, counseller, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $insertStmt = mysqli_prepare($conn, $insertSql);
-                $details = $POST_['consultation_report']; // Provide a non-null value for the details column
-                mysqli_stmt_bind_param($insertStmt, 'isssssssssiss', $id, $fullname, $contact, $idNumber, $paymentMethod, $age, $timeIn, $timeOut, $imaging_report, $lab, $doctor, $counseller, $details);
+                mysqli_stmt_bind_param($insertStmt, 'isississssiss', $id, $fullname, $contact, $idNumber, $paymentMethod, $age, $timeIn, $timeOut, $imaging_report, $lab, $doctor, $counseller, $details);
                 mysqli_stmt_execute($insertStmt);
-                
-
-
             }
         }
     }
@@ -390,7 +383,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['done'])) {
         $id = $_POST['done'];
 
-        // Update the status in the lab table
+        // Update status in lab table
         $updateStatusSql = "UPDATE lab SET status = 'done' WHERE visitor_id = ?";
         $updateStatusStmt = mysqli_prepare($conn, $updateStatusSql);
         mysqli_stmt_bind_param($updateStatusStmt, 'i', $id);
@@ -398,13 +391,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Query the database for the records with lab data
+// Fetch data to display in the HTML table
 $sql = "SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut, d.details AS consultation_report, i.imaging_report, l.lab, l.doctor, l.counseller
-        FROM visitors v
-        LEFT JOIN lab l ON v.id = l.visitor_id
-        LEFT JOIN doctor d ON v.id = d.id
-        LEFT JOIN imaging i ON v.id = i.visitor_id
-        WHERE v.attendPurpose = 'lab' OR v.attendPurpose = 'doctor'";
+FROM visitors v
+LEFT JOIN lab l ON v.id = l.visitor_id
+LEFT JOIN doctor d ON v.id = d.id
+LEFT JOIN imaging i ON v.id = i.visitor_id
+WHERE v.attendPurpose = 'lab' OR v.attendPurpose = 'doctor'";
+
 $result = mysqli_query($conn, $sql);
 
 // Check if any records were found
@@ -485,7 +479,7 @@ if (mysqli_num_rows($result) > 0) {
                             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                             [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
                             [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
-                            [{ 'direction': 'rtl' }],                         // text direction
+                            [{ 'direction': 'rtl' }],                         // text
                             [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
                             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
                             [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
@@ -522,6 +516,9 @@ if (mysqli_num_rows($result) > 0) {
 // Close the connection to the database
 mysqli_close($conn);
 ?>
+
+
+
 
 
 
