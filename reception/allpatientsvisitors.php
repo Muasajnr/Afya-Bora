@@ -376,10 +376,7 @@
                                                         echo "<td><button onclick='openPopup(" . $row['id'] . ", \"" . $row['fullname'] . "\", \"" . $row['position'] . "\", \"" . $row['contact'] . "\", \"" . $row['idNumber'] . "\", \"" . $row['attendPurpose'] . "\", \"" . $row['paymentMethod'] . "\", \"" . $row['age'] . "\", \"" . $row['role'] . "\", \"" . $row['visitPurpose'] . "\", \"" . $row['patientVisitedName'] . "\", \"" . $row['relationship'] . "\", \"" . $row['timeIn'] . "\", \"" . $row['timeOut'] . "\")' class='btn-primary'>Edit</button></td>";
                                                         echo "</tr>";
 
-                                                        
-                                                    
-
-
+                                                     
                                                     
                                                     }
                                                 } else {

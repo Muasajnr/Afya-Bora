@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Pharmacy</title>
+    <title>AFYA BORA || Counsellor</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -320,25 +320,8 @@
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Type</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                                <th>Consultation Report</th>
-                                                <th>Lab</th>
-                                                <th>Scan/xray</th>
-                                                <th>Doctor</th>
-                                                <th>Counseller</th>
-                                                <th>Pharmacy</th>
-                                            </tr>
-                                        </thead>
-                                        
-                                        <tbody>
                                         <?php
-// Connect to the database
+                                        // Connect to the database
 require('../database/config.php');
 
 // Check the connection
@@ -346,21 +329,26 @@ if (!$conn) {
     die("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 
-// Fetch data from multiple tables using JOIN operations
-$sql = "SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut,
-               d.details AS doctor_details, i.details AS imaging_details, l.details AS lab_details, c.details AS counsellor_details
-        FROM visitors v
-        LEFT JOIN doctor d ON v.id = d.visitor_id
-        LEFT JOIN imaging i ON v.id = i.visitor_id
-        LEFT JOIN lab l ON v.id = l.visitor_id
-        LEFT JOIN counsellor c ON v.id = c.visitor_id";
 
-$result = mysqli_query($conn, $sql);
+
+// Fetch rows from doctor and imaging tables where field counsellor is 1
+$sql_counsellor = "(SELECT d.id, d.fullname, d.contact, d.idNumber, d.paymentMethod, d.age, d.timeIn, d.timeOut, d.details AS consultation_report, NULL AS imaging_report
+                    FROM doctor d
+                    WHERE d.counseller = 1)
+                    UNION
+                    (SELECT i.id, i.fullname, i.contact, i.idNumber, i.paymentMethod, i.age, i.timeIn, i.timeOut, NULL AS consultation_report, i.imaging_report
+                    FROM imaging i
+                    WHERE i.counseller = 1)
+                    UNION
+                    (SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut, NULL AS consultation_report, NULL AS imaging_report
+                    FROM visitors v
+                    WHERE v.attendPurpose = 'counseling')";
+$result_counsellor = mysqli_query($conn, $sql_counsellor);
 
 // Check if any records were found
-if (mysqli_num_rows($result) > 0) {
-    // Display table headers
-    echo "<table>";
+if (mysqli_num_rows($result_counsellor) > 0) {
+    // Display table headers for doctor and imaging
+   
     echo "<tr>";
     echo "<th>ID</th>";
     echo "<th>Full Name</th>";
@@ -370,40 +358,79 @@ if (mysqli_num_rows($result) > 0) {
     echo "<th>Age</th>";
     echo "<th>Time In</th>";
     echo "<th>Time Out</th>";
-    echo "<th>Doctor Details</th>";
-    echo "<th>Imaging Details</th>";
-    echo "<th>Lab Details</th>";
-    echo "<th>Counsellor Details</th>";
+    echo "<th>Consultation Report</th>";
+    echo "<th>Imaging Report</th>";
+    echo "<th>Counselling Report</th>";
     echo "</tr>";
+    echo "</thead>";
+                                        
+    echo "<tbody>";
+ // Iterate over the result set
+while ($row = mysqli_fetch_assoc($result_counsellor)) {
+    // Display a row for each record
+    echo "<tr>";
+    echo "<td>" . $row['id'] . "</td>";
+    echo "<td>" . $row['fullname'] . "</td>";
+    echo "<td>" . $row['contact'] . "</td>";
+    echo "<td>" . $row['idNumber'] . "</td>";
+    echo "<td>" . $row['paymentMethod'] . "</td>";
+    echo "<td>" . $row['age'] . "</td>";
+    echo "<td>" . $row['timeIn'] . "</td>";
+    echo "<td>" . $row['timeOut'] . "</td>";
+    echo "<td>" . $row['consultation_report'] . "</td>";
+    echo "<td>" . $row['imaging_report'] . "</td>";
+    echo "<style>#editor-container_" . $row['id'] . " { width: 300px; max-width: 800px; height: 150px; }</style>";
 
-    // Iterate over the result set
-    while ($row = mysqli_fetch_assoc($result)) {
-        // Display a row for each visitor
-        echo "<tr>";
-        echo "<td>" . $row['id'] . "</td>";
-        echo "<td>" . $row['fullname'] . "</td>";
-        echo "<td>" . $row['contact'] . "</td>";
-        echo "<td>" . $row['idNumber'] . "</td>";
-        echo "<td>" . $row['paymentMethod'] . "</td>";
-        echo "<td>" . $row['age'] . "</td>";
-        echo "<td>" . $row['timeIn'] . "</td>";
-        echo "<td>" . $row['timeOut'] . "</td>";
-        echo "<td>" . ($row['doctor_details'] ? $row['doctor_details'] : '') . "</td>";
-        echo "<td>" . ($row['imaging_details'] ? $row['imaging_details'] : '') . "</td>";
-        echo "<td>" . ($row['lab_details'] ? $row['lab_details'] : '') . "</td>";
-        echo "<td>" . ($row['counsellor_details'] ? $row['counsellor_details'] : '') . "</td>";
-        echo "</tr>";
-    }
-
-    echo "</table>"; // Close the table
+    echo "<td>
+            <div id='editor-container_" . $row['id'] . "'></div>
+            <input type='hidden' id='counselling_report_" . $row['id'] . "' name='counselling_report'>
+            <script>
+                var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{ 'header': 1 }, { 'header': 2 }],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'script': 'sub' }, { 'script': 'super' }],
+                            [{ 'indent': '-1' }, { 'indent': '+1' }],
+                            [{ 'direction': 'rtl' }],
+                            [{ 'size': ['small', false, 'large', 'huge'] }],
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean']
+                        ]
+                    },
+                    placeholder: 'Write your counselling report here...',
+                    autofocus: true,
+                });
+                quill_" . $row['id'] . ".on('text-change', function() {
+                    var html = document.querySelector('#editor-container_" . $row['id'] . " .ql-editor').innerHTML;
+                    document.getElementById('counselling_report_" . $row['id'] . "').value = html;
+                });
+            </script>
+          </td>";
+    echo "</tr>";
+}
+echo "</tbody>";
+echo "</table>"; // Close the table
 } else {
-    // Display a message if no records were found
-    echo "No records found.";
+    echo "No records found in doctor, imaging, or visitors table where counsellor = 1.";
 }
 
 // Close the connection
 mysqli_close($conn);
 ?>
+
+
+
+
+
+
+
 
                                     </table>
                                 </div>
