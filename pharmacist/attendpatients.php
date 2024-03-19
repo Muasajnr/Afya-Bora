@@ -19,6 +19,8 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 </head>
 
@@ -43,7 +45,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -60,14 +62,14 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="attendpatients.html">
+                <a class="nav-link" href="attendpatients.php">
                     <i class="fas fa-edit fa-fw"></i>
                     <span>Attend Patients</span></a>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="mypatients.html">
+                <a class="nav-link" href="mypatients.php">
                     <i class="fas fa-list fa-fw"></i>
                     <span>My Patients</span></a>
             </li>
@@ -307,7 +309,7 @@
                     <div class="container-fluid">
 
                         <!-- Page Heading -->
-                        <h1 class="h3 mb-2 text-gray-800">My Patients</h1>
+                        <h1 class="h3 mb-2 text-gray-800">Attend Patients</h1>
                         
                         <!-- DataTales Example -->
                         <div class="card shadow mb-4">
@@ -325,26 +327,84 @@
                                                 <th>Age</th>
                                                 <th>Start date</th>
                                                 <th>Salary</th>
+                                                <th>Consultation Report</th>
+                                                <th>Lab</th>
+                                                <th>Scan/xray</th>
+                                                <th>Doctor</th>
+                                                <th>Counseller</th>
+                                                <th>Pharmacy</th>
                                             </tr>
                                         </thead>
                                         
                                         <tbody>
-                                            <tr>
-                                                <td>Tiger Nixon</td>
-                                                <td>System Architect</td>
-                                                <td>Edinburgh</td>
-                                                <td>61</td>
-                                                <td>2011/04/25</td>
-                                                <td>$320,800</td>
-                                                <td>
-                                                    <button class="btn btn-primary" type="button">Login</button>
-                                                    <button class="btn btn-secondary" type="button">Edit</button> 
-                                                    <button class="btn btn-danger" type="button">Delete</button>
-                                                
-                                                </td>
-                                            </tr>
-                                            
-                                        </tbody>
+                                        <?php
+// Connect to the database
+require('../database/config.php');
+
+// Check the connection
+if (!$conn) {
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
+}
+
+// Fetch data from multiple tables using JOIN operations
+$sql = "SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut,
+               d.details AS doctor_details, i.details AS imaging_details, l.details AS lab_details, c.details AS counsellor_details
+        FROM visitors v
+        LEFT JOIN doctor d ON v.id = d.visitor_id
+        LEFT JOIN imaging i ON v.id = i.visitor_id
+        LEFT JOIN lab l ON v.id = l.visitor_id
+        LEFT JOIN counsellor c ON v.id = c.visitor_id";
+
+$result = mysqli_query($conn, $sql);
+
+// Check if any records were found
+if (mysqli_num_rows($result) > 0) {
+    // Display table headers
+    echo "<table>";
+    echo "<tr>";
+    echo "<th>ID</th>";
+    echo "<th>Full Name</th>";
+    echo "<th>Contact</th>";
+    echo "<th>ID Number</th>";
+    echo "<th>Payment Method</th>";
+    echo "<th>Age</th>";
+    echo "<th>Time In</th>";
+    echo "<th>Time Out</th>";
+    echo "<th>Doctor Details</th>";
+    echo "<th>Imaging Details</th>";
+    echo "<th>Lab Details</th>";
+    echo "<th>Counsellor Details</th>";
+    echo "</tr>";
+
+    // Iterate over the result set
+    while ($row = mysqli_fetch_assoc($result)) {
+        // Display a row for each visitor
+        echo "<tr>";
+        echo "<td>" . $row['id'] . "</td>";
+        echo "<td>" . $row['fullname'] . "</td>";
+        echo "<td>" . $row['contact'] . "</td>";
+        echo "<td>" . $row['idNumber'] . "</td>";
+        echo "<td>" . $row['paymentMethod'] . "</td>";
+        echo "<td>" . $row['age'] . "</td>";
+        echo "<td>" . $row['timeIn'] . "</td>";
+        echo "<td>" . $row['timeOut'] . "</td>";
+        echo "<td>" . ($row['doctor_details'] ? $row['doctor_details'] : '') . "</td>";
+        echo "<td>" . ($row['imaging_details'] ? $row['imaging_details'] : '') . "</td>";
+        echo "<td>" . ($row['lab_details'] ? $row['lab_details'] : '') . "</td>";
+        echo "<td>" . ($row['counsellor_details'] ? $row['counsellor_details'] : '') . "</td>";
+        echo "</tr>";
+    }
+
+    echo "</table>"; // Close the table
+} else {
+    // Display a message if no records were found
+    echo "No records found.";
+}
+
+// Close the connection
+mysqli_close($conn);
+?>
+
                                     </table>
                                 </div>
                             </div>
@@ -352,6 +412,19 @@
     
                    
 
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var quill = new Quill('#quill-editor', {
+                                    theme: 'snow',
+                                });
+                        
+                                quill.on('text-change', function () {
+                                    // Update the hidden input with Quill content
+                                    document.getElementById('details').value = quill.root.innerHTML;
+                                });
+                            });
+                        </script>
+                        
                 </div>
                 <!-- /.container-fluid -->
 

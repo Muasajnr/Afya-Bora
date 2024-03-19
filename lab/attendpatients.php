@@ -319,8 +319,8 @@
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <?php
-require('../database/config.php');
+<?php
+ require('../database/config.php');
 
 if (!$conn) {
     die("Failed to connect to MySQL: " . mysqli_connect_error());
@@ -465,8 +465,7 @@ if (mysqli_num_rows($result) > 0) {
             <form method='post' action=''>
             <input type='hidden' name='save' value='" . $row['id'] . "'>
             <input type='hidden' id='lab_" . $row['id'] . "' name='lab' value='" . ($row['lab'] ? htmlspecialchars($row['lab']) : '') . "'>
-            <button class='btn btn-primary' type='submit'>Save</button>
-            </form>
+            
             <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
             <script>
                 var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
@@ -479,7 +478,7 @@ if (mysqli_num_rows($result) > 0) {
                             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                             [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
                             [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
-                            [{ 'direction': 'rtl' }],                         // text
+                            [{ 'direction': 'rtl' }],                         // text direction
                             [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
                             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
                             [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
@@ -500,7 +499,8 @@ if (mysqli_num_rows($result) > 0) {
         echo "<td><input type='checkbox' id='doctor' name='doctor' value='" . ($row['doctor'] ? '1' : '0') . "'></td>";
         echo "<td><input type='checkbox' id='counseller' name='counseller' value='" . ($row['counseller'] ? '1' : '0') . "'></td>";
         echo '<td>
-            <form method="post" action="">
+               <button class="btn btn-primary" type="submit">Save</button>
+        
             <input type="hidden" name="done" value="' . $row['id'] . '">
             <button class="btn btn-success" type="submit">Done</button>
             </form>
@@ -516,6 +516,7 @@ if (mysqli_num_rows($result) > 0) {
 // Close the connection to the database
 mysqli_close($conn);
 ?>
+
 
 
 
