@@ -321,23 +321,52 @@
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
                                         <?php
-                                        // Connect to the database
+// Connect to the database
 require('../database/config.php');
 
-// Check the connection
-if (!$conn) {
-    die("Failed to connect to MySQL: " . mysqli_connect_error());
+// Check if the form was submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
+    // Loop through each submitted counselling report
+    foreach ($_POST['counselling_report'] as $id => $counselling_report) {
+        // Sanitize the input
+        $counselling_report = mysqli_real_escape_string($conn, $counselling_report);
+        $id = intval($id); // Ensure ID is an integer
+
+        // Check if the record already exists in the counseller table
+        $check_sql = "SELECT * FROM counseller WHERE visitor_id = $id";
+        $check_result = mysqli_query($conn, $check_sql);
+
+        if (mysqli_num_rows($check_result) > 0) {
+            // Update the existing record
+            $update_sql = "UPDATE counseller SET counselling_report = '$counselling_report' WHERE visitor_id = $id";
+
+            if (mysqli_query($conn, $update_sql)) {
+                echo "Record updated successfully for visitor ID: $id<br>";
+            } else {
+                echo "Error updating record: " . mysqli_error($conn) . "<br>";
+            }
+        } else {
+            // Insert a new record
+            $insert_sql = "INSERT INTO counseller (visitor_id, counselling_report) VALUES ($id, '$counselling_report')";
+
+            if (mysqli_query($conn, $insert_sql)) {
+                echo "Record inserted successfully for visitor ID: $id<br>";
+            } else {
+                echo "Error inserting record: " . mysqli_error($conn) . "<br>";
+            }
+        }
+    }
 }
 
-
-
 // Fetch rows from doctor and imaging tables where field counsellor is 1
-$sql_counsellor = "(SELECT d.id, d.fullname, d.contact, d.idNumber, d.paymentMethod, d.age, d.timeIn, d.timeOut, d.details AS consultation_report, NULL AS imaging_report
+$sql_counsellor = "(SELECT d.id, d.fullname, d.contact, d.idNumber, d.paymentMethod, d.age, d.timeIn, d.timeOut, d.details AS consultation_report, i.imaging_report
                     FROM doctor d
+                    LEFT JOIN imaging i ON d.id = i.id
                     WHERE d.counseller = 1)
                     UNION
-                    (SELECT i.id, i.fullname, i.contact, i.idNumber, i.paymentMethod, i.age, i.timeIn, i.timeOut, NULL AS consultation_report, i.imaging_report
+                    (SELECT i.id, i.fullname, i.contact, i.idNumber, i.paymentMethod, i.age, i.timeIn, i.timeOut, d.details AS consultation_report, i.imaging_report
                     FROM imaging i
+                    LEFT JOIN doctor d ON i.id = d.id
                     WHERE i.counseller = 1)
                     UNION
                     (SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut, NULL AS consultation_report, NULL AS imaging_report
@@ -347,8 +376,8 @@ $result_counsellor = mysqli_query($conn, $sql_counsellor);
 
 // Check if any records were found
 if (mysqli_num_rows($result_counsellor) > 0) {
-    // Display table headers for doctor and imaging
-   
+    // Display form and table headers for doctor and imaging
+    echo "<form method='post' action='attendpatients.php'>"; // Open the form
     echo "<tr>";
     echo "<th>ID</th>";
     echo "<th>Full Name</th>";
@@ -361,77 +390,77 @@ if (mysqli_num_rows($result_counsellor) > 0) {
     echo "<th>Consultation Report</th>";
     echo "<th>Imaging Report</th>";
     echo "<th>Counselling Report</th>";
+    echo "<th>Action</th>";
     echo "</tr>";
     echo "</thead>";
-                                        
     echo "<tbody>";
- // Iterate over the result set
-while ($row = mysqli_fetch_assoc($result_counsellor)) {
-    // Display a row for each record
-    echo "<tr>";
-    echo "<td>" . $row['id'] . "</td>";
-    echo "<td>" . $row['fullname'] . "</td>";
-    echo "<td>" . $row['contact'] . "</td>";
-    echo "<td>" . $row['idNumber'] . "</td>";
-    echo "<td>" . $row['paymentMethod'] . "</td>";
-    echo "<td>" . $row['age'] . "</td>";
-    echo "<td>" . $row['timeIn'] . "</td>";
-    echo "<td>" . $row['timeOut'] . "</td>";
-    echo "<td>" . $row['consultation_report'] . "</td>";
-    echo "<td>" . $row['imaging_report'] . "</td>";
-    echo "<style>#editor-container_" . $row['id'] . " { width: 300px; max-width: 800px; height: 150px; }</style>";
 
-    echo "<td>
-            <div id='editor-container_" . $row['id'] . "'></div>
-            <input type='hidden' id='counselling_report_" . $row['id'] . "' name='counselling_report'>
-            <script>
-                var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
-                    theme: 'snow',
-                    modules: {
-                        toolbar: [
-                            ['bold', 'italic', 'underline', 'strike'],
-                            ['blockquote', 'code-block'],
-                            [{ 'header': 1 }, { 'header': 2 }],
-                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                            [{ 'script': 'sub' }, { 'script': 'super' }],
-                            [{ 'indent': '-1' }, { 'indent': '+1' }],
-                            [{ 'direction': 'rtl' }],
-                            [{ 'size': ['small', false, 'large', 'huge'] }],
-                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                            [{ 'color': [] }, { 'background': [] }],
-                            [{ 'font': [] }],
-                            [{ 'align': [] }],
-                            ['clean']
-                        ]
-                    },
-                    placeholder: 'Write your counselling report here...',
-                    autofocus: true,
-                });
-                quill_" . $row['id'] . ".on('text-change', function() {
-                    var html = document.querySelector('#editor-container_" . $row['id'] . " .ql-editor').innerHTML;
-                    document.getElementById('counselling_report_" . $row['id'] . "').value = html;
-                });
-            </script>
-          </td>";
-    echo "</tr>";
-}
-echo "</tbody>";
-echo "</table>"; // Close the table
+    // Iterate over the result set
+    while ($row = mysqli_fetch_assoc($result_counsellor)) {
+        // Display a row for each record
+        echo "<tr>";
+        echo "<td>" . $row['id'] . "</td>";
+        echo "<td>" . $row['fullname'] . "</td>";
+        echo "<td>" . $row['contact'] . "</td>";
+        echo "<td>" . $row['idNumber'] . "</td>";
+        echo "<td>" . $row['paymentMethod'] . "</td>";
+        echo "<td>" . $row['age'] . "</td>";
+        echo "<td>" . $row['timeIn'] . "</td>";
+        echo "<td>" . $row['timeOut'] . "</td>";
+        echo "<td>" . $row['consultation_report'] . "</td>";
+        echo "<td>" . $row['imaging_report'] . "</td>";
+        echo "<style>#editor-container_" . $row['id'] . " { width: 300px; max-width: 800px; height: 100px; }</style>";
+
+        echo "<td>
+        <div id='editor-container_" . $row['id'] . "'></div>
+        <input type='hidden' id='counselling_report_" . $row['id'] . "' name='counselling_report[" . $row['id'] . "]' value='" . htmlspecialchars($row['counselling_report'] ?? '') . "'>
+        <script>
+            var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'header': 1 }, { 'header': 2 }],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        [{ 'script': 'sub' }, { 'script': 'super' }],
+                        [{ 'indent': '-1' }, { 'indent': '+1' }],
+                        [{ 'direction': 'rtl' }],
+                        [{ 'size': ['small', false, 'large', 'huge'] }],
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'font': [] }],
+                        [{ 'align': [] }],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Write your counselling report here...',
+                autofocus: true,
+            });
+            quill_" . $row['id'] . ".on('text-change', function() {
+                var html = document.querySelector('#editor-container_" . $row['id'] . " .ql-editor').innerHTML;
+                document.getElementById('counselling_report_" . $row['id'] . "').value = html;
+            });
+        </script>
+       </td>";
+         echo "<td>
+          <button class='btn-success' type='submit' name='save'>Save</button>
+         </td>";
+
+        echo "</tr>";
+    }
+    echo "</tbody>";
+
+    echo "</form>"; // Close the form
 } else {
-    echo "No records found in doctor, imaging, or visitors table where counsellor = 1.";
+    echo "No records found in doctor, imaging,";
 }
-
 // Close the connection
 mysqli_close($conn);
 ?>
 
 
-
-
-
-
-
-
+   
                                     </table>
                                 </div>
                             </div>
