@@ -88,12 +88,12 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Control Accounts:</h6>
-                        <a class="collapse-item" href="receptioncontrol.html">Reception</a>
-                        <a class="collapse-item" href="doctorcontrol.html">Doctor</a>
-                        <a class="collapse-item" href="labcontrol.html">Lab</a>
-                        <a class="collapse-item" href="radiationcontrol.html">Radiation</a>
-                        <a class="collapse-item" href="cashiercontrol.html">Cashier</a>
-                        <a class="collapse-item" href="pharmacistcontrol.html">Pharmacist</a>
+                        <a class="collapse-item" href="receptioncontrol.php">Reception</a>
+                        <a class="collapse-item" href="doctorcontrol.php">Doctor</a>
+                        <a class="collapse-item" href="labcontrol.htphpml">Lab</a>
+                        <a class="collapse-item" href="radiationcontrol.php">Radiation</a>
+                        <a class="collapse-item" href="cashiercontrol.php">Cashier</a>
+                        <a class="collapse-item" href="pharmacistcontrol.php">Pharmacist</a>
                     </div>
                 </div>
             </li>
