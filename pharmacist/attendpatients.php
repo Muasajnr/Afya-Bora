@@ -320,24 +320,8 @@
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Type</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                                <th>Consultation Report</th>
-                                                <th>Lab</th>
-                                                <th>Scan/xray</th>
-                                                <th>Doctor</th>
-                                                <th>Counseller</th>
-                                                <th>Pharmacy</th>
-                                            </tr>
-                                        </thead>
-                                        
-                                        <tbody>
-                                        <?php
+                    
+                 <?php
 // Connect to the database
 require('../database/config.php');
 
@@ -348,19 +332,24 @@ if (!$conn) {
 
 // Fetch data from multiple tables using JOIN operations
 $sql = "SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut,
-               d.details AS doctor_details, i.details AS imaging_details, l.details AS lab_details, c.details AS counsellor_details
+               d.details AS doctor_details, i.details AS imaging_details, l.details AS lab_details, c.counselling_report AS counselling_details
         FROM visitors v
-        LEFT JOIN doctor d ON v.id = d.visitor_id
+        LEFT JOIN doctor d ON v.id = d.id
         LEFT JOIN imaging i ON v.id = i.visitor_id
         LEFT JOIN lab l ON v.id = l.visitor_id
-        LEFT JOIN counsellor c ON v.id = c.visitor_id";
+        LEFT JOIN counseller c ON v.id = c.visitor_id";
+
+
+
+
+
 
 $result = mysqli_query($conn, $sql);
 
 // Check if any records were found
 if (mysqli_num_rows($result) > 0) {
     // Display table headers
-    echo "<table>";
+   
     echo "<tr>";
     echo "<th>ID</th>";
     echo "<th>Full Name</th>";
@@ -375,7 +364,8 @@ if (mysqli_num_rows($result) > 0) {
     echo "<th>Lab Details</th>";
     echo "<th>Counsellor Details</th>";
     echo "</tr>";
-
+    echo "</thead>";                               
+    echo "<tbody>";
     // Iterate over the result set
     while ($row = mysqli_fetch_assoc($result)) {
         // Display a row for each visitor
@@ -391,11 +381,11 @@ if (mysqli_num_rows($result) > 0) {
         echo "<td>" . ($row['doctor_details'] ? $row['doctor_details'] : '') . "</td>";
         echo "<td>" . ($row['imaging_details'] ? $row['imaging_details'] : '') . "</td>";
         echo "<td>" . ($row['lab_details'] ? $row['lab_details'] : '') . "</td>";
-        echo "<td>" . ($row['counsellor_details'] ? $row['counsellor_details'] : '') . "</td>";
+        echo "<td>" . ($row['counselling_report'] ? $row['counselling_report'] : '') . "</td>";
         echo "</tr>";
     }
 
-    echo "</table>"; // Close the table
+    echo "</body>"; // Close the table
 } else {
     // Display a message if no records were found
     echo "No records found.";
