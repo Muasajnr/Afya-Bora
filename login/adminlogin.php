@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Verify the password
         if ($password === $user['password']) {
             // Password is correct, redirect the user to the dashboard
-            header("Location: ../index.php");
+            header("Location: ../admin.php");
             exit();
         } else {
             // Password is incorrect

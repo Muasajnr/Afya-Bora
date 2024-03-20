@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Lab Control</title>
+    <title>AFYA BORA || Pharmacist Control</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -66,12 +66,12 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Create Accounts:</h6>
-                        <a class="collapse-item" href="register_accounts/addreception.html">Reception</a>
-                        <a class="collapse-item" href="register_accounts/adddoctor.html">Doctor</a>
-                        <a class="collapse-item" href="register_accounts/addlab.html">Lab</a>
-                        <a class="collapse-item" href="register_accounts/addradiation.html">Radiation</a>
-                        <a class="collapse-item" href="register_accounts/addcashier.html">Cashier</a>
-                        <a class="collapse-item" href="register_accounts/addpharmacist.html">Pharmacist</a>
+                        <a class="collapse-item" href="register_accounts/addreception.php">Reception</a>
+                        <a class="collapse-item" href="register_accounts/adddoctor.php">Doctor</a>
+                        <a class="collapse-item" href="register_accounts/addlab.php">Lab</a>
+                        <a class="collapse-item" href="register_accounts/addradiation.php">Radiation</a>
+                        <a class="collapse-item" href="register_accounts/addcashier.php">Cashier</a>
+                        <a class="collapse-item" href="register_accounts/addpharmacist.php">Pharmacist</a>
 
                     </div>
                 </div>
@@ -88,12 +88,12 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Control Accounts:</h6>
-                        <a class="collapse-item" href="receptioncontrol.html">Reception</a>
-                        <a class="collapse-item" href="doctorcontrol.html">Doctor</a>
-                        <a class="collapse-item" href="labcontrol.html">Lab</a>
-                        <a class="collapse-item" href="radiationcontrol.html">Radiation</a>
-                        <a class="collapse-item" href="cashiercontrol.html">Cashier</a>
-                        <a class="collapse-item" href="pharmacistcontrol.html">Pharmacist</a>
+                        <a class="collapse-item" href="receptioncontrol.php">Reception</a>
+                        <a class="collapse-item" href="doctorcontrol.php">Doctor</a>
+                        <a class="collapse-item" href="labcontrol.php">Lab</a>
+                        <a class="collapse-item" href="radiationcontrol.php">Radiation</a>
+                        <a class="collapse-item" href="cashiercontrol.php">Cashier</a>
+                        <a class="collapse-item" href="pharmacistcontrol.php">Pharmacist</a>
                     </div>
                 </div>
             </li>
@@ -140,7 +140,6 @@
                     <i class="fas fa-file-invoice-dollar fa-fw"></i>
                     <span>Payroll</span></a>
             </li>
-
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -373,64 +372,81 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">All Lab Accounts</h1>
+                    <h1 class="h3 mb-2 text-gray-800">All Pharmacist Accounts</h1>
                     
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Lab Accounts</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Pharmacist Accounts</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
-                                        <tr>
-                                            <th> Full Name</th>
-                                            <th>Email</th>
-                                            <th>Password</th>
-                                            <th>Status</th>
-                                            
-                                        </tr>
-                                    </thead>
+                                    <?php
+// Connect to the database
+require('../database/config.php');
+
+// Check if the form was submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
+    // Extract the ID of the record to be deleted
+    $id = mysqli_real_escape_string($conn, $_POST['delete_id']);
+
+    // Query to delete the record from the database
+    $delete_sql = "DELETE FROM pharmacy_users WHERE id = $id";
+
+    // Attempt to execute the delete query
+    if (mysqli_query($conn, $delete_sql)) {
+        echo "Record deleted successfully.";
+    } else {
+        echo "Error deleting record: " . mysqli_error($conn);
+    }
+}
+
+// Query to fetch all data from the cashier_users table
+$sql = "SELECT * FROM pharmacy_users";
+$result = mysqli_query($conn, $sql);
+
+// Check if any records were found
+if (mysqli_num_rows($result) > 0) {
+    // Display table headers
+    echo "<tr>";
+    echo "<th>First Name</th>";
+    echo "<th>Last Name</th>";
+    echo "<th>Email</th>";
+    echo "<th>Time Created</th>";
+    echo "<th>Actions</th>";
+    echo "</tr>";
+    echo "</thead>";
                                     
-                                    <tbody>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>nixon@afyabora.org.ke</td>
-                                            <td>Edinburgh</td>
-                                            <td>Active</td>
-                                            <td>
-                                                <button class="btn btn-primary" type="button">Login</button>
-                                                <button class="btn btn-secondary" type="button">Edit</button> 
-                                                <button class="btn btn-danger" type="button">Delete</button>
-                                            
-                                            </td>
-                                            
-                                        </tr>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>nixon@afyabora.org.ke</td>
-                                            <td>Edinburgh</td>
-                                            <td>Active</td>
-                                            <td>
-                                                <button class="btn btn-primary" type="button">Login</button>
-                                                <button class="btn btn-secondary" type="button">Edit</button> 
-                                                <button class="btn btn-danger" type="button">Delete</button>
-                                            
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>nixon@afyabora.org.ke</td>
-                                            <td>Edinburgh</td>
-                                            <td>Active</td>
-                                            <td>
-                                                <button class="btn btn-primary" type="button">Login</button>
-                                                <button class="btn btn-secondary" type="button">Edit</button> 
-                                                <button class="btn btn-danger" type="button">Delete</button>
-                                            
-                                            </td>
-                                        </tr>
+    echo "<tbody>";
+    // Iterate over the result set and display the data
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr>";
+        echo "<td>" . $row['first_name'] . "</td>";
+        echo "<td>" . $row['last_name'] . "</td>";
+        echo "<td>" . $row['email'] . "</td>";
+        echo "<td>" . $row['created_at'] . "</td>";
+        echo '<td>
+                <form method="post" onsubmit="return confirm(\'Are you sure you want to delete this record?\')">
+                    <input type="hidden" name="delete_id" value="' . $row['id'] . '">
+                    <button class="btn btn-primary" type="button" onclick="location.href=\'../pharmacist/index.php\'">Login</button> 
+                    <button class="btn btn-danger" type="submit" name="delete">Delete</button>
+                </form>
+              </td>';
+        echo "</tr>";
+    }
+
+    echo "</tbody>"; // Close the table body
+    echo "</table>"; // Close the table
+} else {
+    echo "No records found.";
+}
+
+// Close the connection
+mysqli_close($conn);
+?>
+
                                     </tbody>
                                 </table>
                             </div>
