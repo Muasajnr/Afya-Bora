@@ -326,6 +326,8 @@ require('../database/config.php');
 
 // Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
+    $id = intval($_POST['save']); // Get the visitor ID from the submitted form
+    $counselling_report = $_POST['counselling_report'][$id]; // Get the counselling report for the specific visitor ID
     // Loop through each submitted counselling report
     foreach ($_POST['counselling_report'] as $id => $counselling_report) {
         // Sanitize the input
@@ -377,7 +379,7 @@ $result_counsellor = mysqli_query($conn, $sql_counsellor);
 // Check if any records were found
 if (mysqli_num_rows($result_counsellor) > 0) {
     // Display form and table headers for doctor and imaging
-    echo "<form method='post' action='attendpatients.php'>"; // Open the form
+
     echo "<tr>";
     echo "<th>ID</th>";
     echo "<th>Full Name</th>";
@@ -399,6 +401,7 @@ if (mysqli_num_rows($result_counsellor) > 0) {
     while ($row = mysqli_fetch_assoc($result_counsellor)) {
         // Display a row for each record
         echo "<tr>";
+        echo "<form method='post' action=''>"; // Open the form
         echo "<td>" . $row['id'] . "</td>";
         echo "<td>" . $row['fullname'] . "</td>";
         echo "<td>" . $row['contact'] . "</td>";
@@ -443,9 +446,10 @@ if (mysqli_num_rows($result_counsellor) > 0) {
             });
         </script>
        </td>";
-         echo "<td>
-          <button class='btn-success' type='submit' name='save'>Save</button>
-         </td>";
+       echo '<td>
+            <button class="btn btn-primary" type="submit" name="save" value="' . $row['id'] . '">Save</button>
+            </td>';
+ 
 
         echo "</tr>";
     }
