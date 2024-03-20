@@ -66,12 +66,12 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Create Accounts:</h6>
-                        <a class="collapse-item" href="register_accounts/addreception.html">Reception</a>
-                        <a class="collapse-item" href="register_accounts/adddoctor.html">Doctor</a>
-                        <a class="collapse-item" href="register_accounts/addlab.html">Lab</a>
-                        <a class="collapse-item" href="register_accounts/addradiation.html">Radiation</a>
-                        <a class="collapse-item" href="register_accounts/addcashier.html">Cashier</a>
-                        <a class="collapse-item" href="register_accounts/addpharmacist.html">Pharmacist</a>
+                        <a class="collapse-item" href="register_accounts/addreception.php">Reception</a>
+                        <a class="collapse-item" href="register_accounts/adddoctor.php">Doctor</a>
+                        <a class="collapse-item" href="register_accounts/addlab.php">Lab</a>
+                        <a class="collapse-item" href="register_accounts/addradiation.php">Radiation</a>
+                        <a class="collapse-item" href="register_accounts/addcashier.php">Cashier</a>
+                        <a class="collapse-item" href="register_accounts/addpharmacist.php">Pharmacist</a>
 
                     </div>
                 </div>
