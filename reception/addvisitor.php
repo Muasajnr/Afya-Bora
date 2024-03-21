@@ -456,11 +456,13 @@ if (mysqli_connect_errno()) {
         </div>
 
         <!-- Time In and Time Out -->
-        <div class="form-group" id="timeInField" style="display: none;">
+        <div class="form-group" id="timeInField" >
             <label for="timeIn">Time In</label>
             <input type="time" class="form-control" name="timeIn" id="timeIn">
         </div>
-        <div class="form-group" id="timeOutField" style="display: none;">
+        
+
+        <div class="form-group" id="timeOutField">
             <label for="timeOut">Time Out</label>
             <input type="time" class="form-control" name="timeOut" id="timeOut">
         </div>
