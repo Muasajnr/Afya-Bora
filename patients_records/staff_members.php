@@ -1,59 +1,3 @@
-<?php
-// Include your database connection details (assuming config.php is in the database folder)
-require('../database/config.php');
-
-// Check if form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-  // Collect form data
-  $fullName = $_POST['fullName'];
-  $position = $_POST['position'];
-  $contact = $_POST['contact'];
-  $idNumber = $_POST['idNumber'];
-  $attendPurpose = $_POST['attendPurpose'];
-  $paymentMethod = $_POST['paymentMethod'];
-  $age = $_POST['age'];
-  $role = $_POST['role'];
-  $visitPurpose = $_POST['visitPurpose'];
-  $patientVisitedName = $_POST['patientVisitedName'];
-  $relationship = $_POST['relationship'];
-  $currentDate = date('Y-m-d');
-  $timeIn = date('Y-m-d H:i:s', strtotime($currentDate . ' ' . $_POST['timeIn']));
-$timeOut = date('Y-m-d H:i:s', strtotime($currentDate . ' ' . $_POST['timeOut']));
-
-            
-
-  // Prepare SQL statement (prevents SQL injection)
-  $sql = "INSERT INTO visitors (fullname, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-$stmt = mysqli_prepare($conn, $sql);
-
-// Bind parameters to the prepared statement
-mysqli_stmt_bind_param($stmt, "sssssssssssss", $fullName, $position, $contact, $idNumber, $attendPurpose, $paymentMethod, $age, $role, $visitPurpose, $patientVisitedName, $relationship, $timeIn, $timeOut);
-
-  // Execute the statement
-  if (mysqli_stmt_execute($stmt)) {
-    echo "Visitor information added successfully!";
-  } else {
-    echo "Error: " . mysqli_error($conn);
-  }
-
-  // Close statement and connection
-  mysqli_stmt_close($stmt);
-  mysqli_close($conn);
-}
-
-// Check connection established earlier (optional, assuming connection details are correct)
-if (mysqli_connect_errno()) {
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-}
-?>
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -65,7 +9,7 @@ if (mysqli_connect_errno()) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Reception</title>
+    <title>AFYA BORA || Staff Members</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -75,7 +19,6 @@ if (mysqli_connect_errno()) {
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 </head>
 
@@ -100,7 +43,7 @@ if (mysqli_connect_errno()) {
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.php">
+                <a class="nav-link" href="index.html">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -108,27 +51,94 @@ if (mysqli_connect_errno()) {
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Staff
+            </div>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>New Staff Accounts</span>
+                </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Create Accounts:</h6>
+                        <a class="collapse-item" href="register_accounts/addreception.html">Reception</a>
+                        <a class="collapse-item" href="register_accounts/adddoctor.html">Doctor</a>
+                        <a class="collapse-item" href="register_accounts/addlab.html">Lab</a>
+                        <a class="collapse-item" href="register_accounts/addradiation.html">Radiation</a>
+                        <a class="collapse-item" href="register_accounts/addcashier.html">Cashier</a>
+                        <a class="collapse-item" href="register_accounts/addpharmacist.html">Pharmacist</a>
+
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Utilities Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                    aria-expanded="true" aria-controls="collapseUtilities">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Staff Accounts</span>
+                </a>
+                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Control Accounts:</h6>
+                        <a class="collapse-item" href="control_account/receptioncontrol.html">Reception</a>
+                        <a class="collapse-item" href="control_account/doctorcontrol.html">Doctor</a>
+                        <a class="collapse-item" href="control_account/labcontrol.html">Lab</a>
+                        <a class="collapse-item" href="control_account/radiationcontrol.html">Radiation</a>
+                        <a class="collapse-item" href="control_account/cashiercontrol.html">Cashier</a>
+                        <a class="collapse-item" href="control_account/pharmacistcontrol.html">Pharmacist</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Reception
+                Patients
             </div>
 
-            
-
-            <!-- Nav Item -  -->
+            <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link" href="addvisitor.php">
-                    <i class="fas fa-edit fa-fw"></i>
-                    <span>Add Visitor</span></a>
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                    aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Patients' Report</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Patients:</h6>
+                        <a class="collapse-item" href="allpatients.php">All </a>
+                        <a class="collapse-item" href="inpatient.php">In-Patients</a>
+                        <a class="collapse-item" href="outpatient.php">Out-Patients</a>
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Visitors:</h6>
+                        <a class="collapse-item" href="caregiver.php">Caregiver</a>
+                        <a class="collapse-item" href="non_patient.php">Non-Patient</a>
+                    </div>
+                </div>
             </li>
 
-            <!-- Nav Item -  -->
+            <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="allpatientsvisitors.php">
-                    <i class="fas fa-edit fa-fw"></i>
-                    <span>Manage Visitor</span></a>
+                <a class="nav-link" href="staff_members.php">
+                    <i class="fas fa-users fa-fw"></i>
+                    <span>Staff Members</span></a>
+            </li>
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="payroll.php">
+                    <i class="fas fa-file-invoice-dollar fa-fw"></i>
+                    <span>Payroll</span></a>
             </li>
 
             <!-- Divider -->
@@ -271,7 +281,7 @@ if (mysqli_connect_errno()) {
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="../img/undraw_profile_1.svg"
                                             alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -283,7 +293,7 @@ if (mysqli_connect_errno()) {
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
+                                        <img class="rounded-circle" src="../img/undraw_profile_2.svg"
                                             alt="...">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -295,7 +305,7 @@ if (mysqli_connect_errno()) {
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
+                                        <img class="rounded-circle" src="../img/undraw_profile_3.svg"
                                             alt="...">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -328,7 +338,8 @@ if (mysqli_connect_errno()) {
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                                <img class="img-profile rounded-circle" src="../img/undraw_profile.svg">
+                                <img class="img-profile rounded-circle"
+                                    src="../img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -359,127 +370,191 @@ if (mysqli_connect_errno()) {
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+        
+                    <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Add Vistor</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
+                        <!-- Page Heading -->
+                        <h1 class="h3 mb-2 text-gray-800">Staff Members</h1>
+                        
+                        <!-- DataTales Example -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">All Staff Members</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                        <?php
+// Connect to the database
+require('../database/config.php');
 
-                    <!-- Content Row -->
-                    <div class="row">
+// Check if the form was submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['delete'])) {
+        // Extract the ID of the record to be deleted
+        $id = mysqli_real_escape_string($conn, $_POST['delete_id']);
 
-                        <!-- New Patient/Visitor Form -->
-                        <div class="col-xl-12 mb-4">
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Add New Patient/Visitor</h6>
-                                </div>
-                                <div class="card-body">
-                                    <!-- Your form content goes here -->
-                                    <form method="post" action="addvisitor.php">
-        <!-- Full Name -->
-        <div class="form-group">
-            <label for="fullName">Full Name</label>
-            <input type="text" class="form-control" name="fullName" id="fullName" placeholder="Enter Full Name">
-        </div>
+        // Array of tables from which data should be deleted
+        $tables = array("pharmacy_users", "lab_users", "doctor_users", "cashier_users", "reception_users", "radiation_users");
 
-        <!-- Position (Patient, Non-Patient, Caregiver) -->
-        <div class="form-group">
-            <label for="position">Position</label>
-            <select class="form-control" id="position" name="position" onchange="showFieldsBasedOnPosition()">
-                <option value="patient" selected>Patient</option>
-                <option value="nonPatient">Non-Patient(Others)</option>
-                <option value="caregiver">Caregiver</option>
-            </select>
-        </div>
+        // Loop through tables and delete records
+        foreach ($tables as $table) {
+            // Query to delete the record from the current table
+            $delete_sql = "DELETE FROM $table WHERE id = $id";
 
-        <!-- Contact -->
-        <div class="form-group" id="contactField">
-            <label for="contact">Contact</label>
-            <input type="tel" class="form-control" name="contact" id="contact" placeholder="Enter Contact Number">
-        </div>
+            // Attempt to execute the delete query
+            if (mysqli_query($conn, $delete_sql)) {
+                echo "Record deleted successfully from $table.<br>";
+            } else {
+                echo "Error deleting record from $table: " . mysqli_error($conn) . "<br>";
+            }
+        }
+    } elseif (isset($_POST['save'])) {
+        // Extract the ID and salary from the form
+        $id = isset($_POST['save_id']) ? mysqli_real_escape_string($conn, $_POST['save_id']) : null;
+        $salary = isset($_POST['salary']) ? mysqli_real_escape_string($conn, $_POST['salary']) : null;
 
-        <!-- ID Number -->
-        <div class="form-group" id="idNumberField">
-            <label for="idNumber">ID Number</label>
-            <input type="text" class="form-control" name="idNumber" id="idNumber" placeholder="Enter ID Number">
-        </div>
+        // Ensure both ID and salary are set before proceeding
+        if ($id !== null && $salary !== null) {
+            // Query to check if the record exists in the staff table
+            $check_sql = "SELECT * FROM staff WHERE id = $id";
+            $check_result = mysqli_query($conn, $check_sql);
 
-        <!-- Attend Purpose (for patients) -->
-        <div class="form-group" id="attendPurposeField">
-            <label for="attendPurpose">Attend Purpose</label>
-            <select class="form-control" name="attendPurpose" id="attendPurpose">
-                <option value="doctor">Doctor</option>
-                <option value="imaging">Imaging</option>
-                <option value="lab">Lab</option>
-                <option value="pharmacist">Pharmacist</option>
-                <option value="counseling">Counseling</option>
-            </select>
-        </div>
+            // If the record exists, update the salary
+            if (mysqli_num_rows($check_result) > 0) {
+                $update_sql = "UPDATE staff SET salary = $salary WHERE id = $id";
+                if (mysqli_query($conn, $update_sql)) {
+                    echo "Salary updated successfully.<br>";
+                } else {
+                    echo "Error updating salary: " . mysqli_error($conn) . "<br>";
+                }
+            } else { // If the record doesn't exist, insert a new row
+                $source_table = isset($_POST['source_table']) ? mysqli_real_escape_string($conn, $_POST['source_table']) : null;
+                $first_name = isset($_POST['first_name']) ? mysqli_real_escape_string($conn, $_POST['first_name']) : null;
+                $last_name = isset($_POST['last_name']) ? mysqli_real_escape_string($conn, $_POST['last_name']) : null;
+                $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : null;
+                $time_created = date('Y-m-d H:i:s');
 
-        <!-- Payment Method -->
-        <div class="form-group" id="paymentMethodField">
-            <label for="paymentMethod">Payment Method</label>
-            <input type="text" class="form-control" name="paymentMethod" id="paymentMethod" placeholder="Enter Payment Method">
-        </div>
+                if ($source_table !== null && $first_name !== null && $last_name !== null && $email !== null) {
+                    $insert_sql = "INSERT INTO staff (id, source, first_name, last_name, email, created_at, salary) VALUES ('$id', '$source_table', '$first_name', '$last_name', '$email', '$time_created', '$salary')";
+                    if (mysqli_query($conn, $insert_sql)) {
+                        echo "Salary saved successfully.<br>";
+                    } else {
+                        echo "Error saving salary: " . mysqli_error($conn) . "<br>";
+                    }
+                } else {
+                    echo "Error: Required fields are missing.<br>";
+                }
+            }
+        } else {
+            echo "Error: ID or salary is missing.<br>";
+        }
+    }
+}
 
-        <!-- Age -->
-        <div class="form-group" id="ageField">
-            <label for="age">Age</label>
-            <input type="number" class="form-control" name="age" id="age" placeholder="Enter Age">
-        </div>
+// Array to hold all fetched records
+$all_records = array();
 
-        <!-- Role (for non-patients) -->
-        <div class="form-group" id="roleField" style="display: none;">
-            <label for="role">Role/Title</label>
-            <input type="text" class="form-control" name="role" id="role" placeholder="Enter Role">
-        </div>
+// Array of tables from which data should be fetched
+$tables = array("pharmacy_users", "lab_users", "doctor_users", "cashier_users", "reception_users", "radiation_users");
 
-        <!-- Visit Purpose (for non-patients) -->
-        <div class="form-group" id="visitPurposeField" style="display: none;">
-            <label for="visitPurpose">Visit Purpose</label>
-            <input type="text" class="form-control" name="visitPurpose" id="visitPurpose" placeholder="Enter Visit Purpose">
-        </div>
+// Loop through tables and fetch data
+foreach ($tables as $table) {
+    // Query to fetch all data from the current table
+    $sql = "SELECT *, '$table' as source FROM $table";
+    $result = mysqli_query($conn, $sql);
 
-        <!-- Patient Visited Name and Relationship (for caregivers) -->
-        <div class="form-group" id="patientVisitedField" style="display: none;">
-            <label for="patientVisitedName">Patient Visited Name</label>
-            <input type="text" class="form-control" name="patientVisitedName" id="patientVisitedName"
-                placeholder="Enter Patient Visited Name">
-        </div>
-        <div class="form-group" id="relationshipField" style="display: none;">
-            <label for="relationship">Relationship</label>
-            <input type="text" class="form-control" name="relationship" id="relationship" placeholder="Enter Relationship">
-        </div>
+    // Check if any records were found
+    if (mysqli_num_rows($result) > 0) {
+        // Iterate over the result set and add records to the array
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Add the record along with the source table to the array
+            $all_records[] = $row;
+        }
+    }
+}
 
-        <!-- Time In and Time Out -->
-        <div class="form-group" id="timeInField" style="display: none;">
-            <label for="timeIn">Time In</label>
-            <input type="time" class="form-control" name="timeIn" id="timeIn">
-        </div>
-        <div class="form-group" id="timeOutField" style="display: none;">
-            <label for="timeOut">Time Out</label>
-            <input type="time" class="form-control" name="timeOut" id="timeOut">
-        </div>
+// Check if any records were fetched
+if (!empty($all_records)) {
+    // Display table headers
+    echo "<tr>";
+    echo "<th>Source Table</th>";
+    echo "<th>First Name</th>";
+    echo "<th>Last Name</th>";
+    echo "<th>Email</th>";
+    echo "<th>Time Created</th>";
+    echo "<th>Salary</th>";
+    echo "<th>Actions</th>";
+    echo "</tr>";
+    echo "</thead>";
+    echo "<tbody>";
 
-        <!-- Submit button -->
-        <button type="submit" class="btn btn-primary">Add Patient/Visitor</button>
-                                    </form>
+    // Iterate over all records and display them
+    foreach ($all_records as $record) {
+        echo "<tr>";
+        echo "<td>" . $record['source'] . "</td>";
+        echo "<td>" . $record['first_name'] . "</td>";
+        echo "<td>" . $record['last_name'] . "</td>";
+        echo "<td>" . $record['email'] . "</td>";
+        echo "<td>" . $record['created_at'] . "</td>";
+        echo "<td>";
+// Display salary input
+if (in_array($record['source'], $tables)) {
+    echo '<form method="post">
+            <input type="hidden" name="save_id" value="' . $record['id'] . '">
+            <input type="hidden" name="source_table" value="' . $record['source'] . '">
+            <input type="hidden" name="first_name" value="' . $record['first_name'] . '">
+            <input type="hidden" name="last_name" value="' . $record['last_name'] . '">
+            <input type="hidden" name="email" value="' . $record['email'] . '">
+            <input type="number" name="salary" value="' . getSalary($conn, $record['id']) . '">
+        </td>
+        <td>
+            <button class="btn btn-success" type="submit" name="save">Save</button><br><br>
+        </form>';
+} else {
+    echo getSalary($conn, $record['id']);
+}
+// Display delete button
+echo '<form method="post" onsubmit="return confirm(\'Are you sure you want to delete this record from all tables?\')">
+        <input type="hidden" name="delete_id" value="' . $record['id'] . '">
+        <button class="btn btn-danger" type="submit" name="delete">Delete</button>
+      </form>';
+echo "</td>";
+
+        echo "</tr>";
+    }
+
+    echo "</tbody>"; // Close the table body
+    echo "</table>"; // Close the table
+} else {
+    echo "No records found.";
+}
+
+// Function to get salary for a given ID
+function getSalary($conn, $id) {
+    $sql = "SELECT salary FROM staff WHERE id = $id";
+    $result = mysqli_query($conn, $sql);
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        return $row['salary'];
+    } else {
+        return "";
+    }
+}
+
+// Close the connection
+mysqli_close($conn);
+?>
+
+
+                                            
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                    
-                        
-                    
-                    </div>
-                    
-
-                    <!-- Content Row -->
-
-                   
+    
                    
 
                 </div>
@@ -492,7 +567,7 @@ if (mysqli_connect_errno()) {
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; 2024 AFYA BORA</span>
+                        <span>Copyright &copy; Afya Bora 2024</span>
                     </div>
                 </div>
             </footer>
@@ -528,62 +603,6 @@ if (mysqli_connect_errno()) {
             </div>
         </div>
     </div>
-    <script>
-        function showFieldsBasedOnPosition() {
-            // Reset all fields
-            resetFields();
-
-            // Get the selected position
-            var position = document.getElementById('position').value;
-
-            // Show fields based on the selected position
-            if (position === 'patient') {
-                showField('idNumberField');
-                showField('attendPurposeField');
-                showField('paymentMethodField');
-                showField('ageField');
-            } else if (position === 'caregiver') {
-                showField('idNumberField');
-                showField('ageField');
-                showField('patientVisitedField');
-                showField('relationshipField');
-                showField('timeInField');
-                showField('timeOutField');
-            } else if (position === 'nonPatient') {
-                showField('idNumberField');
-                showField('ageField');
-                showField('roleField');
-                showField('visitPurposeField');
-                showField('timeInField');
-                showField('timeOutField');
-            }
-        }
-
-        function showField(fieldId) {
-            document.getElementById(fieldId).style.display = 'block';
-        }
-
-        function resetFields() {
-            // Define all field IDs
-            var fieldIds = [
-                'idNumberField',
-                'attendPurposeField',
-                'paymentMethodField',
-                'ageField',
-                'roleField',
-                'visitPurposeField',
-                'patientVisitedField',
-                'relationshipField',
-                'timeInField',
-                'timeOutField'
-            ];
-
-            // Hide all fields
-            for (var i = 0; i < fieldIds.length; i++) {
-                document.getElementById(fieldIds[i]).style.display = 'none';
-            }
-        }
-    </script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
@@ -596,14 +615,11 @@ if (mysqli_connect_errno()) {
     <script src="../js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="../vendor/chart.js/Chart.min.js"></script>
+    <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="../js/demo/chart-area-demo.js"></script>
-    <script src="../js/demo/chart-pie-demo.js"></script>
-
-
-
+    <script src="../js/demo/datatables-demo.js"></script>
 
 </body>
 
