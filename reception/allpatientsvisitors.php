@@ -11,6 +11,7 @@
     <meta name="author" content="">
 
     <title>AFYA BORA || Reception</title>
+    
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -20,7 +21,7 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 
 </head>
@@ -344,7 +345,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Prepare and execute SQL statement to update timeOut for the specified ID
         $updateSql = "UPDATE visitors SET timeOut = '$formattedTimeOut' WHERE id = $id";
         if (mysqli_query($conn, $updateSql)) {
-            echo "Time Out updated successfully";
+           // echo "Time Out updated successfully";
         } else {
             echo "Error updating time Out: " . mysqli_error($conn);
         }
@@ -352,26 +353,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "ID and Time Out are required";
     }
 }
-
-                                            echo '<tr style="background-color:whitesmoke;border:2px;">
-                                            <th></th> 
-                                            <th>Full Name</th>
-                                            <th>Position</th>
-                                            <th>Contact</th>
-                                            <th>ID Number</th>
-                                            <th>Attend Purpose</th>
-                                            <th>Payment Method</th>
-                                            <th>Age</th>
-                                            <th>Role</th>
-                                            <th>Visit Purpose</th>
-                                            <th>Patient Visited Name</th>
-                                            <th>Relationship</th>
-                                            <th>TimeIn</th>
-                                            <th>TimeOut</th>
-                                            </tr>';
-                                       echo "</thead>";
-                                        
-                                       
+                                     
 // Fetch visitor data from the database
 $sql = "SELECT * FROM visitors";
 $result = mysqli_query($conn, $sql);
@@ -379,12 +361,30 @@ $result = mysqli_query($conn, $sql);
 // Check if any results found
 if ($result) {
     if (mysqli_num_rows($result) > 0) {
+        echo '<tr style="background-color:whitesmoke;border:2px;">
+        <th></th> 
+        <th>Full Name</th>
+        <th>Position</th>
+        <th>Contact</th>
+        <th>ID Number</th>
+        <th>Attend Purpose</th>
+        <th>Payment Method</th>
+        <th>Age</th>
+        <th>Role</th>
+        <th>Visit Purpose</th>
+        <th>Patient Visited Name</th>
+        <th>Relationship</th>
+        <th>TimeIn</th>
+        <th>TimeOut</th>
+        </tr>';
+   echo "</thead>";
+   echo "<tbody>";
         // Loop through results and display data in table rows
+        $count=1;
         while ($row = mysqli_fetch_assoc($result)) {
-            echo "<tbody>";
-            echo "<form method='post' action=''>";
             echo "<tr>";
-            echo "<td>" . $row['id'] . "</td>";
+            echo "<form method='post' action=''>";
+            echo "<td>" . $count . "</td>";
             echo "<td>" . $row['fullname'] . "</td>";
             echo "<td>" . $row['position'] . "</td>";
             echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
@@ -400,17 +400,19 @@ if ($result) {
             echo "<td> <input type='time' name='editTimeOut' value='" . $row['timeOut'] . "' required> " . $row['timeOut'] . "</td>"; 
 
             echo "<td><input type='hidden' name='id' value='" . $row['id'] . "'><button class='btn-primary'type='submit'>Save</button></td>";
-            echo "</tr>";
             echo "</form>";
+            echo "</tr>";
+            $count++;
         }
+        echo"</tbody>";
+        echo"</table>";
     } else {
         echo "<tr><td colspan='14'>No visitors found!</td></tr>";
     }
 } else {
     die("Error: " . mysqli_error($conn));
 }
-echo"</tbody>";
-echo"</table>";
+
 
 // Close connection
 mysqli_close($conn);
