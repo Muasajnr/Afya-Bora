@@ -321,78 +321,147 @@
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th>Status</th>
-                                                <th>Full Names</th>
-                                                <th>Contact</th>
-                                                <th>ID Number</th>
-                                                <th>Payment Method</th>
-                                                <th>Age</th>
-                                                <th>Time In</th>
-                                                <th>Time Out</th>
-                                                <th>Attend Purpose</th>
-                                                <th>Consultation Report</th>
-                                                <th>Lab</th>
-                                                <th>Scan/xray</th>
-                                                <th>Counseller</th>
-                                            </tr>
-                                        </thead>
+                                        
 <?php
 // Include database connection details
 require('../database/config.php');
 
-// Function to handle visitor data
-function handleVisitorData($conn)
-{
-    // Fetch visitor data
-    $sql = "SELECT * FROM visitors WHERE attendPurpose = 'doctor'";
+// Check connection
+if (!$conn) {
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
+}
+
+if (isset($_POST['save'])) {
+    $id = $_POST['save'];
+
+    // Escape the values to prevent SQL injection (using prepared statement)
+    $imaging = isset($_POST['imaging']) ? 1 : 0;
+    $lab = isset($_POST['lab']) ? 1 : 0;
+    $doctor = isset($_POST['doctor']) ? 1 : 0;
+    $counseller = isset($_POST['counseller']) ? 1 : 0;
+    $admit = isset($_POST['admit']) ? 1 : 0;
+    $details = isset($_POST['details']) ? $_POST['details'] : ''; // Ensure details are properly retrieved
+
+    // Check if a record already exists in the doctor table for the current visitor
+    $checkSql = "SELECT * FROM doctor WHERE visitor_id = ?";
+    $checkStmt = mysqli_prepare($conn, $checkSql);
+    mysqli_stmt_bind_param($checkStmt, 'i', $id);
+    mysqli_stmt_execute($checkStmt);
+    $checkResult = mysqli_stmt_get_result($checkStmt);
+
+    if (mysqli_num_rows($checkResult) > 0) {
+        // Update the existing record
+        $updateSql = "UPDATE doctor SET imaging = ?, lab = ?, counseller = ?, admit = ?, details = ? WHERE visitor_id = ?";
+        $updateStmt = mysqli_prepare($conn, $updateSql);
+        mysqli_stmt_bind_param($updateStmt, 'iiiisi', $imaging, $lab, $counseller, $admit, $details, $id);
+        mysqli_stmt_execute($updateStmt);
+    } else {
+        // Insert a new record
+        $insertSql = "INSERT INTO doctor (visitor_id, imaging, lab, counseller, admit, details) VALUES (?, ?, ?, ?, ?, ?)";
+        $insertStmt = mysqli_prepare($conn, $insertSql);
+        mysqli_stmt_bind_param($insertStmt, 'iiiiis', $id, $imaging, $lab, $counseller, $admit, $details);
+        mysqli_stmt_execute($insertStmt);
+    }
+}
+
+
+if (isset($_POST['done'])) {
+    $id = $_POST['done'];
+
+    // Update the status in the database
+    $updateStatusSql = "UPDATE doctor SET status = 'done' WHERE id = ?";
+    $updateStatusStmt = mysqli_prepare($conn, $updateStatusSql);
+    mysqli_stmt_bind_param($updateStatusStmt, 'i', $id);
+    mysqli_stmt_execute($updateStatusStmt);
+}
+
+// Query the database for the records with imaging
+    $sql = "SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut, d.details, d.imaging, d.lab, d.counseller, d.admit 
+        FROM visitors v
+        LEFT JOIN doctor d ON v.id = d.visitor_id
+        WHERE v.attendPurpose = 'doctor'";
     $result = mysqli_query($conn, $sql);
 
-    if ($result) {
-        if (mysqli_num_rows($result) > 0) {
-            echo "<tbody>";
-            echo '<form method="post" action="attendpatients.php">';
-            while ($row = mysqli_fetch_assoc($result)) {
-                $cellId = 'statusCell_' . $row['id'];
-                $cellStatus = isset($_SESSION[$cellId]) ? $_SESSION[$cellId] : 'red';
+    // Check if any records were found
+    if (mysqli_num_rows($result) > 0) {
+        echo "<form method='post'>";
+        echo "<tr>";
+        echo "<th>Status</th>";
+        echo "<th>Full Names</th>";
+        echo "<th>Contact</th>";
+        echo "<th>ID Number</th>";
+        echo "<th>Payment Method</th>";
+        echo "<th>Age</th>";
+        echo "<th>Time In</th>";
+        echo "<th>Time Out</th>";
+        echo "<th>Consultation Report</th>";
+        echo "<th>Scan/xray</th>";
+        echo "<th>Lab</th>";
+        echo "<th>Counseller</th>";
+        echo "<th>Admit</th>";
+        echo "</tr>";
 
-                // Check if record exists
-                $checkSql = "SELECT * FROM doctor WHERE idNumber = '{$row['idNumber']}'";
-                $checkResult = mysqli_query($conn, $checkSql);
-                $recordExists = mysqli_num_rows($checkResult) > 0;
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Fetch existing data from the doctor table
+            $imagingChecked = isset($doctorRow['imaging']) ? ($doctorRow['imaging'] ? 'checked' : '') : '';
+            $labChecked = isset($doctorRow['lab']) ? ($doctorRow['lab'] ? 'checked' : '') : '';
+        
+            $counsellerChecked = isset($doctorRow['counseller']) ? ($doctorRow['counseller'] ? 'checked' : '') : '';
+            $admitChecked = isset($doctorRow['admit']) ? ($doctorRow['admit'] ? 'checked' : '') : '';
 
-                // Initialize variables for current data
+
+            if ($row['details']) {
+                $details = $row['details'];
+            } else {
                 $details = '';
-                $labChecked = '';
-                $imagingChecked = '';
-                $counsellerChecked = '';
+            }
 
-                // Fetch current data if the record exists
-                if ($recordExists) {
-                    $fetchRow = mysqli_fetch_assoc($checkResult);
+            if ($row['imaging']) {
+                $imagingChecked = 'checked';
+            }
+            if ($row['lab']) {
+                $labChecked = 'checked';
+            }
+            
+            if ($row['counseller']) {
+                $counsellerChecked = 'checked';
+            }
+            if ($row['admit']) {
+                $admitChecked = 'checked';
+            }
 
-                    // Set current data to variables
-                    $details = $fetchRow['details'];
-                    $labChecked = $fetchRow['lab'] == 1 ? 'checked' : '';
-                    $imagingChecked = $fetchRow['imaging'] == 1 ? 'checked' : '';
-                    $counsellerChecked = $fetchRow['counseller'] == 1 ? 'checked' : '';
-                }
+            //*****color status
+            if (isset($_POST['update_status']) && isset($_POST['status_input_' . $_POST['update_status']])) {
+                $updateId = $_POST['update_status'];
+                $newStatus = $_POST['status_input_' . $updateId];
 
-                // Display the table row with current data
-                echo "<tr>";
-                echo "<td id='statusCell' style='background-color: $cellStatus;'>";
-                echo '<i class="fas fa-check-circle text-success"></i>';
-                echo "</td>";
-                echo "<td>" . $row['fullname'] . "</td>";
-                echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
-                echo "<td>" . $row['idNumber'] . "</td>";
-                echo "<td>" . $row['paymentMethod'] . "</td>";
-                echo "<td>" . $row['age'] . "</td>";
-                echo "<td>" . $row['timeIn'] . "</td>";
-                echo "<td>" . $row['timeOut'] . "</td>";
-                echo "<td>" . $row['attendPurpose'] . "</td>";
-                echo "<td>
+                // Update the status in the doctor table
+                $updateStatusSql = "UPDATE doctor SET status= ? WHERE visitor_id = ?";
+                $updateStatusStmt = mysqli_prepare($conn, $updateStatusSql);
+                mysqli_stmt_bind_param($updateStatusStmt, 'si', $newStatus, $updateId);
+                mysqli_stmt_execute($updateStatusStmt);
+            }
+            //*******status color
+            // Escape the values to prevent SQL injection
+            $cellId = 'statusCell_' . $row['id'];
+            $cellStatus = isset($_SESSION[$cellId]) ? $_SESSION[$cellId] : 'red';
+            echo "<tr>";
+            echo '<td id="statusCell_' . $row['id'] . '" style="background-color: ' . $cellStatus . ';">';
+            echo '<form method="post" id="updateStatusForm_' . $row['id'] . '" style="display: none;">
+            <input type="hidden" name="update_status" value="' . $row['id'] . '" id="statusInput_' . $row['id'] . '">
+        </form>';
+            echo '<i class="fas fa-check-circle text-success"></i>';
+            echo "</td>";
+            echo "<td>" . $row['fullname'] . "</td>";
+            echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
+            echo "<td>" . $row['idNumber'] . "</td>";
+            echo "<td>" . $row['paymentMethod'] . "</td>";
+            echo "<td>" . $row['age'] . "</td>";
+            echo "<td>" . $row['timeIn'] . "</td>";
+            echo "<td>" . $row['timeOut'] . "</td>";
+            echo "<form method='post'>";
+            echo "<input type='hidden' name='save' value='" . $row['id'] . "'>";
+            echo "<td>
                     <style>
                         #editor-container_" . $row['id'] . " {
                             width: 350px; 
@@ -400,83 +469,67 @@ function handleVisitorData($conn)
                             margin: auto;
                         }
                     </style>
-                    <div id='editor-container_" . $row['id'] . "' name='details'>$details</div>
-                    <input type='hidden' id='details_" . $row['id'] . "' name='details" . $row['id'] . "' value='$details'>
-                    <script src='https://cdn.quilljs.com/1.3.6/quill.js'></script>
-                    <script>
-                        var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
-                            theme: 'snow',
-                            modules: {
-                                toolbar: [
-                                    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                                    ['blockquote', 'code-block'],
-                                    [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-                                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                                    [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
-                                    [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
-                                    [{ 'direction': 'rtl' }],                         // text direction
-                                    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                                    [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
-                                    [{ 'font': [] }],
-                                    [{ 'align': [] }],
-                                    ['clean']                                         // remove formatting button
-                                ]
-                            },
-                            name: 'details_" . $row['id'] . "',
-                            placeholder: 'write your report here...',
-                            autofocus: true,
-                        });
-                        quill_" . $row['id'] . ".on('text-change', function () {
-                            document.getElementById('details_" . $row['id'] . "').value = quill_" . $row['id'] . ".root.innerHTML;
-                        });
-                    </script>
-                </td>";
+                    <div id='editor-container_" . $row['id'] . "'></div>
+                    <input type='hidden' id='details_" . $row['id'] . "' name='details' value='$details'>
+<script>
+        var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],        
+                    ['blockquote', 'code-block'],
+                    [{ 'header': 1 }, { 'header': 2 }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'script': 'sub' }, { 'script': 'super' }],
+                    [{ 'indent': '-1' }, { 'indent': '+1' }],
+                    [{ 'direction': 'rtl' }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'font': [] }],
+                    [{ 'align': [] }],
+                    ['clean']
+                ]
+            },
+            placeholder: 'write your report here...',
+            autofocus: true,
+        });
+        quill_" . $row['id'] . ".root.innerHTML = '" . htmlspecialchars($details) . "'; // Set initial content
+        quill_" . $row['id'] . ".on('text-change', function () {
+            document.getElementById('details_" . $row['id'] . "').value = quill_" . $row['id'] . ".root.innerHTML;
+        });
+    </script>";
 
-                echo '<td><input type="checkbox" id="lab' . $row['id'] . '" name="lab' . $row['id'] . '" ' . $labChecked . '></td>';
-                echo '<td><input type="checkbox" id="imaging' . $row['id'] . '" name="imaging' . $row['id'] . '" ' . $imagingChecked . '></td>';
-                echo '<td><input type="checkbox" id="counseller' . $row['id'] . '" name="counseller' . $row['id'] . '" ' . $counsellerChecked . '></td>';
-                echo '<td>
-                    <button class="btn btn-primary" type="submit" name="save' . $row['id'] . '">Save</button><br><br>
-                    <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
-                    <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ')">Done</button>
-                </td>';
-                echo "</tr>";
 
-                if (isset($_POST['save' . $row['id']])) {
-                    // Escape input for security
-                    $details = mysqli_real_escape_string($conn, $_POST['details' . $row['id']]);
-                    $lab = isset($_POST['lab' . $row['id']]) ? 1 : 0;
-                    $imaging = isset($_POST['imaging' . $row['id']]) ? 1 : 0;
-                    $counseller = isset($_POST['counseller' . $row['id']]) ? 1 : 0;
-
-                    if ($recordExists) {
-                        // Update existing record
-                        $updateSql = "UPDATE doctor SET details = '$details', lab = $lab, imaging = $imaging, counseller = $counseller, status = '$cellStatus' WHERE idNumber = '{$row['idNumber']}'";
-                        mysqli_query($conn, $updateSql);
-                    } else {
-                        // Insert new record
-                        $insertSql = "INSERT INTO doctor (fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, details, lab, imaging, counseller, status)
-                                           VALUES ('{$row['fullname']}', '{$row['contact']}', '{$row['idNumber']}', '{$row['paymentMethod']}', '{$row['age']}', '{$row['timeIn']}', '{$row['timeOut']}', '$details', $lab, $imaging, $counseller, '$cellStatus')";
-                        mysqli_query($conn, $insertSql);
-                    }
-                }
-            }
-            echo '</form>';
-            echo "</tbody>";
-        } else {
-            echo "<tr><td colspan='4'>No visitors found!</td></tr>";
+            echo"</td>";
+            echo "<td><input type='checkbox' id='imaging' name='imaging' $imagingChecked></td>"; // Change from div to checkbox
+            echo "<td><input type='checkbox' id='lab' name='lab' $labChecked></td>";
+            echo "<td><input type='checkbox' id='counseller' name='counseller' $counsellerChecked></td>";
+            echo "<td><input type='checkbox' id='admit' name='admit' $admitChecked></td>";
+            echo '<td>
+                <button class="btn btn-primary" type="submit" name="save" value="' . $row['id'] . '">Save</button><br><br>
+                <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
+                <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ', \'' . $cellStatus . '\')">Done</button>
+            </td>';
+            echo "</tr>";
         }
+        echo "</table>";
+        echo "</form>";
     } else {
-        die("Error: " . mysqli_error($conn));
+        // Display a message if no records were found
+        echo "No records found.";
     }
-}
 
-// Call the function to handle visitor data
-handleVisitorData($conn);
+    // Close the connection to the database
+    mysqli_close($conn);
+    ?>
 
-mysqli_close($conn);
-?>
+
+
+           
+
+
+
 
 
 
