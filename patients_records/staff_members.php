@@ -31,7 +31,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -43,7 +43,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="../admin.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -66,12 +66,12 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Create Accounts:</h6>
-                        <a class="collapse-item" href="register_accounts/addreception.html">Reception</a>
-                        <a class="collapse-item" href="register_accounts/adddoctor.html">Doctor</a>
-                        <a class="collapse-item" href="register_accounts/addlab.html">Lab</a>
-                        <a class="collapse-item" href="register_accounts/addradiation.html">Radiation</a>
-                        <a class="collapse-item" href="register_accounts/addcashier.html">Cashier</a>
-                        <a class="collapse-item" href="register_accounts/addpharmacist.html">Pharmacist</a>
+                        <a class="collapse-item" href="../register_accounts/addreception.html">Reception</a>
+                        <a class="collapse-item" href="../register_accounts/adddoctor.html">Doctor</a>
+                        <a class="collapse-item" href="../register_accounts/addlab.html">Lab</a>
+                        <a class="collapse-item" href="../register_accounts/addradiation.html">Radiation</a>
+                        <a class="collapse-item" href="../register_accounts/addcashier.html">Cashier</a>
+                        <a class="collapse-item" href="../register_accounts/addpharmacist.html">Pharmacist</a>
 
                     </div>
                 </div>
@@ -88,12 +88,12 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Control Accounts:</h6>
-                        <a class="collapse-item" href="control_account/receptioncontrol.html">Reception</a>
-                        <a class="collapse-item" href="control_account/doctorcontrol.html">Doctor</a>
-                        <a class="collapse-item" href="control_account/labcontrol.html">Lab</a>
-                        <a class="collapse-item" href="control_account/radiationcontrol.html">Radiation</a>
-                        <a class="collapse-item" href="control_account/cashiercontrol.html">Cashier</a>
-                        <a class="collapse-item" href="control_account/pharmacistcontrol.html">Pharmacist</a>
+                        <a class="collapse-item" href="../control_account/receptioncontrol.html">Reception</a>
+                        <a class="collapse-item" href="../control_account/doctorcontrol.html">Doctor</a>
+                        <a class="collapse-item" href="../control_account/labcontrol.html">Lab</a>
+                        <a class="collapse-item" href="../control_account/radiationcontrol.html">Radiation</a>
+                        <a class="collapse-item" href="../control_account/cashiercontrol.html">Cashier</a>
+                        <a class="collapse-item" href="../control_account/pharmacistcontrol.html">Pharmacist</a>
                     </div>
                 </div>
             </li>

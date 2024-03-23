@@ -31,7 +31,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -270,7 +270,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">ADMIN</span>
                                 <img class="img-profile rounded-circle"
                                     src="../img/undraw_profile.svg">
                             </a>
@@ -308,8 +308,34 @@
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                         <!-- report generation code -->
+<a href="#" id="generateReportBtn" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+</a>
+
+<!-- JavaScript code -->
+<script>
+document.getElementById("generateReportBtn").addEventListener("click", function() {
+    // Send an AJAX request to fetch the text file
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../reports/generate_report.php", true); // Adjust path here
+    xhr.responseType = "blob"; // Set response type to blob (binary data)
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            // Create a temporary link to download the text file
+            var blob = new Blob([xhr.response], { type: "text/plain" });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "reception_report.txt";
+            document.body.appendChild(a);
+            a.click(); // Simulate click on the link to trigger download
+            document.body.removeChild(a); // Remove the link from the document
+        }
+    };
+    xhr.send();
+});
+</script>
                     </div>
 
                     <!-- Content Row -->

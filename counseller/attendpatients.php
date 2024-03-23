@@ -33,7 +33,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -57,7 +57,7 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Pharmacy
+                Counseller
             </div>
 
             <!-- Nav Item - Tables -->
@@ -65,13 +65,6 @@
                 <a class="nav-link" href="attendpatients.php">
                     <i class="fas fa-edit fa-fw"></i>
                     <span>Attend Patients</span></a>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="mypatients.php">
-                    <i class="fas fa-list fa-fw"></i>
-                    <span>My Patients</span></a>
             </li>
 
             
@@ -318,71 +311,43 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                        <thead>
-                                        <?php
-// Connect to the database
-require('../database/config.php');
+  <?php                          
+  require('../database/config.php');
 
-// Check if the form was submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
-    $id = intval($_POST['save']); // Get the visitor ID from the submitted form
-    $counselling_report = $_POST['counselling_report'][$id]; // Get the counselling report for the specific visitor ID
-    // Loop through each submitted counselling report
-    foreach ($_POST['counselling_report'] as $id => $counselling_report) {
-        // Sanitize the input
-        $counselling_report = mysqli_real_escape_string($conn, $counselling_report);
-        $id = intval($id); // Ensure ID is an integer
-
-        // Check if the record already exists in the counseller table
-        $check_sql = "SELECT * FROM counseller WHERE visitor_id = $id";
-        $check_result = mysqli_query($conn, $check_sql);
-
-        if (mysqli_num_rows($check_result) > 0) {
-            // Update the existing record
-            $update_sql = "UPDATE counseller SET counselling_report = '$counselling_report' WHERE visitor_id = $id";
-
-            if (mysqli_query($conn, $update_sql)) {
-                echo "Record updated successfully for visitor ID: $id<br>";
-            } else {
-                echo "Error updating record: " . mysqli_error($conn) . "<br>";
-            }
-        } else {
-            // Insert a new record
-            $insert_sql = "INSERT INTO counseller (visitor_id, counselling_report) VALUES ($id, '$counselling_report')";
-
-            if (mysqli_query($conn, $insert_sql)) {
-                echo "Record inserted successfully for visitor ID: $id<br>";
-            } else {
-                echo "Error inserting record: " . mysqli_error($conn) . "<br>";
-            }
-        }
-    }
+if (!$conn) {
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 
-// Fetch rows from doctor and imaging tables where field counsellor is 1
-$sql_counsellor = "(SELECT d.id, d.fullname, d.contact, d.idNumber, d.paymentMethod, d.age, d.timeIn, d.timeOut, d.details AS consultation_report, i.imaging_report
-                    FROM doctor d
-                    LEFT JOIN imaging i ON d.id = i.id
-                    WHERE d.counseller = 1)
-                    UNION
-                    (SELECT i.id, i.fullname, i.contact, i.idNumber, i.paymentMethod, i.age, i.timeIn, i.timeOut, d.details AS consultation_report, i.imaging_report
-                    FROM imaging i
-                    LEFT JOIN doctor d ON i.id = d.id
-                    WHERE i.counseller = 1)
-                    UNION
-                    (SELECT v.id, v.fullname, v.contact, v.idNumber, v.paymentMethod, v.age, v.timeIn, v.timeOut, NULL AS consultation_report, NULL AS imaging_report
-                    FROM visitors v
-                    WHERE v.attendPurpose = 'counseling')";
-$result_counsellor = mysqli_query($conn, $sql_counsellor);
+if (isset($_POST['save'])) {
+    $id = $_POST['save'];
 
-// Check if any records were found
-if (mysqli_num_rows($result_counsellor) > 0) {
-    // Display form and table headers for doctor and imaging
+    // Escape the values to prevent SQL injection (using prepared statement)
+    $imaging = isset($_POST['imaging_' . $id]) ? 1 : 0;
+    $lab = isset($_POST['lab_' . $id]) ? 1 : 0;
+    $doctor = isset($_POST['doctor_' . $id]) ? 1 : 0;
+    $admit = isset($_POST['admit_' . $id]) ? 1 : 0;
+    $counselling_report = isset($_POST['counselling_report_' . $id]) ? $_POST['counselling_report_' . $id] : '';
 
+    // Update the visitor row in the database
+    $updateSql = "UPDATE visitors SET imaging = ?, lab = ?, doctor = ?, admit = ?, counselling_report = ? WHERE id = ?";
+    $updateStmt = mysqli_prepare($conn, $updateSql);
+    mysqli_stmt_bind_param($updateStmt, 'iiissi', $imaging, $lab, $doctor, $admit, $counselling_report, $id);
+    mysqli_stmt_execute($updateStmt);
+}
+
+
+$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report, counselling_report, imaging, lab, counseller, doctor, admit 
+        FROM visitors
+        WHERE attendPurpose = 'counselling' OR counseller = 1";
+$result = mysqli_query($conn, $sql);
+$cellStatus = 'red';
+
+if (mysqli_num_rows($result) > 0) {
+    echo "<form method='post'>";
+    echo "<table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>";
     echo "<tr>";
-    echo "<th>ID</th>";
-    echo "<th>Full Name</th>";
+    echo "<th>No</th>";
+    echo "<th>Full Names</th>";
     echo "<th>Contact</th>";
     echo "<th>ID Number</th>";
     echo "<th>Payment Method</th>";
@@ -390,100 +355,102 @@ if (mysqli_num_rows($result_counsellor) > 0) {
     echo "<th>Time In</th>";
     echo "<th>Time Out</th>";
     echo "<th>Consultation Report</th>";
-    echo "<th>Imaging Report</th>";
-    echo "<th>Counselling Report</th>";
-    echo "<th>Action</th>";
+    echo "<th>Scan/xray</th>";
+    echo "<th>Lab</th>";
+    echo "<th>Counseller</th>";
+    echo "<th>Scan/Xray</th>";
+    echo "<th>Lab</th>";
+    echo "<th>Doctor</th>";
+    echo "<th>Admit</th>";
     echo "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
-
-    // Iterate over the result set
-    while ($row = mysqli_fetch_assoc($result_counsellor)) {
-        // Display a row for each record
+    
+    $count = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr>";
-        echo "<form method='post' action=''>"; // Open the form
-        echo "<td>" . $row['id'] . "</td>";
+        echo "<td>" . $count . "</td>"; 
         echo "<td>" . $row['fullname'] . "</td>";
-        echo "<td>" . $row['contact'] . "</td>";
+        echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
         echo "<td>" . $row['idNumber'] . "</td>";
         echo "<td>" . $row['paymentMethod'] . "</td>";
         echo "<td>" . $row['age'] . "</td>";
         echo "<td>" . $row['timeIn'] . "</td>";
         echo "<td>" . $row['timeOut'] . "</td>";
-        echo "<td>" . $row['consultation_report'] . "</td>";
+        echo "<td>" . $row['doctor_report'] . "</td>";
         echo "<td>" . $row['imaging_report'] . "</td>";
-        echo "<style>#editor-container_" . $row['id'] . " { width: 300px; max-width: 800px; height: 100px; }</style>";
+        echo "<td>" . $row['lab_report'] . "</td>";
 
         echo "<td>
-        <div id='editor-container_" . $row['id'] . "'></div>
-        <input type='hidden' id='counselling_report_" . $row['id'] . "' name='counselling_report[" . $row['id'] . "]' value='" . htmlspecialchars($row['counselling_report'] ?? '') . "'>
-        <script>
-            var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
-                theme: 'snow',
-                modules: {
-                    toolbar: [
-                        ['bold', 'italic', 'underline', 'strike'],
-                        ['blockquote', 'code-block'],
-                        [{ 'header': 1 }, { 'header': 2 }],
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        [{ 'script': 'sub' }, { 'script': 'super' }],
-                        [{ 'indent': '-1' }, { 'indent': '+1' }],
-                        [{ 'direction': 'rtl' }],
-                        [{ 'size': ['small', false, 'large', 'huge'] }],
-                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                        [{ 'color': [] }, { 'background': [] }],
-                        [{ 'font': [] }],
-                        [{ 'align': [] }],
-                        ['clean']
-                    ]
-                },
-                placeholder: 'Write your counselling report here...',
-                autofocus: true,
-            });
-            quill_" . $row['id'] . ".on('text-change', function() {
-                var html = document.querySelector('#editor-container_" . $row['id'] . " .ql-editor').innerHTML;
-                document.getElementById('counselling_report_" . $row['id'] . "').value = html;
-            });
-        </script>
-       </td>";
-       echo '<td>
-            <button class="btn btn-primary" type="submit" name="save" value="' . $row['id'] . '">Save</button>
-            </td>';
- 
+            <style>
+                #editor-container_" . $row['id'] . " {
+                    width: 350px; 
+                    max-height: 400px; 
+                    margin: auto;
+                }
+            </style>
+            <div id='editor-container_" . $row['id'] . "'></div>
+            <input type='hidden' id='counselling_report_" . $row['id'] . "' name='counselling_report_" . $row['id'] . "' value='" . htmlspecialchars($row['counselling_report'] ?? '') . "'>
+            <script>
+                var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],        
+                            ['blockquote', 'code-block'],
+                            [{ 'header': 1 }, { 'header': 2 }],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'script': 'sub' }, { 'script': 'super' }],
+                            [{ 'indent': '-1' }, { 'indent': '+1' }],
+                            [{ 'direction': 'rtl' }],
+                            [{ 'size': ['small', false, 'large', 'huge'] }],
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean']
+                        ]
+                    },
+                    placeholder: 'Write your report here...',
+                    autofocus: true,
+                });
+                quill_" . $row['id'] . ".root.innerHTML = '" . (isset($row['counselling_report']) ? htmlspecialchars_decode($row['counselling_report']) : '') . "'; // Set initial content
 
-        echo "</tr>";
-    }
-    echo "</tbody>";
+                quill_" . $row['id'] . ".on('text-change', function () {
+                    var content = quill_" . $row['id'] . ".root.innerHTML;
+                    document.getElementById('counselling_report_" . $row['id'] . "').value = content;
+                });
+            </script>
+        </td>";
 
-    echo "</form>"; // Close the form
-} else {
-    echo "No records found in doctor, imaging,";
+        echo "<td><input type='checkbox' id='imaging' name='imaging_" . $row['id'] . "' " . ($row['imaging'] ? 'checked' :'') . "></td>";
+        echo "<td><input type='checkbox' id='lab' name='lab_" . $row['id'] . "' " . ($row['lab'] ? 'checked' : '') . "></td>";
+        echo "<td><input type='checkbox' id='doctor' name='doctor_" . $row['id'] . "' " . ($row['doctor'] ? 'checked' : '') . "></td>";
+        echo "<td><input type='checkbox' id='admit' name='admit_" . $row['id'] . "' " . ($row['admit'] ? 'checked' : '') . "></td>";
+
+        // Save, Modify, and Done buttons
+        echo '<td>
+                <button class="btn btn-primary" type="submit" name="save" value="' .$row['id'] . '">Save</button><br><br>
+<button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
+<button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ', \'' . $cellStatus . '\')">Done</button>
+</td>';
+echo "</tr>";
+$count++;
 }
-// Close the connection
+echo "</table>";
+echo "</form>";
+} else {
+echo "No records found.";
+}
+
 mysqli_close($conn);
 ?>
 
-
+                                       
    
                                     </table>
                                 </div>
                             </div>
                         </div>
     
-                   
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                var quill = new Quill('#quill-editor', {
-                                    theme: 'snow',
-                                });
-                        
-                                quill.on('text-change', function () {
-                                    // Update the hidden input with Quill content
-                                    document.getElementById('details').value = quill.root.innerHTML;
-                                });
-                            });
-                        </script>
                         
                 </div>
                 <!-- /.container-fluid -->

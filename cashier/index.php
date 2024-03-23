@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Radiation</title>
+    <title>AFYA BORA || Cashier Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,6 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 </head>
 
@@ -33,7 +31,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -57,7 +55,7 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Reception
+                Pharmacy
             </div>
 
             <!-- Nav Item - Tables -->
@@ -67,12 +65,6 @@
                     <span>Attend Patients</span></a>
             </li>
 
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="mypatients.php">
-                    <i class="fas fa-list fa-fw"></i>
-                    <span>My Patients</span></a>
-            </li>
 
             
 
@@ -216,7 +208,7 @@
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
                                             alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -228,7 +220,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../img/undraw_profile_2.svg"
+                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
                                             alt="...">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -240,7 +232,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../img/undraw_profile_3.svg"
+                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
                                             alt="...">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -305,175 +297,166 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-        
-                    <div class="container-fluid">
+                <div class="container-fluid">
 
-                        <!-- Page Heading -->
-                        <h1 class="h3 mb-2 text-gray-800">My Patients</h1>
-                        
-                        <!-- DataTales Example -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">All Patients </h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <?php
-// Include database connection details
-require('../database/config.php');
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                         <!-- report generation code -->
+<a href="#" id="generateReportBtn" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+</a>
 
-// Check connection
-if (!$conn) {
-    die("Failed to connect to MySQL: " . mysqli_connect_error());
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['save'])) {
-        $id = $_POST['save'];
-
-        // Escape the values to prevent SQL injection (using prepared statement)
-        $imaging_report = isset($_POST['imaging_report']) ? $_POST['imaging_report'] : '';
-        $lab = isset($_POST['lab']) ? 1 : 0;
-        $doctor = isset($_POST['doctor']) ? 1 : 0;
-        $counseller = isset($_POST['counseller']) ? 1 : 0;
-
-        // Check if a record already exists in the imaging table for the current visitor
-        $checkSql = "SELECT * FROM imaging WHERE visitor_id = ?";
-        $checkStmt = mysqli_prepare($conn, $checkSql);
-        mysqli_stmt_bind_param($checkStmt, 'i', $id);
-        mysqli_stmt_execute($checkStmt);
-        $checkResult = mysqli_stmt_get_result($checkStmt);
-
-        if (mysqli_num_rows($checkResult) > 0) {
-            // Update the existing record
-            $updateSql = "UPDATE imaging SET imaging_report = ?, lab = ?, doctor = ?, counseller = ? WHERE visitor_id = ?";
-            $updateStmt = mysqli_prepare($conn, $updateSql);
-            mysqli_stmt_bind_param($updateStmt, 'siiii', $imaging_report, $lab, $doctor, $counseller, $id);
-            mysqli_stmt_execute($updateStmt);
-
-            // Update status based on 'Done' button
-            $status = isset($_POST['status']) ? ($_POST['status'] === 'green' ? 'done' : 'pending') : 'pending';
-            $updateStatusSql = "UPDATE imaging SET status = ? WHERE visitor_id = ?";
-            $updateStatusStmt = mysqli_prepare($conn, $updateStatusSql);
-            mysqli_stmt_bind_param($updateStatusStmt, 'si', $status, $id);
-            mysqli_stmt_execute($updateStatusStmt);
+<!-- JavaScript code -->
+<script>
+document.getElementById("generateReportBtn").addEventListener("click", function() {
+    // Send an AJAX request to fetch the text file
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../reports/generate_report.php", true); // Adjust path here
+    xhr.responseType = "blob"; // Set response type to blob (binary data)
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            // Create a temporary link to download the text file
+            var blob = new Blob([xhr.response], { type: "text/plain" });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "cashier_report.txt";
+            document.body.appendChild(a);
+            a.click(); // Simulate click on the link to trigger download
+            document.body.removeChild(a); // Remove the link from the document
         }
-    }
-}
+    };
+    xhr.send();
+});
+</script>
+                    </div>
 
-// Query the database for the records with imaging
-$sql = "SELECT * FROM imaging";
-$result = mysqli_query($conn, $sql);
+                    <!-- Content Row -->
+                    <div class="row">
 
-// Check if any records were found
-if (mysqli_num_rows($result) > 0) {
-    echo "<form method='post'>";
-    echo "<tr>";
-    echo "<th>ID</th>";
-    echo "<th>Visitor ID</th>";
-    echo "<th>Full Names</th>";
-    echo "<th>Contact</th>";
-    echo "<th>ID Number</th>";
-    echo "<th>Payment Method</th>";
-    echo "<th>Age</th>";
-    echo "<th>Time In</th>";
-    echo "<th>Time Out</th>";
-    echo "<th>Details</th>";
-    echo "<th>Imaging Report</th>";
-    echo "<th>Lab</th>";
-    echo "<th>Doctor</th>";
-    echo "<th>Counseller</th>";
-    echo "<th>Action</th>";
-    echo "</tr>";
-
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>" . $row['id'] . "</td>";
-        echo "<td>" . $row['visitor_id'] . "</td>";
-        echo "<td>" . $row['fullname'] . "</td>";
-        echo "<td>" . $row['contact'] . "</td>";
-        echo "<td>" . $row['idNumber'] . "</td>";
-        echo "<td>" . $row['paymentMethod'] . "</td>";
-        echo "<td>" . $row['age'] . "</td>";
-        echo "<td>" . $row['timeIn'] . "</td>";
-        echo "<td>" . $row['timeOut'] . "</td>";
-        echo "<td>" . $row['details'] . "</td>";
-        echo "<td>
-        <div id='editor-container_" . $row['visitor_id'] . "' style='width: 350px; max-height: 400px; margin: auto;'></div>
-        <input type='hidden' id='imaging_report_" . $row['visitor_id'] . "' name='imaging_report' value='" . htmlspecialchars($row['imaging_report']) . "'>
-        <script>
-            var quill_" . $row['visitor_id'] . " = new Quill('#editor-container_" . $row['visitor_id'] . "', {
-                theme: 'snow',
-                modules: {
-                    toolbar: [
-                        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                        ['blockquote', 'code-block'],
-                        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        [{ 'script': 'sub' }, { 'script': 'super' }],    // superscript/subscript
-                        [{ 'indent': '-1' }, { 'indent': '+1' }],        // outdent/indent
-                        [{ 'direction': 'rtl' }],                         // text direction
-                        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                        [{ 'color': [] }, { 'background': [] }],        // dropdown with defaults from theme
-                        [{ 'font': [] }],
-                        [{ 'align': [] }],
-                        ['clean']                                         // remove formatting button
-                    ]
-                },
-                placeholder: 'Write your report here...',
-                autofocus: true,
-            });
-    
-            // Set the initial content of the Quill editor
-            var initialContent_" . $row['visitor_id'] . " = '" . htmlspecialchars($row['imaging_report']) . "';
-            quill_" . $row['visitor_id'] . ".root.innerHTML = initialContent_" . $row['visitor_id'] . ";
-    
-            // Update the hidden input field when the content changes
-            quill_" . $row['visitor_id'] . ".on('text-change', function() {
-                var htmlContent_" . $row['visitor_id'] . " = quill_" . $row['visitor_id'] . ".root.innerHTML;
-                document.getElementById('imaging_report_" . $row['visitor_id'] . "').value = htmlContent_" . $row['visitor_id'] . ";
-            });
-    
-            // Decode the imaging report content
-            var imagingReportContent_" . $row['visitor_id'] . " = document.getElementById('imaging_report_" . $row['visitor_id'] . "').value;
-            var decodedContent_" . $row['visitor_id'] . " = decodeURIComponent(imagingReportContent_" . $row['visitor_id'] . ");
-        </script>
-    </td>";
-    
-    
-   
-
-
-        echo "<td><input type='checkbox' id='lab' name='lab' " . ($row['lab'] ? 'checked' : '') . "></td>";
-        echo "<td><input type='checkbox' id='doctor' name='doctor' " . ($row['doctor'] ? 'checked' : '') . "></td>";
-        echo "<td><input type='checkbox' id='counseller' name='counseller' " . ($row['counseller'] ? 'checked' : '') . "></td>";
-        echo "<td>
-            <button class='btn btn-primary' type='submit' name='save' value='" . $row['visitor_id'] . "'>Save</button><br><br>
-            <button class='btn btn-danger' type='button' onclick='modifyPatient(" . $row['visitor_id'] . ")'>Modify</button><br><br>
-            <button class='btn btn-success' type='button' onclick='updateStatus(" . $row['visitor_id'] . ")'>Done</button>
-            <input type='hidden' name='status' value='" . ($row['status'] === 'done' ? 'green' : 'red') . "'>
-        </td>";
-        echo "</tr>";
-    }
-    echo "</table>";
-    echo "</form>";
-} else {
-    // Display a message if no records were found
-    echo "No records found.";
-}
-
-// Close the connection to the database
-mysqli_close($conn);
-?>
-
-
-
+                        <!-- patients (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Patients (Monthly)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">40,000</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-    
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Earnings (Monthly)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="progress progress-sm mr-2">
+                                                        <div class="progress-bar bg-info" role="progressbar"
+                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Requests Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                 Messages/Requests</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Row -->
+
+                    <div class="row">
+
+                        <!-- Area Chart -->
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Income Overview</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                            aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Select:</div>
+                                            <a class="dropdown-item" href="#">Weekly</a>
+                                            <a class="dropdown-item" href="#">Monthly</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Yearly</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div class="chart-area">
+                                        <canvas id="myAreaChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+
                    
 
                 </div>
@@ -486,7 +469,7 @@ mysqli_close($conn);
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Afya Bora 2024</span>
+                        <span>Copyright &copy; 2024 AFYA BORA</span>
                     </div>
                 </div>
             </footer>
@@ -534,11 +517,11 @@ mysqli_close($conn);
     <script src="../js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="../vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="../js/demo/datatables-demo.js"></script>
+    <script src="../js/demo/chart-area-demo.js"></script>
+    <script src="../js/demo/chart-pie-demo.js"></script>
 
 </body>
 

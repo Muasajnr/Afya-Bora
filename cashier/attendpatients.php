@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Lab</title>
+    <title>AFYA BORA || Cashier</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -19,6 +19,8 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 </head>
 
@@ -31,7 +33,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -55,7 +57,7 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Lab
+                Pharmacy
             </div>
 
             <!-- Nav Item - Tables -->
@@ -63,13 +65,6 @@
                 <a class="nav-link" href="attendpatients.php">
                     <i class="fas fa-edit fa-fw"></i>
                     <span>Attend Patients</span></a>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="mypatients.php">
-                    <i class="fas fa-list fa-fw"></i>
-                    <span>My Patients</span></a>
             </li>
 
             
@@ -307,7 +302,7 @@
                     <div class="container-fluid">
 
                         <!-- Page Heading -->
-                        <h1 class="h3 mb-2 text-gray-800">My Patients</h1>
+                        <h1 class="h3 mb-2 text-gray-800">Attend Patients</h1>
                         
                         <!-- DataTales Example -->
                         <div class="card shadow mb-4">
@@ -316,33 +311,136 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Type</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                            </tr>
-                                        </thead>
-                                        
-                                        <tbody>
-                                            <tr>
-                                                <td>Tiger Nixon</td>
-                                                <td>System Architect</td>
-                                                <td>Edinburgh</td>
-                                                <td>61</td>
-                                                <td>2011/04/25</td>
-                                                <td>$320,800</td>
-                                                <td>
-                                                    <button class="btn btn-primary" type="button">Login</button>
-                                                    <button class="btn btn-secondary" type="button">Edit</button> 
-                                                    <button class="btn btn-danger" type="button">Delete</button>
-                                                
-                                                </td>
-                                            </tr>
+                                <?php                          
+  require('../database/config.php');
+
+if (!$conn) {
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
+}
+
+if (isset($_POST['save'])) {
+    $id = $_POST['save'];
+
+    // Escape the values to prevent SQL injection (using prepared statement)
+    
+    $admit = isset($_POST['admit_' . $id]) ? 1 : 0;
+    $cashier_report = isset($_POST['cashier_report_' . $id]) ? $_POST['cashier_report_' . $id] : '';
+
+    // Update the visitor row in the database
+    $updateSql = "UPDATE visitors SET admit = ?, cashier_report = ? WHERE id = ?";
+    $updateStmt = mysqli_prepare($conn, $updateSql);
+    mysqli_stmt_bind_param($updateStmt, 'isi', $admit, $cashier_report, $id);
+    mysqli_stmt_execute($updateStmt);
+}
+
+
+$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report, counselling_report,pharmacy_report,cashier_report, admit 
+        FROM visitors
+        WHERE position = 'patient' ";
+$result = mysqli_query($conn, $sql);
+$cellStatus = 'red';
+
+if (mysqli_num_rows($result) > 0) {
+    echo "<form method='post'>";
+    echo "<table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>";
+    echo "<tr>";
+    echo "<th>No</th>";
+    echo "<th>Full Names</th>";
+    echo "<th>Contact</th>";
+    echo "<th>ID Number</th>";
+    echo "<th>Payment Method</th>";
+    echo "<th>Age</th>";
+    echo "<th>Time In</th>";
+    echo "<th>Time Out</th>";
+    echo "<th>Consultation Report</th>";
+    echo "<th>Scan/xray</th>";
+    echo "<th>Lab</th>";
+    echo "<th>Counseller</th>";
+    echo "<th>Pharmacy</th>";
+    echo "<th>Cashier</th>";
+    echo "<th>Admited </th>";
+    echo "</tr>";
+    
+    $count = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr>";
+        echo "<td>" . $count . "</td>"; 
+        echo "<td>" . $row['fullname'] . "</td>";
+        echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
+        echo "<td>" . $row['idNumber'] . "</td>";
+        echo "<td>" . $row['paymentMethod'] . "</td>";
+        echo "<td>" . $row['age'] . "</td>";
+        echo "<td>" . $row['timeIn'] . "</td>";
+        echo "<td>" . $row['timeOut'] . "</td>";
+        echo "<td>" . $row['doctor_report'] . "</td>";
+        echo "<td>" . $row['imaging_report'] . "</td>";
+        echo "<td>" . $row['lab_report'] . "</td>";
+        echo "<td>" . $row['counselling_report'] . "</td>";
+        echo "<td>" . $row['pharmacy_report'] . "</td>";
+
+        echo "<td>
+            <style>
+                #editor-container_" . $row['id'] . " {
+                    width: 350px; 
+                    max-height: 400px; 
+                    margin: auto;
+                }
+            </style>
+            <div id='editor-container_" . $row['id'] . "'></div>
+            <input type='hidden' id='cashier_report_" . $row['id'] . "' name='cashier_report_" . $row['id'] . "' value='" . htmlspecialchars($row['cashier_report'] ?? '') . "'>
+            <script>
+                var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],        
+                            ['blockquote', 'code-block'],
+                            [{ 'header': 1 }, { 'header': 2 }],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'script': 'sub' }, { 'script': 'super' }],
+                            [{ 'indent': '-1' }, { 'indent': '+1' }],
+                            [{ 'direction': 'rtl' }],
+                            [{ 'size': ['small', false, 'large', 'huge'] }],
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean']
+                            
+                        ]
+                    },
+                    placeholder: 'Write your report here...',
+                    autofocus: true,
+                });
+                quill_" . $row['id'] . ".root.innerHTML = '" . (isset($row['cashier_report']) ? htmlspecialchars_decode($row['cashier_report']) : '') . "'; // Set initial content
+
+                quill_" . $row['id'] . ".on('text-change', function () {
+                    var content = quill_" . $row['id'] . ".root.innerHTML;
+                    document.getElementById('cashier_report_" . $row['id'] . "').value = content;
+                });
+            </script>
+        </td>";
+
+        
+        echo "<td><input type='checkbox' id='admit' name='admit_" . $row['id'] . "' " . ($row['admit'] ? 'checked' : '') . "></td>";
+
+        // Save, Modify, and Done buttons
+        echo '<td>
+                <button class="btn btn-primary" type="submit" name="save" value="' .$row['id'] . '">Save</button><br><br>
+<button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
+<button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ', \'' . $cellStatus . '\')">Done</button>
+</td>';
+echo "</tr>";
+$count++;
+}
+echo "</table>";
+echo "</form>";
+} else {
+echo "No records found.";
+}
+
+mysqli_close($conn);
+?>
                                             
                                         </tbody>
                                     </table>
@@ -352,6 +450,8 @@
     
                    
 
+                       
+                        
                 </div>
                 <!-- /.container-fluid -->
 

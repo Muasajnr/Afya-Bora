@@ -43,7 +43,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="admin.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -88,12 +88,12 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Control Accounts:</h6>
-                        <a class="collapse-item" href="control_account/receptioncontrol.html">Reception</a>
-                        <a class="collapse-item" href="control_account/doctorcontrol.html">Doctor</a>
-                        <a class="collapse-item" href="control_account/labcontrol.html">Lab</a>
-                        <a class="collapse-item" href="control_account/radiationcontrol.html">Radiation</a>
-                        <a class="collapse-item" href="control_account/cashiercontrol.html">Cashier</a>
-                        <a class="collapse-item" href="control_account/pharmacistcontrol.html">Pharmacist</a>
+                        <a class="collapse-item" href="control_account/receptioncontrol.php">Reception</a>
+                        <a class="collapse-item" href="control_account/doctorcontrol.php">Doctor</a>
+                        <a class="collapse-item" href="control_account/labcontrol.php">Lab</a>
+                        <a class="collapse-item" href="control_account/radiationcontrol.php">Radiation</a>
+                        <a class="collapse-item" href="control_account/cashiercontrol.php">Cashier</a>
+                        <a class="collapse-item" href="control_account/pharmacistcontrol.php">Pharmacist</a>
                     </div>
                 </div>
             </li>
@@ -116,27 +116,27 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Patients:</h6>
-                        <a class="collapse-item" href="patients_records/allpatients.html">All </a>
-                        <a class="collapse-item" href="patients_records/inpatient.html">In-Patients</a>
-                        <a class="collapse-item" href="patients_records/outpatient.html">Out-Patients</a>
+                        <a class="collapse-item" href="patients_records/allpatients.php">All </a>
+                        <a class="collapse-item" href="patients_records/inpatient.php">In-Patients</a>
+                        <a class="collapse-item" href="patients_records/outpatient.php">Out-Patients</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Visitors:</h6>
-                        <a class="collapse-item" href="patients_records/caregiver.html">Caregiver</a>
-                        <a class="collapse-item" href="patients_records/non_patient.html">Non-Patient</a>
+                        <a class="collapse-item" href="patients_records/caregiver.php">Caregiver</a>
+                        <a class="collapse-item" href="patients_records/non_patient.php">Non-Patient</a>
                     </div>
                 </div>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="patients_records/staff_members.html">
+                <a class="nav-link" href="patients_records/staff_members.php">
                     <i class="fas fa-users fa-fw"></i>
                     <span>Staff Members</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="patients_records/payroll.html">
+                <a class="nav-link" href="patients_records/payroll.php">
                     <i class="fas fa-file-invoice-dollar fa-fw"></i>
                     <span>Payroll</span></a>
             </li>
@@ -375,8 +375,36 @@
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                    
+                        <!-- report generation code -->
+<a href="#" id="generateReportBtn" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+</a>
+
+<!-- JavaScript code -->
+<script>
+document.getElementById("generateReportBtn").addEventListener("click", function() {
+    // Send an AJAX request to fetch the text file
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "reports/generate_report.php", true); // Adjust path here
+    xhr.responseType = "blob"; // Set response type to blob (binary data)
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            // Create a temporary link to download the text file
+            var blob = new Blob([xhr.response], { type: "text/plain" });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "visitor_report.txt";
+            document.body.appendChild(a);
+            a.click(); // Simulate click on the link to trigger download
+            document.body.removeChild(a); // Remove the link from the document
+        }
+    };
+    xhr.send();
+});
+</script>
+
                     </div>
 
                     <!-- Content Row -->
@@ -569,6 +597,8 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+
+    
 
 </body>
 

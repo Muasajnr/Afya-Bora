@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Cashier</title>
+    <title>AFYA BORA || All Patients</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,6 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 </head>
 
@@ -33,7 +31,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -45,7 +43,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="../admin.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -53,28 +51,95 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Staff
+            </div>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>New Staff Accounts</span>
+                </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Create Accounts:</h6>
+                        <a class="collapse-item" href="../register_accounts/addreception.php">Reception</a>
+                        <a class="collapse-item" href="../register_accounts/adddoctor.php">Doctor</a>
+                        <a class="collapse-item" href="../register_accounts/addlab.php">Lab</a>
+                        <a class="collapse-item" href="../register_accounts/addradiation.php">Radiation</a>
+                        <a class="collapse-item" href="../register_accounts/addcashier.php">Cashier</a>
+                        <a class="collapse-item" href="../register_accounts/addpharmacist.php">Pharmacist</a>
+
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Utilities Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                    aria-expanded="true" aria-controls="collapseUtilities">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Staff Accounts</span>
+                </a>
+                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Control Accounts:</h6>
+                        <a class="collapse-item" href="../control_account/receptioncontrol.php">Reception</a>
+                        <a class="collapse-item" href="../control_account/doctorcontrol.php">Doctor</a>
+                        <a class="collapse-item" href="../control_account/labcontrol.php">Lab</a>
+                        <a class="collapse-item" href="../control_account/radiationcontrol.php">Radiation</a>
+                        <a class="collapse-item" href="../control_account/cashiercontrol.php">Cashier</a>
+                        <a class="collapse-item" href="../control_account/pharmacistcontrol.php">Pharmacist</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Pharmacy
+                Patients
             </div>
 
-            <!-- Nav Item - Tables -->
+            <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link" href="attendpatients.html">
-                    <i class="fas fa-edit fa-fw"></i>
-                    <span>Attend Patients</span></a>
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                    aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Patients' Report</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Patients:</h6>
+                        <a class="collapse-item" href="allpatients.php">All </a>
+                        <a class="collapse-item" href="inpatient.php">In-Patients</a>
+                        <a class="collapse-item" href="outpatient.php">Out-Patients</a>
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Visitors:</h6>
+                        <a class="collapse-item" href="caregiver.php">Caregiver</a>
+                        <a class="collapse-item" href="non_patient.php">Non-Patient</a>
+                    </div>
+                </div>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="mypatients.html">
-                    <i class="fas fa-list fa-fw"></i>
-                    <span>My Patients</span></a>
+                <a class="nav-link" href="staff_members.php">
+                    <i class="fas fa-users fa-fw"></i>
+                    <span>Staff Members</span></a>
             </li>
 
-            
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="payroll.php">
+                    <i class="fas fa-file-invoice-dollar fa-fw"></i>
+                    <span>Payroll</span></a>
+            </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -309,69 +374,102 @@
                     <div class="container-fluid">
 
                         <!-- Page Heading -->
-                        <h1 class="h3 mb-2 text-gray-800">Attend Patients</h1>
+                        <h1 class="h3 mb-2 text-gray-800">Patients</h1>
                         
                         <!-- DataTales Example -->
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">All Patients </h6>
+                                <h6 class="m-0 font-weight-bold text-primary">All Patients</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Type</th>
-                                                <th>Office</th>
-                                                <th>Age</th>
-                                                <th>Start date</th>
-                                                <th>Salary</th>
-                                                <th>Consultation Report</th>
-                                                <th>Lab</th>
-                                                <th>Scan/xray</th>
-                                                <th>Doctor</th>
-                                                <th>Counseller</th>
-                                                <th>Pharmacy</th>
-                                                <th>Payment Method</th>
-                                                <th>Note</th>
-                                                <th>Payment Status</th>
-                                                <th>Total</th>
-                                            </tr>
-                                        </thead>
-                                        
-                                        <tbody>
-                                            <tr>
-                                                <td>Tiger Nixon</td>
-                                                <td>System Architect</td>
-                                                <td>Edinburgh</td>
-                                                <td>61</td>
-                                                <td>2011/04/25</td>
-                                                <td>$320,800</td>
-                                                <td>
-                                                    
-                                                </td>
-                                            
-                                                <td></td>
-                                               
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td><div id="quill-editor" style="height: 250px;width: 300px;"></div>
-                                                    <input type="hidden" id="consultation_report" name="consultation_report" required></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    
-                                                <td>
-                                                    <button class="btn btn-primary" type="button">Save</button><br><br>
-                                                    <button class="btn btn-danger" type="button">Modify</button> <br><br>
-                                                    <button class="btn btn-success" type="button"> Done</button> 
-                                                
-                                                </td>
-                                            </tr>
-                                            
+                                <?php
+require('../database/config.php');
+
+if (!$conn) {
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
+}
+
+if (isset($_POST['delete'])) {
+    $id = $_POST['delete'];
+    
+    // Delete the visitor row from the database
+    $deleteSql = "DELETE FROM visitors WHERE id = ?";
+    $deleteStmt = mysqli_prepare($conn, $deleteSql);
+    mysqli_stmt_bind_param($deleteStmt, 'i', $id);
+    mysqli_stmt_execute($deleteStmt);
+}
+
+$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report, counselling_report, pharmacy_report, cashier_report, admit 
+        FROM visitors
+        WHERE position = 'patient' ";
+$result = mysqli_query($conn, $sql);
+$cellStatus = 'red';
+
+if (mysqli_num_rows($result) > 0) {
+    echo "<form method='post'>";
+    echo "<table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>";
+    echo "<tr>";
+    echo "<th>No</th>";
+    echo "<th>Full Names</th>";
+    echo "<th>Contact</th>";
+    echo "<th>ID Number</th>";
+    echo "<th>Payment Method</th>";
+    echo "<th>Age</th>";
+    echo "<th>Time In</th>";
+    echo "<th>Time Out</th>";
+    echo "<th>Consultation Report</th>";
+    echo "<th>Scan/xray</th>";
+    echo "<th>Lab</th>";
+    echo "<th>Counseller</th>";
+    echo "<th>Pharmacy</th>";
+    echo "<th>Cashier</th>";
+    echo "<th>Status</th>"; // Changed column header to "Status"
+    echo "<th>Action</th>"; // Added column for actions
+    echo "</tr>";
+
+    $count = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr>";
+        echo "<td>" . $count . "</td>"; 
+        echo "<td>" . $row['fullname'] . "</td>";
+        echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
+        echo "<td>" . $row['idNumber'] . "</td>";
+        echo "<td>" . $row['paymentMethod'] . "</td>";
+        echo "<td>" . $row['age'] . "</td>";
+        echo "<td>" . $row['timeIn'] . "</td>";
+        echo "<td>" . $row['timeOut'] . "</td>";
+        echo "<td>" . $row['doctor_report'] . "</td>";
+        echo "<td>" . $row['imaging_report'] . "</td>";
+        echo "<td>" . $row['lab_report'] . "</td>";
+        echo "<td>" . $row['counselling_report'] . "</td>";
+        echo "<td>" . $row['pharmacy_report'] . "</td>";
+        echo "<td>" . $row['cashier_report'] . "</td>";
+        echo "<td>" . ($row['admit'] == 1 ? 'Inpatient' : 'Outpatient') . "</td>"; // Displaying status as Inpatient or Outpatient
+        
+       
+// Print Receipt button
+echo '<td><form method="post" action="../reports/print_reciepts.php">
+         <input type="hidden" name="visitor_id" value="' . $row['id'] . '">
+         <button class="btn btn-primary" type="submit">Print Receipt</button>
+      </form></td>';
+
+        // Delete button
+        echo '<td><button class="btn btn-danger" type="submit" name="delete" value="' . $row['id'] . '">Delete</button></td>';
+        echo "</tr>";
+        $count++;
+    }
+    echo "</table>";
+    echo "</form>";
+} else {
+    echo "No records found.";
+}
+
+mysqli_close($conn);
+?>
+
+
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -380,19 +478,6 @@
     
                    
 
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                var quill = new Quill('#quill-editor', {
-                                    theme: 'snow',
-                                });
-                        
-                                quill.on('text-change', function () {
-                                    // Update the hidden input with Quill content
-                                    document.getElementById('details').value = quill.root.innerHTML;
-                                });
-                            });
-                        </script>
-                        
                 </div>
                 <!-- /.container-fluid -->
 
