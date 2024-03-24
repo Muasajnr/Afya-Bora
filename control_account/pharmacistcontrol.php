@@ -73,7 +73,31 @@
                         <a class="collapse-item" href="../register_accounts/addcashier.php">Cashier</a>
                         <a class="collapse-item" href="../register_accounts/addpharmacist.php">Pharmacist</a>
                         <a class="collapse-item" href="../register_accounts/addward.php">Ward</a>
+                        <a class="collapse-item" href="../register_accounts/addcounseller.php">Counseller</a>
 
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Utilities Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                    aria-expanded="true" aria-controls="collapseUtilities">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Staff Accounts</span>
+                </a>
+                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Control Accounts:</h6>
+                        <a class="collapse-item" href="receptioncontrol.php">Reception</a>
+                        <a class="collapse-item" href="doctorcontrol.php">Doctor</a>
+                        <a class="collapse-item" href="labcontrol.php">Lab</a>
+                        <a class="collapse-item" href="radiationcontrol.php">Radiation</a>
+                        <a class="collapse-item" href="cashiercontrol.php">Cashier</a>
+                        <a class="collapse-item" href="pharmacistcontrol.php">Pharmacist</a>
+                        <a class="collapse-item" href="wardcontrol.php">Ward</a>
+                        <a class="collapse-item" href="counsellercontrol.php">Counseller</a>
                     </div>
                 </div>
             </li>
@@ -108,11 +132,11 @@
             </li>
 
             <!-- Nav Item - Tables -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="../patients_records/payroll.php">
                     <i class="fas fa-file-invoice-dollar fa-fw"></i>
                     <span>Payroll</span></a>
-            </li>
+            </li> -->
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 

@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Ward - Login</title>
+    <title>Counselor - Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // Query to check if the user exists in the database
-    $sql = "SELECT * FROM ward_users WHERE email = '$email'";
+    $sql = "SELECT * FROM counseller_users WHERE email = '$email'";
     $result = mysqli_query($conn, $sql);
 
     // Check if a row was returned
@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Verify the password
         if ($password === $user['password']) {
             // Password is correct, redirect the user to the dashboard
-            header("Location: ../ward/index.php");
+            header("Location: ../counseller/index.php");
             exit();
         } else {
             // Password is incorrect

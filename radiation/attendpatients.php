@@ -57,7 +57,7 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Reception
+                Radiation
             </div>
 
             <!-- Nav Item - Tables -->
@@ -291,7 +291,7 @@ if (isset($_POST['save'])) {
 
 $sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report,lab_report,imaging_report, imaging, lab, counseller, admit 
         FROM visitors
-        WHERE attendPurpose = 'imaging' OR imaging=1 ";
+        WHERE attendPurpose = 'imaging'AND position='patient' OR imaging=1 ";
 $result = mysqli_query($conn, $sql);
 $cellStatus = 'red';
 

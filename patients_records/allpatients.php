@@ -74,6 +74,7 @@
                         <a class="collapse-item" href="../control_account/cashiercontrol.php">Cashier</a>
                         <a class="collapse-item" href="../control_account/pharmacistcontrol.php">Pharmacist</a>
                         <a class="collapse-item" href="../control_account/wardcontrol.php">Ward</a>
+                        <a class="collapse-item" href="../control_account/counsellercontrol.php">Counseller</a>
                     </div>
                 </div>
             </li>
@@ -96,6 +97,7 @@
                         <a class="collapse-item" href="cashiercontrol.php">Cashier</a>
                         <a class="collapse-item" href="pharmacistcontrol.php">Pharmacist</a>
                         <a class="collapse-item" href="wardcontrol.php">Ward</a>
+                        <a class="collapse-item" href="counsellercontrol.php">Counseller</a>
                     </div>
                 </div>
             </li>
@@ -137,11 +139,11 @@
             </li>
 
             <!-- Nav Item - Tables -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="payroll.php">
                     <i class="fas fa-file-invoice-dollar fa-fw"></i>
                     <span>Payroll</span></a>
-            </li>
+            </li> -->
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -406,10 +408,10 @@ if (mysqli_num_rows($result) > 0) {
         
        
 // Print Receipt button
-echo '<td><form method="post" action="../reports/print_reciepts.php">
-         <input type="hidden" name="visitor_id" value="' . $row['id'] . '">
-         <button class="btn btn-primary" type="submit">Print Receipt</button>
-      </form></td>';
+// echo '<td><form method="post" action="../reports/print_reciepts.php">
+//          <input type="hidden" name="visitor_id" value="' . $row['id'] . '">
+         
+//       </form></td>';
 
         // Delete button
         echo '<td><button class="btn btn-danger" type="submit" name="delete" value="' . $row['id'] . '">Delete</button></td>';

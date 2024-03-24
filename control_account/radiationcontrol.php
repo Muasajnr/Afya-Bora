@@ -73,6 +73,7 @@
                         <a class="collapse-item" href="../register_accounts/addcashier.php">Cashier</a>
                         <a class="collapse-item" href="../register_accounts/addpharmacist.php">Pharmacist</a>
                         <a class="collapse-item" href="../register_accounts/addward.php">Ward</a>
+                        <a class="collapse-item" href="../register_accounts/addcounseller.php">Counseller</a>
 
                     </div>
                 </div>
@@ -96,6 +97,7 @@
                         <a class="collapse-item" href="cashiercontrol.php">Cashier</a>
                         <a class="collapse-item" href="pharmacistcontrol.php">Pharmacist</a>
                         <a class="collapse-item" href="wardcontrol.php">Ward</a>
+                        <a class="collapse-item" href="counsellercontrol.php">Counseller</a>
                     </div>
                 </div>
             </li>
@@ -137,11 +139,11 @@
             </li>
 
             <!-- Nav Item - Tables -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="../patients_records/payroll.php">
                     <i class="fas fa-file-invoice-dollar fa-fw"></i>
                     <span>Payroll</span></a>
-            </li>
+            </li> -->
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 

@@ -57,7 +57,7 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Pharmacy
+                Cashier
             </div>
 
             <!-- Nav Item - Tables -->

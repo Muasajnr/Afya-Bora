@@ -55,7 +55,7 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Reception
+                Radiation
             </div>
 
             <!-- Nav Item - Tables -->

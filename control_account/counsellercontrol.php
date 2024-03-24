@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Lab Control</title>
+    <title>AFYA BORA || Counseller Control</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -144,7 +144,6 @@
                     <i class="fas fa-file-invoice-dollar fa-fw"></i>
                     <span>Payroll</span></a>
             </li> -->
-
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -330,12 +329,12 @@ mysqli_close($conn);
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">All Lab Accounts</h1>
+                    <h1 class="h3 mb-2 text-gray-800">All Reception Accounts</h1>
                     
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Lab Accounts</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Reception Accounts</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -351,7 +350,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
     $id = mysqli_real_escape_string($conn, $_POST['delete_id']);
 
     // Query to delete the record from the database
-    $delete_sql = "DELETE FROM lab_users WHERE id = $id";
+    $delete_sql = "DELETE FROM ward_users WHERE id = $id";
 
     // Attempt to execute the delete query
     if (mysqli_query($conn, $delete_sql)) {
@@ -362,7 +361,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
 }
 
 // Query to fetch all data from the cashier_users table
-$sql = "SELECT * FROM lab_users";
+$sql = "SELECT * FROM ward_users";
 $result = mysqli_query($conn, $sql);
 
 // Check if any records were found
@@ -388,7 +387,7 @@ if (mysqli_num_rows($result) > 0) {
         echo '<td>
                 <form method="post" onsubmit="return confirm(\'Are you sure you want to delete this record?\')">
                     <input type="hidden" name="delete_id" value="' . $row['id'] . '">
-                    <button class="btn btn-primary" type="button" onclick="location.href=\'../lab/index.php\'">Login</button> 
+                    <button class="btn btn-primary" type="button" onclick="location.href=\'../reception/index.php\'">Login</button> 
                     <button class="btn btn-danger" type="submit" name="delete">Delete</button>
                 </form>
               </td>';
@@ -405,6 +404,8 @@ if (mysqli_num_rows($result) > 0) {
 mysqli_close($conn);
 ?>
 
+                                    
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -421,7 +422,7 @@ mysqli_close($conn);
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Afya Bora 2024</span>
+                        <span>Copyright &copy; Your Website 2020</span>
                     </div>
                 </div>
             </footer>

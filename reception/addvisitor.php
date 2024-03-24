@@ -1,47 +1,47 @@
 <?php
-// Include your database connection details (assuming config.php is in the database folder)
-require('../database/config.php');
+    // Include your database connection details (assuming config.php is in the database folder)
+    require('../database/config.php');
 
-// Check if form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Check if form is submitted
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-  // Collect form data
-  $fullName = $_POST['fullName'];
-  $position = $_POST['position'];
-  $contact = $_POST['contact'];
-  $idNumber = $_POST['idNumber'];
-  $attendPurpose = $_POST['attendPurpose'];
-  $paymentMethod = $_POST['paymentMethod'];
-  $age = $_POST['age'];
-  $role = $_POST['role'];
-  $visitPurpose = $_POST['visitPurpose'];
-  $patientVisitedName = $_POST['patientVisitedName'];
-  $relationship = $_POST['relationship'];
-  $currentDate = date('Y-m-d');
-  $timeIn = date('Y-m-d H:i:s', strtotime($currentDate . ' ' . $_POST['timeIn']));
-$timeOut = date('Y-m-d H:i:s', strtotime($currentDate . ' ' . $_POST['timeOut']));
+    // Collect form data
+    $fullName = $_POST['fullName'];
+    $position = $_POST['position'];
+    $contact = $_POST['contact'];
+    $idNumber = $_POST['idNumber'];
+    $attendPurpose = $_POST['attendPurpose'];
+    $paymentMethod = $_POST['paymentMethod'];
+    $age = $_POST['age'];
+    $role = $_POST['role'];
+    $visitPurpose = $_POST['visitPurpose'];
+    $patientVisitedName = $_POST['patientVisitedName'];
+    $relationship = $_POST['relationship'];
+    $currentDate = date('Y-m-d');
+    $timeIn = date('Y-m-d H:i:s', strtotime($currentDate . ' ' . $_POST['timeIn']));
+    $timeOut = date('Y-m-d H:i:s', strtotime($currentDate . ' ' . $_POST['timeOut']));
 
-            
+                
 
-  // Prepare SQL statement (prevents SQL injection)
-  $sql = "INSERT INTO visitors (fullname, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Prepare SQL statement (prevents SQL injection)
+    $sql = "INSERT INTO visitors (fullname, position, contact, idNumber, attendPurpose, paymentMethod, age, role, visitPurpose, patientVisitedName, relationship, timeIn, timeOut)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-$stmt = mysqli_prepare($conn, $sql);
+    $stmt = mysqli_prepare($conn, $sql);
 
-// Bind parameters to the prepared statement
-mysqli_stmt_bind_param($stmt, "sssssssssssss", $fullName, $position, $contact, $idNumber, $attendPurpose, $paymentMethod, $age, $role, $visitPurpose, $patientVisitedName, $relationship, $timeIn, $timeOut);
+    // Bind parameters to the prepared statement
+    mysqli_stmt_bind_param($stmt, "sssssssssssss", $fullName, $position, $contact, $idNumber, $attendPurpose, $paymentMethod, $age, $role, $visitPurpose, $patientVisitedName, $relationship, $timeIn, $timeOut);
 
-  // Execute the statement
-  if (mysqli_stmt_execute($stmt)) {
-    echo "Visitor information added successfully!";
-  } else {
-    echo "Error: " . mysqli_error($conn);
-  }
+    // Execute the statement
+    if (mysqli_stmt_execute($stmt)) {
+        echo "Visitor information added successfully!";
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
 
-  // Close statement and connection
-  mysqli_stmt_close($stmt);
-  mysqli_close($conn);
+    // Close statement and connection
+    mysqli_stmt_close($stmt);
+   
 }
 
 // Check connection established earlier (optional, assuming connection details are correct)
@@ -215,7 +215,9 @@ if (mysqli_connect_errno()) {
                             <!-- Dropdown - Alerts -->
                             <?php
 require_once('../database/config.php');
-
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 // Fetch messages where receiver is "admin"
 $sql = "SELECT * FROM messages WHERE receiver_name = 'reception'";
 $result = mysqli_query($conn, $sql);

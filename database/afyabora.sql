@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 24, 2024 at 03:10 PM
+-- Generation Time: Mar 24, 2024 at 08:55 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -61,6 +61,21 @@ CREATE TABLE `cashier_users` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `counseller_users`
+--
+
+CREATE TABLE `counseller_users` (
+  `id` int NOT NULL,
+  `first_name` varchar(50) DEFAULT NULL,
+  `last_name` varchar(50) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `doctor_users`
 --
 
@@ -103,6 +118,22 @@ CREATE TABLE `messages` (
   `time_sent` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `department`, `sender_name`, `receiver_name`, `message`, `time_sent`) VALUES
+(1, 'admin', 'musa', 'admin', 'how are you today? check out patient mark abosi details', '2024-03-24 20:01:41'),
+(2, 'admin', 'nicky', 'reception', 'hello how are you today? We are expecting area MP anytime. be ready.Great time', '2024-03-24 20:06:02'),
+(3, 'admin', 'faith', 'ward', 'hello. I need feedback regarding this week new equipments', '2024-03-24 20:08:09'),
+(5, 'ward', 'stacy', 'doctor', 'habari doc.. there is a patient who needs urgent attention ward room 11b', '2024-03-24 20:10:27'),
+(6, 'doctor', 'allan', 'lab', 'hi... can you retake insulin test on mike munene?', '2024-03-24 20:17:47'),
+(7, 'lab', 'maggy', 'admin', 'Thank you boss', '2024-03-24 20:18:39'),
+(8, 'admin', 'Mark', 'cashier', 'Hello\r\nThe meeting has been rescheduled to 3pm. Kindly avail yourself on time.Sorry for Inconviniences.', '2024-03-24 20:20:17'),
+(9, 'cashier', 'susan', 'pharmacy', 'Hello.. Come to my office we should discuss on the matter', '2024-03-24 20:22:43'),
+(10, 'pharmacy', 'yusuf', 'counselor', 'I get it thank you', '2024-03-24 20:24:15'),
+(11, 'doctor', 'Edwin', 'imaging', 'very good work done .. congrats!!', '2024-03-24 20:25:44');
+
 -- --------------------------------------------------------
 
 --
@@ -115,7 +146,8 @@ CREATE TABLE `pharmacy_users` (
   `last_name` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `source` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -190,13 +222,13 @@ CREATE TABLE `visitors` (
   `imaging` tinyint(1) NOT NULL DEFAULT '0',
   `counseller` tinyint(1) NOT NULL DEFAULT '0',
   `admit` tinyint(1) NOT NULL DEFAULT '0',
-  `doctor_report` varchar(255) DEFAULT NULL,
-  `lab_report` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `imaging_report` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `counselling_report` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `pharmacy_report` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `cashier_report` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `ward_report` varchar(255) DEFAULT NULL
+  `doctor_report` varchar(1255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `lab_report` varchar(1255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `imaging_report` varchar(1255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `counselling_report` varchar(1255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `pharmacy_report` varchar(1255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `cashier_report` varchar(1255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ward_report` varchar(1255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -233,6 +265,12 @@ ALTER TABLE `cashier_users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `counseller_users`
+--
+ALTER TABLE `counseller_users`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `doctor_users`
 --
 ALTER TABLE `doctor_users`
@@ -257,7 +295,9 @@ ALTER TABLE `messages`
 --
 ALTER TABLE `pharmacy_users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `id_source_unique` (`id`,`source`),
+  ADD UNIQUE KEY `unique_id_source` (`id`,`source`);
 
 --
 -- Indexes for table `radiation_users`
@@ -286,6 +326,12 @@ ALTER TABLE `visitors`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `ward_users`
+--
+ALTER TABLE `ward_users`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -299,6 +345,12 @@ ALTER TABLE `admin_users`
 -- AUTO_INCREMENT for table `cashier_users`
 --
 ALTER TABLE `cashier_users`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `counseller_users`
+--
+ALTER TABLE `counseller_users`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
@@ -317,7 +369,7 @@ ALTER TABLE `lab_users`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `pharmacy_users`
@@ -341,6 +393,12 @@ ALTER TABLE `reception_users`
 -- AUTO_INCREMENT for table `visitors`
 --
 ALTER TABLE `visitors`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `ward_users`
+--
+ALTER TABLE `ward_users`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 COMMIT;
 

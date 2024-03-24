@@ -64,7 +64,7 @@
                     <span>New Staff Accounts</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                div class="bg-white py-2 collapse-inner rounded">
+                    <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Create Accounts:</h6>
                         <a class="collapse-item" href="../register_accounts/addreception.php">Reception</a>
                         <a class="collapse-item" href="../register_accounts/adddoctor.php">Doctor</a>
@@ -137,11 +137,11 @@
             </li>
 
             <!-- Nav Item - Tables -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="payroll.php">
                     <i class="fas fa-file-invoice-dollar fa-fw"></i>
                     <span>Payroll</span></a>
-            </li>
+            </li> -->
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -346,105 +346,66 @@ require('../database/config.php');
 // Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['delete'])) {
-        // Extract the ID of the record to be deleted
+        // Extract the ID and source table of the record to be deleted
         $id = mysqli_real_escape_string($conn, $_POST['delete_id']);
+        $source_table = mysqli_real_escape_string($conn, $_POST['source_table']);
 
-        // Array of tables from which data should be deleted
-        $tables = array("pharmacy_users", "lab_users", "doctor_users", "cashier_users", "reception_users", "radiation_users");
-
-        // Loop through tables and delete records
-        foreach ($tables as $table) {
-            // Query to delete the record from the current table
-            $delete_sql = "DELETE FROM $table WHERE id = $id";
-
-            // Attempt to execute the delete query
-            if (mysqli_query($conn, $delete_sql)) {
-                echo "Record deleted successfully from $table.<br>";
-            } else {
-                echo "Error deleting record from $table: " . mysqli_error($conn) . "<br>";
-            }
+        // Delete the record from the specified table
+        $delete_sql = "DELETE FROM $source_table WHERE id = $id AND source = '$source_table'";
+        if (mysqli_query($conn, $delete_sql)) {
+            echo "Record deleted successfully from $source_table.<br>";
+        } else {
+            echo "Error deleting record from $source_table: " . mysqli_error($conn) . "<br>";
         }
     } elseif (isset($_POST['save'])) {
-        // Extract the ID and salary from the form
+        // Extract the ID, source table, and salary from the form
         $id = isset($_POST['save_id']) ? mysqli_real_escape_string($conn, $_POST['save_id']) : null;
+        $source_table = isset($_POST['source_table']) ? mysqli_real_escape_string($conn, $_POST['source_table']) : null;
         $salary = isset($_POST['salary']) ? mysqli_real_escape_string($conn, $_POST['salary']) : null;
 
-        // Ensure both ID and salary are set before proceeding
-        if ($id !== null && $salary !== null) {
-            // Query to check if the record exists in the staff table
-            $check_sql = "SELECT * FROM staff WHERE id = $id";
-            $check_result = mysqli_query($conn, $check_sql);
-
-            // If the record exists, update the salary
-            if (mysqli_num_rows($check_result) > 0) {
-                $update_sql = "UPDATE staff SET salary = $salary WHERE id = $id";
-                if (mysqli_query($conn, $update_sql)) {
-                    echo "Salary updated successfully.<br>";
-                } else {
-                    echo "Error updating salary: " . mysqli_error($conn) . "<br>";
-                }
-            } else { // If the record doesn't exist, insert a new row
-                $source_table = isset($_POST['source_table']) ? mysqli_real_escape_string($conn, $_POST['source_table']) : null;
-                $first_name = isset($_POST['first_name']) ? mysqli_real_escape_string($conn, $_POST['first_name']) : null;
-                $last_name = isset($_POST['last_name']) ? mysqli_real_escape_string($conn, $_POST['last_name']) : null;
-                $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : null;
-                $time_created = date('Y-m-d H:i:s');
-
-                if ($source_table !== null && $first_name !== null && $last_name !== null && $email !== null) {
-                    $insert_sql = "INSERT INTO staff (id, source, first_name, last_name, email, created_at, salary) VALUES ('$id', '$source_table', '$first_name', '$last_name', '$email', '$time_created', '$salary')";
-                    if (mysqli_query($conn, $insert_sql)) {
-                        echo "Salary saved successfully.<br>";
-                    } else {
-                        echo "Error saving salary: " . mysqli_error($conn) . "<br>";
-                    }
-                } else {
-                    echo "Error: Required fields are missing.<br>";
-                }
+        // Ensure all necessary fields are set before proceeding
+        if ($id !== null && $source_table !== null && $salary !== null) {
+            // Update the salary for the specified record in the specified table
+            $update_sql = "UPDATE $source_table SET salary = $salary WHERE id = $id AND source = '$source_table'";
+            if (mysqli_query($conn, $update_sql)) {
+                echo "Salary updated successfully.<br>";
+            } else {
+                echo "Error updating salary: " . mysqli_error($conn) . "<br>";
             }
         } else {
-            echo "Error: ID or salary is missing.<br>";
+            echo "Error: ID, source table, or salary is missing.<br>";
         }
     }
 }
 
-// Array to hold all fetched records
+// Fetch all records from different tables
 $all_records = array();
-
-// Array of tables from which data should be fetched
-$tables = array("pharmacy_users", "lab_users", "doctor_users", "cashier_users", "reception_users", "radiation_users");
-
-// Loop through tables and fetch data
+$tables = array("pharmacy_users", "lab_users", "doctor_users", "cashier_users", "reception_users", "radiation_users", "ward_users", "counseller_users");
 foreach ($tables as $table) {
-    // Query to fetch all data from the current table
     $sql = "SELECT *, '$table' as source FROM $table";
     $result = mysqli_query($conn, $sql);
 
-    // Check if any records were found
     if (mysqli_num_rows($result) > 0) {
-        // Iterate over the result set and add records to the array
         while ($row = mysqli_fetch_assoc($result)) {
-            // Add the record along with the source table to the array
             $all_records[] = $row;
         }
     }
 }
 
-// Check if any records were fetched
+// Display records in a table
 if (!empty($all_records)) {
-    // Display table headers
     echo "<tr>";
     echo "<th>Source Table</th>";
     echo "<th>First Name</th>";
     echo "<th>Last Name</th>";
     echo "<th>Email</th>";
     echo "<th>Time Created</th>";
-    echo "<th>Salary</th>";
-    echo "<th>Actions</th>";
+    //echo "<th>Salary</th>";
+    //echo "<th>Actions</th>";
     echo "</tr>";
     echo "</thead>";
     echo "<tbody>";
 
-    // Iterate over all records and display them
     foreach ($all_records as $record) {
         echo "<tr>";
         echo "<td>" . $record['source'] . "</td>";
@@ -452,31 +413,29 @@ if (!empty($all_records)) {
         echo "<td>" . $record['last_name'] . "</td>";
         echo "<td>" . $record['email'] . "</td>";
         echo "<td>" . $record['created_at'] . "</td>";
-        echo "<td>";
-// Display salary input
-if (in_array($record['source'], $tables)) {
-    echo '<form method="post">
-            <input type="hidden" name="save_id" value="' . $record['id'] . '">
-            <input type="hidden" name="source_table" value="' . $record['source'] . '">
-            <input type="hidden" name="first_name" value="' . $record['first_name'] . '">
-            <input type="hidden" name="last_name" value="' . $record['last_name'] . '">
-            <input type="hidden" name="email" value="' . $record['email'] . '">
-            <input type="number" name="salary" value="' . getSalary($conn, $record['id']) . '">
-        </td>
-        <td>
-            <button class="btn btn-success" type="submit" name="save">Save</button><br><br>
-        </form>';
-} else {
-    echo getSalary($conn, $record['id']);
-}
-// Display delete button
-echo '<form method="post" onsubmit="return confirm(\'Are you sure you want to delete this record from all tables?\')">
-        <input type="hidden" name="delete_id" value="' . $record['id'] . '">
-        <button class="btn btn-danger" type="submit" name="delete">Delete</button>
-      </form>';
-echo "</td>";
+        //echo "<td>";
 
-        echo "</tr>";
+        // Display salary input for records from specified tables
+        // if (in_array($record['source'], $tables)) {
+        //     echo '<form method="post">
+        //             <input type="hidden" name="save_id" value="' . $record['id'] . '">
+        //             <input type="hidden" name="source_table" value="' . $record['source'] . '">
+        //             // <input type="number" name="salary" value="' . getSalary($conn, $record['id'], $record['source']) . '">
+        //         </td>
+              
+                
+        // } else {
+            // echo getSalary($conn, $record['id'], $record['source']);
+       // }
+
+        // Display delete button
+        // echo '<form method="post" onsubmit="return confirm(\'Are you sure you want to delete this record from ' . $record['source'] . ' table?\')">
+        //         <input type="hidden" name="delete_id" value="' . $record['id'] . '">
+        //         <input type="hidden" name="source_table" value="' . $record['source'] . '">
+        //         <button class="btn btn-danger" type="submit" name="delete">Delete</button>
+        //       </form>';
+        // echo "</td>";
+        // echo "</tr>";
     }
 
     echo "</tbody>"; // Close the table body
@@ -485,9 +444,9 @@ echo "</td>";
     echo "No records found.";
 }
 
-// Function to get salary for a given ID
-function getSalary($conn, $id) {
-    $sql = "SELECT salary FROM staff WHERE id = $id";
+// Function to get salary for a given ID and source table
+function getSalary($conn, $id, $source_table) {
+    $sql = "SELECT salary FROM $source_table WHERE id = $id";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);

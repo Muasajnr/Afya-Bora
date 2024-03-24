@@ -292,7 +292,7 @@ if (isset($_POST['save'])) {
 
 $sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report,lab_report, imaging, doctor, counseller, admit 
         FROM visitors
-        WHERE attendPurpose = 'lab' OR lab = 1";
+        WHERE attendPurpose = 'lab' AND position='patient' OR lab = 1";
 $result = mysqli_query($conn, $sql);
 $cellStatus = 'red';
 
