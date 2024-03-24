@@ -1,2 +1,0 @@
-id	fullname	position	contact	idNumber	attendPurpose	paymentMethod	age	role	visitPurpose	patientVisitedName	relationship	timeIn	timeOut	doctor	lab	imaging	counseller	admit	doctor_report	lab_report	imaging_report	counselling_report	pharmacy_report	cashier_report
-20	miss maliti	patient	788965543	2145557	doctor	card	25					2024-03-23 10:01:00	2024-03-23 00:00:00	1	1	1	1	1	<p>malitu misiss</p>	<p>yog</p>	<p>msms</p>	<p>rekjhhretiu</p>		
