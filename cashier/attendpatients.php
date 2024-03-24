@@ -286,7 +286,7 @@ if (isset($_POST['save'])) {
 }
 
 
-$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report, counselling_report,pharmacy_report,cashier_report, admit 
+$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report, counselling_report,pharmacy_report,cashier_report,ward_report, admit 
         FROM visitors
         WHERE position = 'patient' ";
 $result = mysqli_query($conn, $sql);
@@ -308,6 +308,7 @@ if (mysqli_num_rows($result) > 0) {
     echo "<th>Scan/xray</th>";
     echo "<th>Lab</th>";
     echo "<th>Counseller</th>";
+    echo "<th>Ward</th>";
     echo "<th>Pharmacy</th>";
     echo "<th>Cashier</th>";
     echo "<th>Admited </th>";
@@ -328,6 +329,7 @@ if (mysqli_num_rows($result) > 0) {
         echo "<td>" . $row['imaging_report'] . "</td>";
         echo "<td>" . $row['lab_report'] . "</td>";
         echo "<td>" . $row['counselling_report'] . "</td>";
+        echo "<td>" . $row['ward_report'] . "</td>";
         echo "<td>" . $row['pharmacy_report'] . "</td>";
 
         echo "<td>

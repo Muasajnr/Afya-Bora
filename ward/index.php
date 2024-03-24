@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Out-Patients</title>
+    <title>AFYA BORA || Ward Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -31,7 +31,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -43,7 +43,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="../admin.php">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -51,97 +51,22 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Staff
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>New Staff Accounts</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Create Accounts:</h6>
-                        <a class="collapse-item" href="../register_accounts/addreception.php">Reception</a>
-                        <a class="collapse-item" href="../register_accounts/adddoctor.php">Doctor</a>
-                        <a class="collapse-item" href="../register_accounts/addlab.php">Lab</a>
-                        <a class="collapse-item" href="../register_accounts/addradiation.php">Radiation</a>
-                        <a class="collapse-item" href="../register_accounts/addcashier.php">Cashier</a>
-                        <a class="collapse-item" href="../register_accounts/addpharmacist.php">Pharmacist</a>
-                        <a class="collapse-item" href="../register_accounts/addward.php">Ward</a>
-
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Staff Accounts</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Control Accounts:</h6>
-                        <a class="collapse-item" href="../control_account/receptioncontrol.php">Reception</a>
-                        <a class="collapse-item" href="../control_account/doctorcontrol.php">Doctor</a>
-                        <a class="collapse-item" href="../control_account/labcontrol.php">Lab</a>
-                        <a class="collapse-item" href="../control_account/radiationcontrol.php">Radiation</a>
-                        <a class="collapse-item" href="../control_account/cashiercontrol.php">Cashier</a>
-                        <a class="collapse-item" href="../control_account/pharmacistcontrol.php">Pharmacist</a>
-                        <a class="collapse-item" href="../control_account/wardcontrol.php">Ward</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+            
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Patients
+                Ward
             </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Patients' Report</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Patients:</h6>
-                        <a class="collapse-item" href="allpatients.php">All </a>
-                        <a class="collapse-item" href="inpatient.php">In-Patients</a>
-                        <a class="collapse-item" href="outpatient.php">Out-Patients</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Visitors:</h6>
-                        <a class="collapse-item" href="caregiver.php">Caregiver</a>
-                        <a class="collapse-item" href="non_patient.php">Non-Patient</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="staff_members.php">
-                    <i class="fas fa-users fa-fw"></i>
-                    <span>Staff Members</span></a>
-            </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="payroll.php">
-                    <i class="fas fa-file-invoice-dollar fa-fw"></i>
-                    <span>Payroll</span></a>
+                <a class="nav-link" href="attendpatients.php">
+                    <i class="fas fa-edit fa-fw"></i>
+                    <span>Attend Patients</span></a>
             </li>
+
+           
+
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -228,7 +153,7 @@
 require_once('../database/config.php');
 
 // Fetch messages where receiver is "admin"
-$sql = "SELECT * FROM messages WHERE receiver_name = 'admin'";
+$sql = "SELECT * FROM messages WHERE receiver_name = 'ward'";
 $result = mysqli_query($conn, $sql);
 
 // Start dropdown list
@@ -265,6 +190,7 @@ echo '<a class="dropdown-item text-center small text-gray-500" href="#">Show All
 
 // Close dropdown list
 echo '</div>';
+
 // Close database connection
 mysqli_close($conn);
 ?>
@@ -283,13 +209,14 @@ mysqli_close($conn);
                             </a>
                             
                         </li>
+
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">admin</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Ward</span>
                                 <img class="img-profile rounded-circle"
                                     src="../img/undraw_profile.svg">
                             </a>
@@ -322,102 +249,166 @@ mysqli_close($conn);
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-        
-                    <div class="container-fluid">
+                <div class="container-fluid">
 
-                        <!-- Page Heading -->
-                        <h1 class="h3 mb-2 text-gray-800">Out-Patients</h1>
-                        
-                        <!-- DataTales Example -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">All Out-Patients</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                <?php
-require('../database/config.php');
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <!-- report generation code -->
+<a href="#" id="generateReportBtn" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+</a>
 
-if (!$conn) {
-    die("Failed to connect to MySQL: " . mysqli_connect_error());
-}
+<!-- JavaScript code -->
+<script>
+document.getElementById("generateReportBtn").addEventListener("click", function() {
+    // Send an AJAX request to fetch the text file
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../reports/generate_report.php", true); // Adjust path here
+    xhr.responseType = "blob"; // Set response type to blob (binary data)
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            // Create a temporary link to download the text file
+            var blob = new Blob([xhr.response], { type: "text/plain" });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "ward_report.txt";
+            document.body.appendChild(a);
+            a.click(); // Simulate click on the link to trigger download
+            document.body.removeChild(a); // Remove the link from the document
+        }
+    };
+    xhr.send();
+});
+</script>
+                    </div>
 
-if (isset($_POST['delete'])) {
-    $id = $_POST['delete'];
-    
-    // Delete the visitor row from the database
-    $deleteSql = "DELETE FROM visitors WHERE id = ?";
-    $deleteStmt = mysqli_prepare($conn, $deleteSql);
-    mysqli_stmt_bind_param($deleteStmt, 'i', $id);
-    mysqli_stmt_execute($deleteStmt);
-}
+                    <!-- Content Row -->
+                    <div class="row">
 
-$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report, counselling_report, pharmacy_report, cashier_report, admit 
-        FROM visitors
-        WHERE position = 'patient' AND admit=0 ";
-$result = mysqli_query($conn, $sql);
-$cellStatus = 'red';
-
-if (mysqli_num_rows($result) > 0) {
-    echo "<form method='post'>";
-    echo "<table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>";
-    echo "<tr>";
-    echo "<th>No</th>";
-    echo "<th>Full Names</th>";
-    echo "<th>Contact</th>";
-    echo "<th>ID Number</th>";
-    echo "<th>Payment Method</th>";
-    echo "<th>Age</th>";
-    echo "<th>Time In</th>";
-    echo "<th>Time Out</th>";
-    echo "<th>Consultation Report</th>";
-    echo "<th>Scan/xray</th>";
-    echo "<th>Lab</th>";
-    echo "<th>Counseller</th>";
-    echo "<th>Pharmacy</th>";
-    echo "<th>Cashier</th>";
-    echo "<th>Status</th>"; 
-    echo "<th>Action</th>"; 
-    echo "</tr>";
-
-    $count = 1;
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        echo "<td>" . $count . "</td>"; 
-        echo "<td>" . $row['fullname'] . "</td>";
-        echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
-        echo "<td>" . $row['idNumber'] . "</td>";
-        echo "<td>" . $row['paymentMethod'] . "</td>";
-        echo "<td>" . $row['age'] . "</td>";
-        echo "<td>" . $row['timeIn'] . "</td>";
-        echo "<td>" . $row['timeOut'] . "</td>";
-        echo "<td>" . $row['doctor_report'] . "</td>";
-        echo "<td>" . $row['imaging_report'] . "</td>";
-        echo "<td>" . $row['lab_report'] . "</td>";
-        echo "<td>" . $row['counselling_report'] . "</td>";
-        echo "<td>" . $row['pharmacy_report'] . "</td>";
-        echo "<td>" . $row['cashier_report'] . "</td>";
-        echo "<td>" . ($row['admit'] == 1 ? 'Inpatient' : 'Outpatient') . "</td>"; // Displaying status as Inpatient or Outpatient
-        
-        // Delete button
-        echo '<td><button class="btn btn-danger" type="submit" name="delete" value="' . $row['id'] . '">Delete</button></td>';
-        echo "</tr>";
-        $count++;
-    }
-    echo "</table>";
-    echo "</form>";
-} else {
-    echo "No records found.";
-}
-
-mysqli_close($conn);
-?>
-                                        </tbody>
-                                    </table>
+                        <!-- patients (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Patients (Monthly)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">40,000</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-    
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Earnings (Monthly)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="progress progress-sm mr-2">
+                                                        <div class="progress-bar bg-info" role="progressbar"
+                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Requests Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                 Messages/Requests</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Row -->
+
+                    <div class="row">
+
+                        <!-- Area Chart -->
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Income Overview</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                            aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Select:</div>
+                                            <a class="dropdown-item" href="#">Weekly</a>
+                                            <a class="dropdown-item" href="#">Monthly</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Yearly</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div class="chart-area">
+                                        <canvas id="myAreaChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+
                    
 
                 </div>
@@ -430,7 +421,7 @@ mysqli_close($conn);
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Afya Bora 2024</span>
+                        <span>Copyright &copy; 2024 AFYA BORA</span>
                     </div>
                 </div>
             </footer>
@@ -478,11 +469,11 @@ mysqli_close($conn);
     <script src="../js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="../vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="../js/demo/datatables-demo.js"></script>
+    <script src="../js/demo/chart-area-demo.js"></script>
+    <script src="../js/demo/chart-pie-demo.js"></script>
 
 </body>
 <style>  /* Styles for the popup form */
@@ -556,7 +547,8 @@ button[type="submit"]:hover {
         <form action="../messages/insert_message.php" method="post" id="messageForm">
             <label for="senderDepartment">Sender Department:</label>
             <select id="senderDepartment" name="senderDepartment">
-                <option value="admin">Admin</option>
+                
+                <option value="ward">Ward</option>
                 
             </select>
             <label for="senderName">Sender Name:</label>

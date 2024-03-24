@@ -265,6 +265,140 @@ mysqli_close($conn);
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <?php
+require('../database/config.php');
+
+if (!$conn) {
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
+}
+
+if (isset($_POST['save'])) {
+    $id = $_POST['save'];
+
+    // Escape the values to prevent SQL injection (using prepared statement)
+    $imaging = isset($_POST['imaging_' . $id]) ? 1 : 0;
+    $lab = isset($_POST['lab_' . $id]) ? 1 : 0;
+    $counseller = isset($_POST['counseller_' . $id]) ? 1 : 0;
+    $admit = isset($_POST['admit_' . $id]) ? 1 : 0;
+    $doctor_report = isset($_POST['doctor_report_' . $id]) ? $_POST['doctor_report_' . $id] : '';
+
+    // Update the visitor row in the database
+    $updateSql = "UPDATE visitors SET imaging = ?, lab = ?, counseller = ?, admit = ?, doctor_report = ? WHERE id = ?";
+    $updateStmt = mysqli_prepare($conn, $updateSql);
+    mysqli_stmt_bind_param($updateStmt, 'iiissi', $imaging, $lab, $counseller, $admit, $doctor_report, $id);
+    mysqli_stmt_execute($updateStmt);
+}
+
+
+$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report,lab_report,imaging_report,counselling_report,ward_report, imaging, lab, counseller, admit 
+        FROM visitors
+        WHERE attendPurpose = 'doctor' OR doctor = 1";
+$result = mysqli_query($conn, $sql);
+$cellStatus = 'red';
+
+if (mysqli_num_rows($result) > 0) {
+    echo "<form method='post'>";
+    echo "<table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>";
+    echo "<tr>";
+    echo "<th>No</th>";
+    echo "<th>Full Names</th>";
+    echo "<th>Contact</th>";
+    echo "<th>ID Number</th>";
+    echo "<th>Payment Method</th>";
+    echo "<th>Age</th>";
+    echo "<th>Time In</th>";
+    echo "<th>Time Out</th>";
+    echo "<th>Consultation Report</th>";
+    echo "<th>Lab Report</th>";
+    echo "<th>Imaging Report</th>";
+    echo "<th>Counseller Report</th>";
+    echo "<th>Ward Report</th>";
+    echo "<th>Lab</th>";
+    echo "<th>Scan/xray</th>";
+    echo "<th>Counseller</th>";
+    echo "<th>Admit</th>";
+    echo "</tr>";
+    
+    $count = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr>";
+        echo "<td>" . $count . "</td>"; 
+        echo "<td>" . $row['fullname'] . "</td>";
+        echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
+        echo "<td>" . $row['idNumber'] . "</td>";
+        echo "<td>" . $row['paymentMethod'] . "</td>";
+        echo "<td>" . $row['age'] . "</td>";
+        echo "<td>" . $row['timeIn'] . "</td>";
+        echo "<td>" . $row['timeOut'] . "</td>";
+       
+
+        
+echo "<td>
+<style>
+    #editor-container_" . $row['id'] . " {
+        width: 350px; 
+        max-height: 400px; 
+        margin: auto;
+    }
+</style>
+<div id='editor-container_" . $row['id'] . "'></div>
+<input type='hidden' id='doctor_report_" . $row['id'] . "' name='doctor_report_" . $row['id'] . "' value='" . htmlspecialchars($row['doctor_report'] ?? '') . "'>
+<script>
+    var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],        
+                ['blockquote', 'code-block'],
+                [{ 'header': 1 }, { 'header': 2 }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],
+                [{ 'indent': '-1' }, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }],
+                [{ 'size': ['small', false, 'large', 'huge'] }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+                ['clean']
+            ]
+        },
+        placeholder: 'Write your report here...',
+        autofocus: true,
+    });
+    quill_" . $row['id'] . ".root.innerHTML = '" . (isset($row['doctor_report']) ? htmlspecialchars_decode($row['doctor_report']) : '') . "'; // Set initial content
+
+    quill_" . $row['id'] . ".on('text-change', function () {
+        document.getElementById('doctor_report_" . $row['id'] . "').value = quill_" . $row['id'] . ".root.innerHTML;
+    });
+</script>
+</td>";
+echo "<td>" . $row['lab_report'] . "</td>";
+echo "<td>" . $row['imaging_report'] . "</td>";
+echo "<td>" . $row['counselling_report'] . "</td>";
+echo "<td>" . $row['ward_report'] . "</td>";
+
+        echo "<td><input type='checkbox' id='lab' name='lab_" . $row['id'] . "' " . ($row['lab'] ? 'checked' : '') . "></td>";
+        echo "<td><input type='checkbox' id='imaging' name='imaging_" . $row['id'] . "' " . ($row['imaging'] ? 'checked' :'') . "></td>";
+        echo "<td><input type='checkbox' id='counseller' name='counseller_" . $row['id'] . "' " . ($row['counseller'] ? 'checked' : '') . "></td>";
+        echo "<td><input type='checkbox' id='admit' name='admit_" . $row['id'] . "' " . ($row['admit'] ? 'checked' : '') . "></td>";
+        echo '<td>
+                <button class="btn btn-primary" type="submit" name="save" value="' . $row['id'] . '">Save</button><br><br>
+                <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
+                <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ', \'' . $cellStatus . '\')">Done</button>
+            </td>';
+        echo "</tr>";
+        $count++;
+    }
+    echo "</table>";
+    echo "</form>";
+} else {
+    echo "No records found.";
+}
+
+mysqli_close($conn);
+?>
+
                                         
       
 

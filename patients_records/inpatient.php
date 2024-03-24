@@ -66,12 +66,13 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Create Accounts:</h6>
-                        <a class="collapse-item" href="../register_accounts/addreception.html">Reception</a>
-                        <a class="collapse-item" href="../register_accounts/adddoctor.html">Doctor</a>
-                        <a class="collapse-item" href="../register_accounts/addlab.html">Lab</a>
-                        <a class="collapse-item" href="../register_accounts/addradiation.html">Radiation</a>
-                        <a class="collapse-item" href="../register_accounts/addcashier.html">Cashier</a>
-                        <a class="collapse-item" href="../register_accounts/addpharmacist.html">Pharmacist</a>
+                        <a class="collapse-item" href="../register_accounts/addreception.php">Reception</a>
+                        <a class="collapse-item" href="../register_accounts/adddoctor.php">Doctor</a>
+                        <a class="collapse-item" href="../register_accounts/addlab.php">Lab</a>
+                        <a class="collapse-item" href="../register_accounts/addradiation.php">Radiation</a>
+                        <a class="collapse-item" href="../register_accounts/addcashier.php">Cashier</a>
+                        <a class="collapse-item" href="../register_accounts/addpharmacist.php">Pharmacist</a>
+                        <a class="collapse-item" href="../register_accounts/addward.php">Ward</a>
 
                     </div>
                 </div>
@@ -88,13 +89,13 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Control Accounts:</h6>
-                        <a class="collapse-item" href="../control_account/allpatients.php">All </a>
-                        <a class="collapse-item" href="../control_account/inpatient.php">In-Patients</a>
-                        <a class="collapse-item" href="../control_account/outpatient.php">Out-Patients</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Visitors:</h6>
-                        <a class="collapse-item" href="../control_account/caregiver.php">Caregiver</a>
-                        <a class="collapse-item" href="../control_account/non_patient.php">Non-Patient</a>
+                        <a class="collapse-item" href="../control_account/receptioncontrol.php">Reception</a>
+                        <a class="collapse-item" href="../control_account/doctorcontrol.php">Doctor</a>
+                        <a class="collapse-item" href="../control_account/labcontrol.php">Lab</a>
+                        <a class="collapse-item" href="../control_account/radiationcontrol.php">Radiation</a>
+                        <a class="collapse-item" href="../control_account/cashiercontrol.php">Cashier</a>
+                        <a class="collapse-item" href="../control_account/pharmacistcontrol.php">Pharmacist</a>
+                        <a class="collapse-item" href="../control_account/wardcontrol.php">Ward</a>
                     </div>
                 </div>
             </li>
@@ -215,8 +216,12 @@
                             </div>
                         </li>
 
-                        <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
+                        
+
+                        <!-- Nav Item - Messages -->
+                        
+                            
+                        </li><li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
@@ -224,112 +229,64 @@
                                 <span class="badge badge-danger badge-counter">3+</span>
                             </a>
                             <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div>
+                            <?php
+require_once('../database/config.php');
+
+// Fetch messages where receiver is "admin"
+$sql = "SELECT * FROM messages WHERE receiver_name = 'admin'";
+$result = mysqli_query($conn, $sql);
+
+// Start dropdown list
+echo '<div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">';
+echo '<h6 class="dropdown-header">Alerts Center</h6>';
+
+// Check if there are any messages
+if (mysqli_num_rows($result) > 0) {
+    // Loop through each message
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo '<a class="dropdown-item d-flex align-items-center" href="#" id="openMessagePopupBtn">';
+        echo '<div class="mr-3">';
+        
+        // Set default icon
+        $iconClass = 'fas fa-envelope text-primary';
+        
+        echo '<div class="icon-circle bg-primary">';
+        echo '<i class="' . $iconClass . ' text-white"></i>';
+        echo '</div>';
+        echo '</div>';
+        echo '<div>';
+        echo '<div class="small text-gray-500">' . $row['sender_name'] . ' from ' . $row['department'] . ' - ' . $row['time_sent'] . '</div>';
+        echo '<span class="font-weight-bold">' . $row['message'] . '</span>';
+        echo '</div>';
+        echo '</a>';
+    }
+} else {
+    // Display "No alerts found" as a dropdown item
+    echo '<a class="dropdown-item d-flex align-items-center" href="#"><div class="mr-3"><div class="icon-circle bg-danger"><i class="fas fa-exclamation-circle text-white"></i></div></div><div>No alerts found</div></a>';
+}
+
+// Display "Show All Alerts" link
+echo '<a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>';
+
+// Close dropdown list
+echo '</div>';
+// Close database connection
+mysqli_close($conn);
+?>
+
+
+
                         </li>
 
                         <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
+                        <li class="nav-item dropdown no-arrow mx-1" id="openMessagePopupBtn1">
                             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-envelope fa-fw"></i>
                                 <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
+                                <span class="badge badge-danger badge-counter">1</span>
                             </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../img/undraw_profile_1.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
+                            
                         </li>
 
                         <div class="topbar-divider d-none d-sm-block"></div>
@@ -338,7 +295,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">admin</span>
                                 <img class="img-profile rounded-circle"
                                     src="../img/undraw_profile.svg">
                             </a>
@@ -401,7 +358,7 @@ if (isset($_POST['delete'])) {
     mysqli_stmt_execute($deleteStmt);
 }
 
-$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report, counselling_report, pharmacy_report, cashier_report, admit 
+$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report,ward_report, counselling_report, pharmacy_report, cashier_report, admit 
         FROM visitors
         WHERE position = 'patient' AND admit=1 ";
 $result = mysqli_query($conn, $sql);
@@ -423,6 +380,7 @@ if (mysqli_num_rows($result) > 0) {
     echo "<th>Scan/xray</th>";
     echo "<th>Lab</th>";
     echo "<th>Counseller</th>";
+    echo "<th>Ward</th>";
     echo "<th>Pharmacy</th>";
     echo "<th>Cashier</th>";
     echo "<th>Status</th>"; 
@@ -443,6 +401,7 @@ if (mysqli_num_rows($result) > 0) {
         echo "<td>" . $row['doctor_report'] . "</td>";
         echo "<td>" . $row['imaging_report'] . "</td>";
         echo "<td>" . $row['lab_report'] . "</td>";
+        echo "<td>" . $row['counselling_report'] . "</td>";
         echo "<td>" . $row['counselling_report'] . "</td>";
         echo "<td>" . $row['pharmacy_report'] . "</td>";
         echo "<td>" . $row['cashier_report'] . "</td>";
@@ -535,5 +494,150 @@ mysqli_close($conn);
     <script src="../js/demo/datatables-demo.js"></script>
 
 </body>
+<style>  /* Styles for the popup form */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    width: 80%; /* Adjust width as needed */
+    max-width: 400px; /* Set maximum width */
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 9999; /* Ensure it appears on top of other content */
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
+    text-align: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    cursor: pointer;
+    font-size: 24px;
+    color: red;
+}
+
+/* Style for the form elements */
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+select,
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    background-color: #007bff; /* Blue color for the button */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3; /* Darker blue color on hover */
+}
+</style>
+
+
+<!-- Popup form for composing a message -->
+<div id="messagePopup" class="popup">
+    <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <h2>Compose Message</h2>
+        <form action="../messages/insert_message.php" method="post" id="messageForm">
+            <label for="senderDepartment">Sender Department:</label>
+            <select id="senderDepartment" name="senderDepartment">
+                <option value="admin">Admin</option>
+                
+            </select>
+            <label for="senderName">Sender Name:</label>
+            <input type="text" id="senderName" name="senderName" required>
+            <label for="receiverName">Receiver Name:</label>
+            <select id="receiverName" name="receiverName">
+                <option value="admin">Admin</option>
+                <option value="reception">Reception</option>
+                <option value="doctor">Doctor</option>
+                <option value="lab">Lab</option>
+                <option value="imaging">Imaging</option>
+                <option value="counselor">Counselor</option>
+                <option value="pharmacy">Pharmacy</option>
+                <option value="cashier">Cashier</option>
+                <option value="ward">Ward</option>
+            </select>
+            <label for="messageContent">Message:</label>
+            <textarea id="messageContent" name="messageContent" rows="4" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Get references to elements
+    var messagePopup = document.getElementById("messagePopup");
+    var openMessagePopupBtn = document.getElementById("openMessagePopupBtn");
+    var openMessagePopupBtn1 = document.getElementById("openMessagePopupBtn1");
+    var closeBtn = messagePopup.querySelector(".close-btn");
+    var messageForm = document.getElementById("messageForm");
+
+    // Function to open the popup form
+    function openPopup() {
+        // Reset form fields
+        messageForm.reset();
+        // Show the popup form
+        messagePopup.style.display = "block";
+    }
+
+    // Function to close the popup form
+    function closePopup() {
+        // Hide the popup form
+        messagePopup.style.display = "none";
+    }
+
+    // Event listener for the "Compose Message" button
+    openMessagePopupBtn.addEventListener("click", openPopup);
+    openMessagePopupBtn1.addEventListener("click", openPopup);
+
+    // Event listener for the close button
+    closeBtn.addEventListener("click", function() {
+        closePopup(); // Close the popup form
+        location.reload();
+    });
+
+    // Event listener to close the popup when user clicks outside the content
+    window.addEventListener("click", function(event) {
+        if (event.target === messagePopup) {
+            closePopup(); // Close the popup form
+            location.reload();
+        }
+    });
+
+});
+
+
+</script>
 
 </html>

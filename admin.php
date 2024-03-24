@@ -72,6 +72,7 @@
                         <a class="collapse-item" href="register_accounts/addradiation.php">Radiation</a>
                         <a class="collapse-item" href="register_accounts/addcashier.php">Cashier</a>
                         <a class="collapse-item" href="register_accounts/addpharmacist.php">Pharmacist</a>
+                        <a class="collapse-item" href="register_accounts/addward.php">Ward</a>
 
                     </div>
                 </div>
@@ -94,6 +95,7 @@
                         <a class="collapse-item" href="control_account/radiationcontrol.php">Radiation</a>
                         <a class="collapse-item" href="control_account/cashiercontrol.php">Cashier</a>
                         <a class="collapse-item" href="control_account/pharmacistcontrol.php">Pharmacist</a>
+                        <a class="collapse-item" href="control_account/wardcontrol.php">Ward</a>
                     </div>
                 </div>
             </li>

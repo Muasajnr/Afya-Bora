@@ -9,17 +9,19 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Out-Patients</title>
+    <title>AFYA BORA || Ward</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-zjBQR0WbOG6N9xJ06uJCviMRC9CgjxWGd9xfExkMJndd6aA+WiPMW+JQGJqQ9zMXT9RXQ9nBc7Kn06uA6qFPi3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 </head>
 
 <body id="page-top">
@@ -31,7 +33,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -43,7 +45,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="../admin.php">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -51,97 +53,21 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Staff
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>New Staff Accounts</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Create Accounts:</h6>
-                        <a class="collapse-item" href="../register_accounts/addreception.php">Reception</a>
-                        <a class="collapse-item" href="../register_accounts/adddoctor.php">Doctor</a>
-                        <a class="collapse-item" href="../register_accounts/addlab.php">Lab</a>
-                        <a class="collapse-item" href="../register_accounts/addradiation.php">Radiation</a>
-                        <a class="collapse-item" href="../register_accounts/addcashier.php">Cashier</a>
-                        <a class="collapse-item" href="../register_accounts/addpharmacist.php">Pharmacist</a>
-                        <a class="collapse-item" href="../register_accounts/addward.php">Ward</a>
-
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Staff Accounts</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Control Accounts:</h6>
-                        <a class="collapse-item" href="../control_account/receptioncontrol.php">Reception</a>
-                        <a class="collapse-item" href="../control_account/doctorcontrol.php">Doctor</a>
-                        <a class="collapse-item" href="../control_account/labcontrol.php">Lab</a>
-                        <a class="collapse-item" href="../control_account/radiationcontrol.php">Radiation</a>
-                        <a class="collapse-item" href="../control_account/cashiercontrol.php">Cashier</a>
-                        <a class="collapse-item" href="../control_account/pharmacistcontrol.php">Pharmacist</a>
-                        <a class="collapse-item" href="../control_account/wardcontrol.php">Ward</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+            
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Patients
+                Ward
             </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Patients' Report</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Patients:</h6>
-                        <a class="collapse-item" href="allpatients.php">All </a>
-                        <a class="collapse-item" href="inpatient.php">In-Patients</a>
-                        <a class="collapse-item" href="outpatient.php">Out-Patients</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Visitors:</h6>
-                        <a class="collapse-item" href="caregiver.php">Caregiver</a>
-                        <a class="collapse-item" href="non_patient.php">Non-Patient</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="staff_members.php">
-                    <i class="fas fa-users fa-fw"></i>
-                    <span>Staff Members</span></a>
-            </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="payroll.php">
-                    <i class="fas fa-file-invoice-dollar fa-fw"></i>
-                    <span>Payroll</span></a>
+                <a class="nav-link" href="attendpatients.php">
+                    <i class="fas fa-edit fa-fw"></i>
+                    <span>Attend Patients</span></a>
             </li>
+
+
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -228,7 +154,7 @@
 require_once('../database/config.php');
 
 // Fetch messages where receiver is "admin"
-$sql = "SELECT * FROM messages WHERE receiver_name = 'admin'";
+$sql = "SELECT * FROM messages WHERE receiver_name = 'ward'";
 $result = mysqli_query($conn, $sql);
 
 // Start dropdown list
@@ -265,6 +191,7 @@ echo '<a class="dropdown-item text-center small text-gray-500" href="#">Show All
 
 // Close dropdown list
 echo '</div>';
+
 // Close database connection
 mysqli_close($conn);
 ?>
@@ -289,7 +216,7 @@ mysqli_close($conn);
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">admin</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Ward</span>
                                 <img class="img-profile rounded-circle"
                                     src="../img/undraw_profile.svg">
                             </a>
@@ -326,35 +253,46 @@ mysqli_close($conn);
                     <div class="container-fluid">
 
                         <!-- Page Heading -->
-                        <h1 class="h3 mb-2 text-gray-800">Out-Patients</h1>
+                        <h1 class="h3 mb-2 text-gray-800">Attend Patients</h1>
                         
                         <!-- DataTales Example -->
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">All Out-Patients</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">All Patients </h6>
                             </div>
+                            
+
                             <div class="card-body">
                                 <div class="table-responsive">
-                                <?php
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <?php
 require('../database/config.php');
 
 if (!$conn) {
     die("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 
-if (isset($_POST['delete'])) {
-    $id = $_POST['delete'];
-    
-    // Delete the visitor row from the database
-    $deleteSql = "DELETE FROM visitors WHERE id = ?";
-    $deleteStmt = mysqli_prepare($conn, $deleteSql);
-    mysqli_stmt_bind_param($deleteStmt, 'i', $id);
-    mysqli_stmt_execute($deleteStmt);
+if (isset($_POST['save'])) {
+    $id = $_POST['save'];
+
+    // Escape the values to prevent SQL injection (using prepared statement)
+    $imaging = isset($_POST['imaging_' . $id]) ? 1 : 0;
+    $lab = isset($_POST['lab_' . $id]) ? 1 : 0;
+    $counseller = isset($_POST['counseller_' . $id]) ? 1 : 0;
+    $doctor = isset($_POST['doctor_' . $id]) ? 1 : 0;
+    $ward_report = isset($_POST['ward_report_' . $id]) ? $_POST['ward_report_' . $id] : '';
+
+    // Update the visitor row in the database
+    $updateSql = "UPDATE visitors SET imaging = ?, lab = ?, counseller = ?, doctor = ?, ward_report = ? WHERE id = ?";
+    $updateStmt = mysqli_prepare($conn, $updateSql);
+    mysqli_stmt_bind_param($updateStmt, 'iiissi', $imaging, $lab, $counseller, $doctor, $ward_report, $id);
+    mysqli_stmt_execute($updateStmt);
 }
 
-$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report, counselling_report, pharmacy_report, cashier_report, admit 
+
+$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report,lab_report,imaging_report,counselling_report,ward_report,pharmacy_report,doctor, imaging, lab, counseller, admit 
         FROM visitors
-        WHERE position = 'patient' AND admit=0 ";
+        WHERE position = 'patient' AND admit = 1";
 $result = mysqli_query($conn, $sql);
 $cellStatus = 'red';
 
@@ -371,15 +309,17 @@ if (mysqli_num_rows($result) > 0) {
     echo "<th>Time In</th>";
     echo "<th>Time Out</th>";
     echo "<th>Consultation Report</th>";
-    echo "<th>Scan/xray</th>";
+    echo "<th>Lab Report</th>";
+    echo "<th>Imaging Report</th>";
+    echo "<th>Counseller Report</th>";
+    echo "<th>Pharmacy Report</th>";
+    echo "<th>Ward Report</th>";
     echo "<th>Lab</th>";
+    echo "<th>Scan/xray</th>";
     echo "<th>Counseller</th>";
-    echo "<th>Pharmacy</th>";
-    echo "<th>Cashier</th>";
-    echo "<th>Status</th>"; 
-    echo "<th>Action</th>"; 
+    echo "<th>Doctor</th>";
     echo "</tr>";
-
+    
     $count = 1;
     while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr>";
@@ -392,15 +332,64 @@ if (mysqli_num_rows($result) > 0) {
         echo "<td>" . $row['timeIn'] . "</td>";
         echo "<td>" . $row['timeOut'] . "</td>";
         echo "<td>" . $row['doctor_report'] . "</td>";
-        echo "<td>" . $row['imaging_report'] . "</td>";
         echo "<td>" . $row['lab_report'] . "</td>";
+        echo "<td>" . $row['imaging_report'] . "</td>";
         echo "<td>" . $row['counselling_report'] . "</td>";
         echo "<td>" . $row['pharmacy_report'] . "</td>";
-        echo "<td>" . $row['cashier_report'] . "</td>";
-        echo "<td>" . ($row['admit'] == 1 ? 'Inpatient' : 'Outpatient') . "</td>"; // Displaying status as Inpatient or Outpatient
+       
+
         
-        // Delete button
-        echo '<td><button class="btn btn-danger" type="submit" name="delete" value="' . $row['id'] . '">Delete</button></td>';
+echo "<td>
+<style>
+    #editor-container_" . $row['id'] . " {
+        width: 350px; 
+        max-height: 400px; 
+        margin: auto;
+    }
+</style>
+<div id='editor-container_" . $row['id'] . "'></div>
+<input type='hidden' id='ward_report_" . $row['id'] . "' name='ward_report_" . $row['id'] . "' value='" . htmlspecialchars($row['ward_report'] ?? '') . "'>
+<script>
+    var quill_" . $row['id'] . " = new Quill('#editor-container_" . $row['id'] . "', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],        
+                ['blockquote', 'code-block'],
+                [{ 'header': 1 }, { 'header': 2 }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],
+                [{ 'indent': '-1' }, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }],
+                [{ 'size': ['small', false, 'large', 'huge'] }],
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+                ['clean']
+            ]
+        },
+        placeholder: 'Write your report here...',
+        autofocus: true,
+    });
+    quill_" . $row['id'] . ".root.innerHTML = '" . (isset($row['ward_report']) ? htmlspecialchars_decode($row['ward_report']) : '') . "'; // Set initial content
+
+    quill_" . $row['id'] . ".on('text-change', function () {
+        document.getElementById('ward_report_" . $row['id'] . "').value = quill_" . $row['id'] . ".root.innerHTML;
+    });
+</script>
+</td>";
+
+
+        echo "<td><input type='checkbox' id='lab' name='lab_" . $row['id'] . "' " . ($row['lab'] ? 'checked' : '') . "></td>";
+        echo "<td><input type='checkbox' id='imaging' name='imaging_" . $row['id'] . "' " . ($row['imaging'] ? 'checked' :'') . "></td>";
+        echo "<td><input type='checkbox' id='counseller' name='counseller_" . $row['id'] . "' " . ($row['counseller'] ? 'checked' : '') . "></td>";
+        echo "<td><input type='checkbox' id='doctor' name='doctor_" . $row['id'] . "' " . ($row['doctor'] ? 'checked' : '') . "></td>";
+        echo '<td>
+                <button class="btn btn-primary" type="submit" name="save" value="' . $row['id'] . '">Save</button><br><br>
+                <button class="btn btn-danger" type="button" onclick="modifyPatient(' . $row['id'] . ')">Modify</button><br><br>
+                <button class="btn btn-success" type="button" onclick="updateStatus(' . $row['id'] . ', \'' . $cellStatus . '\')">Done</button>
+            </td>';
         echo "</tr>";
         $count++;
     }
@@ -412,7 +401,11 @@ if (mysqli_num_rows($result) > 0) {
 
 mysqli_close($conn);
 ?>
-                                        </tbody>
+
+                                        
+      
+
+
                                     </table>
                                 </div>
                             </div>
@@ -420,6 +413,8 @@ mysqli_close($conn);
     
                    
 
+                        
+                        
                 </div>
                 <!-- /.container-fluid -->
 
@@ -466,6 +461,42 @@ mysqli_close($conn);
             </div>
         </div>
     </div>
+    
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Assuming the button with class 'btn-success' triggers the 'Done' action
+    var doneButton = document.querySelector('.btn-success');
+    if (doneButton) {
+        doneButton.addEventListener('click', function() {
+            // Assuming $row['id'] is the unique identifier for each row
+            var cellId = 'statusCell_' + <?php echo $row['id']; ?>;
+            var statusCell = document.getElementById(cellId);
+
+            if (statusCell) {
+                // Change background color to green
+                statusCell.style.backgroundColor = 'green';
+                
+                // Store the status in local storage
+                localStorage.setItem(cellId, 'green');
+            }
+        });
+    }
+
+    // Restore cell status from local storage on page load
+    <?php
+    // Assuming $row['id'] is the unique identifier for each row
+    $cellId = 'statusCell_' . $row['id'];
+    $cellStatus = isset($_SESSION[$cellId]) ? $_SESSION[$cellId] : 'red';
+    ?>
+    var statusCell = document.getElementById('<?php echo $cellId; ?>');
+    if (statusCell) {
+        var storedStatus = localStorage.getItem('<?php echo $cellId; ?>');
+        if (storedStatus) {
+            statusCell.style.backgroundColor = storedStatus;
+        }
+    }
+});
+</script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
@@ -556,8 +587,9 @@ button[type="submit"]:hover {
         <form action="../messages/insert_message.php" method="post" id="messageForm">
             <label for="senderDepartment">Sender Department:</label>
             <select id="senderDepartment" name="senderDepartment">
-                <option value="admin">Admin</option>
                 
+                <option value="ward">Ward</option>
+               
             </select>
             <label for="senderName">Sender Name:</label>
             <input type="text" id="senderName" name="senderName" required>
@@ -586,7 +618,7 @@ button[type="submit"]:hover {
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+   document.addEventListener("DOMContentLoaded", function() {
     // Get references to elements
     var messagePopup = document.getElementById("messagePopup");
     var openMessagePopupBtn = document.getElementById("openMessagePopupBtn");

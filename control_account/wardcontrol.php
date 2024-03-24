@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>AFYA BORA || Out-Patients</title>
+    <title>AFYA BORA || Ward Control</title>
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -31,7 +31,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-hospital"></i>
                 </div>
@@ -89,13 +89,13 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Control Accounts:</h6>
-                        <a class="collapse-item" href="../control_account/receptioncontrol.php">Reception</a>
-                        <a class="collapse-item" href="../control_account/doctorcontrol.php">Doctor</a>
-                        <a class="collapse-item" href="../control_account/labcontrol.php">Lab</a>
-                        <a class="collapse-item" href="../control_account/radiationcontrol.php">Radiation</a>
-                        <a class="collapse-item" href="../control_account/cashiercontrol.php">Cashier</a>
-                        <a class="collapse-item" href="../control_account/pharmacistcontrol.php">Pharmacist</a>
-                        <a class="collapse-item" href="../control_account/wardcontrol.php">Ward</a>
+                        <a class="collapse-item" href="receptioncontrol.php">Reception</a>
+                        <a class="collapse-item" href="doctorcontrol.php">Doctor</a>
+                        <a class="collapse-item" href="labcontrol.php">Lab</a>
+                        <a class="collapse-item" href="radiationcontrol.php">Radiation</a>
+                        <a class="collapse-item" href="cashiercontrol.php">Cashier</a>
+                        <a class="collapse-item" href="pharmacistcontrol.php">Pharmacist</a>
+                        <a class="collapse-item" href="wardcontrol.php">Ward</a>
                     </div>
                 </div>
             </li>
@@ -118,27 +118,27 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Patients:</h6>
-                        <a class="collapse-item" href="allpatients.php">All </a>
-                        <a class="collapse-item" href="inpatient.php">In-Patients</a>
-                        <a class="collapse-item" href="outpatient.php">Out-Patients</a>
+                        <a class="collapse-item" href="../patients_records/allpatients.php">All </a>
+                        <a class="collapse-item" href="../patients_records/inpatient.php">In-Patients</a>
+                        <a class="collapse-item" href="../patients_records/outpatient.php">Out-Patients</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Visitors:</h6>
-                        <a class="collapse-item" href="caregiver.php">Caregiver</a>
-                        <a class="collapse-item" href="non_patient.php">Non-Patient</a>
+                        <a class="collapse-item" href="../patients_records/caregiver.php">Caregiver</a>
+                        <a class="collapse-item" href="../patients_records/non_patient.php">Non-Patient</a>
                     </div>
                 </div>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="staff_members.php">
+                <a class="nav-link" href="../patients_records/staff_members.php">
                     <i class="fas fa-users fa-fw"></i>
                     <span>Staff Members</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="payroll.php">
+                <a class="nav-link" href="../patients_records/payroll.php">
                     <i class="fas fa-file-invoice-dollar fa-fw"></i>
                     <span>Payroll</span></a>
             </li>
@@ -283,13 +283,15 @@ mysqli_close($conn);
                             </a>
                             
                         </li>
+
+
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">admin</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
                                 <img class="img-profile rounded-circle"
                                     src="../img/undraw_profile.svg">
                             </a>
@@ -322,103 +324,91 @@ mysqli_close($conn);
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-        
-                    <div class="container-fluid">
+                <div class="container-fluid">
 
-                        <!-- Page Heading -->
-                        <h1 class="h3 mb-2 text-gray-800">Out-Patients</h1>
-                        
-                        <!-- DataTales Example -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">All Out-Patients</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                <?php
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">All Reception Accounts</h1>
+                    
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Reception Accounts</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <?php
+// Connect to the database
 require('../database/config.php');
 
-if (!$conn) {
-    die("Failed to connect to MySQL: " . mysqli_connect_error());
+// Check if the form was submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
+    // Extract the ID of the record to be deleted
+    $id = mysqli_real_escape_string($conn, $_POST['delete_id']);
+
+    // Query to delete the record from the database
+    $delete_sql = "DELETE FROM ward_users WHERE id = $id";
+
+    // Attempt to execute the delete query
+    if (mysqli_query($conn, $delete_sql)) {
+        echo "Record deleted successfully.";
+    } else {
+        echo "Error deleting record: " . mysqli_error($conn);
+    }
 }
 
-if (isset($_POST['delete'])) {
-    $id = $_POST['delete'];
-    
-    // Delete the visitor row from the database
-    $deleteSql = "DELETE FROM visitors WHERE id = ?";
-    $deleteStmt = mysqli_prepare($conn, $deleteSql);
-    mysqli_stmt_bind_param($deleteStmt, 'i', $id);
-    mysqli_stmt_execute($deleteStmt);
-}
-
-$sql = "SELECT id, fullname, contact, idNumber, paymentMethod, age, timeIn, timeOut, doctor_report, lab_report, imaging_report, counselling_report, pharmacy_report, cashier_report, admit 
-        FROM visitors
-        WHERE position = 'patient' AND admit=0 ";
+// Query to fetch all data from the cashier_users table
+$sql = "SELECT * FROM ward_users";
 $result = mysqli_query($conn, $sql);
-$cellStatus = 'red';
 
+// Check if any records were found
 if (mysqli_num_rows($result) > 0) {
-    echo "<form method='post'>";
-    echo "<table class='table table-bordered' id='dataTable' width='100%' cellspacing='0'>";
+    // Display table headers
     echo "<tr>";
-    echo "<th>No</th>";
-    echo "<th>Full Names</th>";
-    echo "<th>Contact</th>";
-    echo "<th>ID Number</th>";
-    echo "<th>Payment Method</th>";
-    echo "<th>Age</th>";
-    echo "<th>Time In</th>";
-    echo "<th>Time Out</th>";
-    echo "<th>Consultation Report</th>";
-    echo "<th>Scan/xray</th>";
-    echo "<th>Lab</th>";
-    echo "<th>Counseller</th>";
-    echo "<th>Pharmacy</th>";
-    echo "<th>Cashier</th>";
-    echo "<th>Status</th>"; 
-    echo "<th>Action</th>"; 
+    echo "<th>First Name</th>";
+    echo "<th>Last Name</th>";
+    echo "<th>Email</th>";
+    echo "<th>Time Created</th>";
+    echo "<th>Actions</th>";
     echo "</tr>";
-
-    $count = 1;
+    echo "</thead>";
+                                    
+    echo "<tbody>";
+    // Iterate over the result set and display the data
     while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr>";
-        echo "<td>" . $count . "</td>"; 
-        echo "<td>" . $row['fullname'] . "</td>";
-        echo "<td><a href='tel:" . $row['contact'] . "'>" . $row['contact'] . "</a></td>";
-        echo "<td>" . $row['idNumber'] . "</td>";
-        echo "<td>" . $row['paymentMethod'] . "</td>";
-        echo "<td>" . $row['age'] . "</td>";
-        echo "<td>" . $row['timeIn'] . "</td>";
-        echo "<td>" . $row['timeOut'] . "</td>";
-        echo "<td>" . $row['doctor_report'] . "</td>";
-        echo "<td>" . $row['imaging_report'] . "</td>";
-        echo "<td>" . $row['lab_report'] . "</td>";
-        echo "<td>" . $row['counselling_report'] . "</td>";
-        echo "<td>" . $row['pharmacy_report'] . "</td>";
-        echo "<td>" . $row['cashier_report'] . "</td>";
-        echo "<td>" . ($row['admit'] == 1 ? 'Inpatient' : 'Outpatient') . "</td>"; // Displaying status as Inpatient or Outpatient
-        
-        // Delete button
-        echo '<td><button class="btn btn-danger" type="submit" name="delete" value="' . $row['id'] . '">Delete</button></td>';
+        echo "<td>" . $row['first_name'] . "</td>";
+        echo "<td>" . $row['last_name'] . "</td>";
+        echo "<td>" . $row['email'] . "</td>";
+        echo "<td>" . $row['created_at'] . "</td>";
+        echo '<td>
+                <form method="post" onsubmit="return confirm(\'Are you sure you want to delete this record?\')">
+                    <input type="hidden" name="delete_id" value="' . $row['id'] . '">
+                    <button class="btn btn-primary" type="button" onclick="location.href=\'../reception/index.php\'">Login</button> 
+                    <button class="btn btn-danger" type="submit" name="delete">Delete</button>
+                </form>
+              </td>';
         echo "</tr>";
-        $count++;
     }
-    echo "</table>";
-    echo "</form>";
+
+    echo "</tbody>"; // Close the table body
+    echo "</table>"; // Close the table
 } else {
     echo "No records found.";
 }
 
+// Close the connection
 mysqli_close($conn);
 ?>
-                                        </tbody>
-                                    </table>
-                                </div>
+
+                                    
+                                        
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-    
-                   
+                    </div>
 
                 </div>
                 <!-- /.container-fluid -->
@@ -430,7 +420,7 @@ mysqli_close($conn);
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Afya Bora 2024</span>
+                        <span>Copyright &copy; Your Website 2020</span>
                     </div>
                 </div>
             </footer>

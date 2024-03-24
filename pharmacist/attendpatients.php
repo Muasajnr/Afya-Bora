@@ -315,6 +315,7 @@ if (mysqli_num_rows($result) > 0) {
     echo "<th>Scan/xray</th>";
     echo "<th>Lab</th>";
     echo "<th>Counseller</th>";
+    echo "<th>Ward</th>";
     echo "<th>Pharmacy</th>";
     echo "<th>Admited </th>";
     echo "</tr>";
@@ -333,6 +334,7 @@ if (mysqli_num_rows($result) > 0) {
         echo "<td>" . $row['doctor_report'] . "</td>";
         echo "<td>" . $row['imaging_report'] . "</td>";
         echo "<td>" . $row['lab_report'] . "</td>";
+        echo "<td>" . $row['counselling_report'] . "</td>";
         echo "<td>" . $row['counselling_report'] . "</td>";
 
         echo "<td>
