@@ -329,12 +329,12 @@ mysqli_close($conn);
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">All Reception Accounts</h1>
+                    <h1 class="h3 mb-2 text-gray-800">All Counselor Accounts</h1>
                     
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Reception Accounts</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Counselor Accounts</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -387,7 +387,7 @@ if (mysqli_num_rows($result) > 0) {
         echo '<td>
                 <form method="post" onsubmit="return confirm(\'Are you sure you want to delete this record?\')">
                     <input type="hidden" name="delete_id" value="' . $row['id'] . '">
-                    <button class="btn btn-primary" type="button" onclick="location.href=\'../reception/index.php\'">Login</button> 
+                    <button class="btn btn-primary" type="button" onclick="location.href=\'../counseller/index.php\'">Login</button> 
                     <button class="btn btn-danger" type="submit" name="delete">Delete</button>
                 </form>
               </td>';
@@ -422,7 +422,7 @@ mysqli_close($conn);
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; Your Website 2024</span>
                     </div>
                 </div>
             </footer>
@@ -453,7 +453,7 @@ mysqli_close($conn);
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="../index.html">Logout</a>
                 </div>
             </div>
         </div>
